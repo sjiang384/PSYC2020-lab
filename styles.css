@@ -1,0 +1,13 @@
+/* indented sub-bullets, matching the lab deck style */
+.subpoint {
+  margin-left: 1.5em;
+  font-size: 90%;
+}
+.subsubpoint {
+  margin-left: 3em;
+  font-size: 80%;
+}
+.subpoint + .subpoint,
+.subsubpoint + .subsubpoint {
+  margin-top: 0.1em;
+}
