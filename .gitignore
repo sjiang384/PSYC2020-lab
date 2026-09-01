@@ -1,0 +1,6 @@
+.Rproj.user
+.quarto
+/.quarto/
+*_files/
+*.html
+*.qmd.bak

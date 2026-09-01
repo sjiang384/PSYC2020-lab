@@ -1,0 +1,6 @@
+project:
+  title: "PSYC2020-slides"
+  render:
+    - "PSYC2020-slides.qmd"
+
+editor: visual

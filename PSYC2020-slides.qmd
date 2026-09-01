@@ -1,0 +1,778 @@
+---
+title: "Central Tendency"
+subtitle: "PSYC 2020-A01 / PSYC 6022-A01 | Lab 2"
+author: "Shuheng Jiang"
+format:
+  live-revealjs:
+    css: styles.css
+engine: knitr
+execute:
+  echo: true
+---
+
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
+
+## Absence and Late Submission Policy
+::: {style="font-size: 70%"}
+
+- Homework and quizzes will generally not be reopened once they have closed and been graded, except in exceptional circumstances.
+
+- For an unavoidable absence, students may submit an Institute Approved Absence (IAA) request through Georgia Tech. Approved IAA requests will be honored.
+
+- Alternatively, students may provide appropriate supporting documentation, such as a doctor’s or dentist’s note. Such documentation will generally be accepted for absence or late-submission accommodations.
+
+- For non-emergency circumstances that you know about in advance, please contact me at least 3 days before the affected lab or assignment deadline. For emergencies or unexpected situations, please contact me as soon as reasonably possible.
+
+:::
+
+## Homework 1 
+Everyone has done a great job! 
+remember to set up the second level header in the white text space, not within the gray code chunk 
+
+
+## Review of Central Tendency!
+
+Mean: [Sum of all values divided by the total number of values]{.fragment fragment-index="0"}
+
+Median: [When sorted lowest to highest, the middle value]{.fragment fragment-index="1"}
+
+Mode: [The value that appears most often]{.fragment fragment-index="2"}
+
+
+## Central Tendency in R: Mean
+
+We can calculate central tendencies in two ways:
+
+Given this dataset, calculate the mean
+
+```{r}
+c(2, 3, 12, 4, 4)
+```
+
+:::: {.columns}
+::: {.column}
+By hand (computer)
+
+```{webr}
+# let's calculate the mean!
+```
+:::
+
+::: {.column}
+With the `mean(x)` function
+
+::: {.subpoint}
+○ `x` = vector of data
+:::
+
+```{webr}
+# let's calculate the mean!
+```
+:::
+::::
+
+## Central Tendency in R: Median
+
+Given this dataset, calculate the median
+
+```{r}
+c(2, 3, 12, 4, 4)
+```
+
+:::: {.columns}
+::: {.column}
+By hand (computer)
+
+```{webr}
+# let's calculate the median!
+```
+:::
+
+::: {.column}
+With the `median(x)` function
+
+::: {.subpoint}
+○ `x` = vector of data
+:::
+
+```{webr}
+# let's calculate the median!
+```
+:::
+::::
+
+## Central Tendency in R: Mode
+
+Given this dataset, calculate the mode
+
+```{r}
+c(2, 3, 12, 4, 4)
+```
+
+With the `mode()` function
+
+```{webr}
+# let's calculate the mode!
+```
+
+::: {.fragment fragment-index="0"}
+Doesn't work :(
+
+Have to create our own
+:::
+
+## R Functions
+
+We've seen some built-in R functions (e.g., `mean()`, `median()`), but we can also make our own
+
+:::: {.columns}
+::: {.column}
+```
+function_name <- function(argument) {
+  do some stuff
+  return(this stuff)
+}
+```
+:::
+
+::: {.column style="font-size:70%"}
+ⓘ Don't actually need to call `return()`; R will automatically return the last expression
+:::
+::::
+
+::: {.fragment fragment-index="0"}
+Then, you can call the function
+
+`function_name(specific_argument)`
+:::
+
+::: {.fragment fragment-index="1"}
+To keep the results, make sure to assign them to some variable
+
+`very_important_results <- function_name(specific_argument)`
+:::
+
+## Central Tendency in R: Mode
+
+Given this dataset, calculate the mode
+
+```{r}
+c(2, 3, 12, 4, 4)
+```
+
+```{r}
+mode_func <- function(x) {
+  sort(table(x), decreasing = T)[1]
+}
+```
+
+How does this work?
+
+```{webr}
+# let's calculate the mode!
+```
+
+## Measures of Variability in R 
+
+Variance: [Average of the squared distances of each value from the mean $s^2 = \dfrac{\sum (x_i - \bar{x})^2}{n - 1}$]{.fragment fragment-index="0"}
+
+Standard deviation: [Square root of the variance; the typical distance of a value from the mean, in the original units]{.fragment fragment-index="1"}
+
+Quantile: [A cut point that splits sorted data into equal-sized groups (e.g., 25% of values fall below the 1st quartile, 75% below the 3rd)]{.fragment fragment-index="2"}
+
+IQR: [3rd quartile minus 1st quartile; the range of the middle 50% of the data]{.fragment fragment-index="3"}
+
+## Variability in R: Variance, SD, IQR
+
+
+Given this dataset, calculate the median
+
+```{r}
+c(2, 3, 12, 4, 4)
+```
+
+With the `var(x)` function
+
+○ `x` = vector of data
+
+```{webr}
+# let's calculate the variance!
+```
+
+With the `sd(x)` function
+
+```{webr}
+# let's calculate the standard deviation!
+```
+
+With the `IQR(x)` function
+
+```{webr}
+# let's calculate the IQR!
+```
+
+
+## Descriptive Statistics in R
+
+Takes time to look at all these for a lot of variables, even with functions
+
+The `summary(object)` function provides us a quick overview of this information
+
+::: {.subpoint}
+○ `object` = for our purposes, a dataframe
+:::
+
+```{webr}
+# let's get descriptive statistics for the iris dataset
+```
+
+What all do we get?
+
+::: {.fragment fragment-index="1"}
+Minimum and maximum
+
+1st quartile, median, 3rd quartile
+
+Mean
+:::
+
+## Descriptive Statistics in R: 
+
+`summary()` gives us the basics, but no variance, SD, or skew
+
+The `describe(object)` function from the `psych` package gives us more
+
+::: {.subpoint}
+○ `object` = a dataframe (or a single variable)
+:::
+
+Do need to install the `psych` package first
+
+```{r}
+#| echo: true
+#| eval: false
+install.packages("psych")
+```
+
+```{webr}
+library(psych)
+# let's describe the iris dataset
+```
+
+::: {.fragment fragment-index="1"}
+What all do we get?
+
+n, mean, sd, median, trimmed mean, mad, min, max, range, skew, kurtosis, se
+:::
+
+## Visualizations
+
+Don't rush: graph your data!
+
+What should graphs do?
+
+::: {.subpoint}
+○ Show the data
+:::
+
+::: {.subpoint}
+○ Draw the reader primarily to the data (not the graphical effects)
+:::
+
+::: {.subpoint}
+○ Avoid distorting the data
+:::
+
+::: {.subpoint}
+○ Present many numbers with minimum ink
+:::
+
+::: {.subpoint}
+○ Make large data sets coherent
+:::
+
+::: {.subpoint}
+○ Encourage the reader to compare different pieces of data
+:::
+
+## Visualizations: Histograms
+
+:::: {.columns}
+::: {.column}
+An example of (simulated) SAT scores
+
+What do we see here?
+
+::: {.fragment fragment-index="0"}
+::: {.subpoint}
+○ Outliers at zero! Not a possible SAT score
+:::
+:::
+
+::: {.fragment fragment-index="1"}
+::: {.subpoint}
+○ Negatively skewed: more data on the left than on the right
+:::
+:::
+:::
+
+::: {.column}
+```{r}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 4
+set.seed(2020)
+sat <- round(1600 - rgamma(500, shape = 2, scale = 120))
+sat <- pmin(pmax(sat, 400), 1600)
+sat <- c(sat, rep(0, 6))
+hist(sat, breaks = 20, col = "grey80", border = "white",
+     main = "Simulated SAT scores", xlab = "SAT score")
+```
+:::
+::::
+
+## Skew
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 3
+#| fig-align: center
+par(mfrow = c(1, 2), mar = c(3, 1, 2, 1))
+x <- seq(0, 1, length.out = 400)
+plot(x, dbeta(x, 2, 6), type = "l", lwd = 3, col = "#377EB8",
+     axes = FALSE, xlab = "", ylab = "", main = "Positive skew")
+abline(v = qbeta(0.5, 2, 6), lty = 2)
+plot(x, dbeta(x, 6, 2), type = "l", lwd = 3, col = "#E41A1C",
+     axes = FALSE, xlab = "", ylab = "", main = "Negative skew")
+abline(v = qbeta(0.5, 6, 2), lty = 2)
+```
+
+:::: {.columns}
+::: {.column}
+Positive skew, right-tailed
+
+The mass of the distribution is concentrated on the left of the figure
+:::
+
+::: {.column}
+Negative skew, left-tailed
+
+The mass of the distribution is concentrated on the right of the figure
+:::
+::::
+
+## Skewness Demonstration
+
+:::: {.columns}
+::: {.column width="80%"}
+<iframe width="90%" height="600px" src="https://fabiosetti.shinyapps.io/Skew_Normal_distribution/"></iframe>
+:::
+
+::: {.column width="20%"}
+Full screen version [here](https://fabiosetti.shinyapps.io/Skew_Normal_distribution/){target="_blank"}
+
+<br>
+
+Skewness demonstration!
+
+Credits to Fabio Setti
+:::
+::::
+
+## Let's Do Some Visualization
+
+### Base R Graphics
+
+:::: {.columns}
+::: {.column .fragment fragment-index="0"}
+```{webr}
+#| fig-width: 5
+#| fig-height: 4
+plot(iris$Sepal.Length, iris$Sepal.Width)
+```
+:::
+
+::: {.column .fragment fragment-index="1"}
+What do we think about this?
+:::
+::::
+
+## Let's Do Some Visualization
+
+### Base R Graphics: Histogram
+
+:::: {.columns}
+::: {.column width="60%"}
+`hist()` function
+
+::: {.subpoint}
+**Required arguments:**
+:::
+
+::: {.subsubpoint}
+○ `x` = vector (variable) you want to plot (remember the $ function!)
+:::
+
+::: {.subpoint}
+**Optional arguments:**
+:::
+
+:::: {.columns}
+::: {.column}
+::: {.subsubpoint}
+○ `breaks` = bin count
+:::
+
+::: {.subsubpoint}
+○ `main` = title
+:::
+
+::: {.subsubpoint}
+○ `xlab` = label for x-axis
+:::
+
+::: {.subsubpoint}
+○ `ylab` = label for y-axis
+:::
+:::
+
+::: {.column}
+::: {.subsubpoint}
+○ `col` = color for bars
+:::
+
+::: {.subsubpoint}
+○ `xlim` = range for x-axis
+:::
+
+::: {.subsubpoint}
+○ `ylim` = range for y-axis
+:::
+
+::: {.subsubpoint}
+○ `prob` = `T`/`F`, proportion instead of frequency
+:::
+:::
+::::
+
+::: {style="font-size:70%"}
+If you do not set specific values for non-essential subarguments, it will use the default
+:::
+:::
+
+::: {.column width="40%"}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+hist(iris$Sepal.Length,
+     breaks = 7,
+     main = "Histogram of Sepal Length",
+     xlab = "Sepal Length",
+     xlim = c(3, 9),
+     border = "white",
+     col = "skyblue")
+```
+:::
+::::
+
+## Let's Do Some Visualization
+
+### Base R Graphics: Bar Chart
+
+:::: {.columns}
+::: {.column width="60%"}
+Useful to show frequency/percentage of **categorical** data
+
+::: {.subpoint}
+○ Categorical data: not numerically meaningful, it's a category of a type
+:::
+
+X-axis displays the variable; Y-axis displays frequency
+
+Bars **do not touch** and have equal widths
+
+Should not be 3-dimensional!
+
+`barplot()` function
+
+::: {.subsubpoint}
+○ `height` = a table of counts (use `table()` first!)
+:::
+
+::: {.subsubpoint}
+○ `main`, `xlab`, `ylab`, `col` work the same as `hist()`
+:::
+:::
+
+::: {.column width="40%"}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+barplot(table(iris$Species),
+        main = "How many of each species?",
+        xlab = "Species",
+        ylab = "Frequency",
+        col = "skyblue")
+```
+:::
+::::
+
+## Histogram vs. Bar Chart
+
+:::: {.columns}
+::: {.column}
+**Histogram**
+
+::: {.subpoint}
+○ Interval/ratio (numeric) data
+:::
+
+::: {.subpoint}
+○ Bars touch: continuity of the data
+:::
+
+::: {.subpoint}
+○ `hist(x)`
+:::
+:::
+
+::: {.column}
+**Bar chart**
+
+::: {.subpoint}
+○ Categorical data
+:::
+
+::: {.subpoint}
+○ Bars do not touch: separate categories
+:::
+
+::: {.subpoint}
+○ `barplot(table(x))`
+:::
+:::
+::::
+
+Try it: make a bar chart of `mtcars$cyl` (number of cylinders)
+
+```{webr}
+# let's make a bar chart!
+```
+
+## Let's Do Some Visualization
+
+### Base R Graphics: Pie Chart
+
+:::: {.columns}
+::: {.column width="60%"}
+Categorical data **only**
+
+Never use with more than 2–3 categories
+
+Use bar charts for comparisons
+
+If unsure, don't use a pie chart!!
+
+::: {.fragment fragment-index="0"}
+Why?
+
+::: {.subpoint}
+○ Eye is good at judging relative *linear* measures, not relative *areas*
+:::
+
+::: {.subpoint}
+○ Anything a pie chart can show, a bar chart can show better (Cleveland, 1985)
+:::
+:::
+
+`pie()` function
+
+::: {.subsubpoint}
+○ `x` = a table of counts, just like `barplot()`
+:::
+:::
+
+::: {.column width="40%"}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+pie(table(mtcars$am),
+    labels = c("Automatic", "Manual"),
+    main = "Transmission type",
+    col = c("skyblue", "salmon"))
+```
+:::
+::::
+
+## Pie Chart vs. Bar Chart
+
+Same data, two graphs: which one is easier to read?
+
+```{r}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 4
+par(mfrow = c(1, 2))
+pie(table(mtcars$carb), main = "Pie: number of carburetors")
+barplot(table(mtcars$carb), main = "Bar: number of carburetors",
+        xlab = "Carburetors", ylab = "Frequency", col = "skyblue")
+```
+
+::: {.fragment fragment-index="0"}
+Take away: **don't use a pie chart, use a bar chart** for categorical data
+
+If you use a pie chart, only when there are two categories
+:::
+
+```{webr}
+# try it yourself: pie(table(mtcars$carb)) vs. barplot(table(mtcars$carb))
+```
+
+## Let's Do Some Visualization
+
+### Base R Graphics: Line Graph
+
+:::: {.columns}
+::: {.column width="60%"}
+Usually displays a variable **over the passage of time** (x-axis)
+
+Time series graph: shows how things **change**
+
+::: {.subpoint}
+○ Long term trends
+:::
+
+::: {.subpoint}
+○ Seasonal components: same pattern every year
+:::
+
+::: {.subpoint}
+○ Irregular cycles and random fluctuations
+:::
+
+`plot()` function, with one new argument
+
+::: {.subsubpoint}
+○ `type = "l"` = line (`"b"` = both points and lines)
+:::
+:::
+
+::: {.column width="40%"}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+year <- 1978:2003
+cases <- c(8, 6, 4, 3, 2, 2.5, 2, 1.5, 1.5, 5.5, 2, 2.2, 2.1, 1.8,
+           1.5, 1, 0.8, 0.6, 0.5, 0.4, 0.3, 0.3, 0.2, 0.2, 0.1, 0.1)
+plot(year, cases, type = "b",
+     main = "Mumps by year (per 100,000)",
+     xlab = "Year", ylab = "Incidence")
+```
+:::
+::::
+
+## Line Graph Practice
+
+What do we see in this graph?
+
+::: {.fragment fragment-index="0"}
+::: {.subpoint}
+○ Overall decreasing trend (the vaccine!)
+:::
+:::
+
+::: {.fragment fragment-index="1"}
+::: {.subpoint}
+○ Small peak in 1987: irregular pattern or random fluctuation
+:::
+:::
+
+Try it: R has a built-in monthly time series called `AirPassengers`
+
+```{webr}
+# let's make a line graph!
+plot(AirPassengers, type = "l")
+```
+
+::: {.fragment fragment-index="2"}
+Trend? Seasonal component?
+:::
+
+## Let's Do Some Visualization
+
+### Base R Graphics: Stem-and-Leaf Plot
+
+:::: {.columns}
+::: {.column width="60%"}
+Visual display that **orders** numbers while also displaying **shape**
+
+**All** data points are included
+
+To create:
+
+::: {.subpoint}
+○ Order data
+:::
+
+::: {.subpoint}
+○ Create stems (the leading digit)
+:::
+
+::: {.subpoint}
+○ Attach leaves (the last digit)
+:::
+
+`stem()` function
+
+::: {.subsubpoint}
+○ `x` = vector of data
+:::
+
+::: {.subsubpoint}
+○ `scale` = how many stems (2 = split each stem in two)
+:::
+:::
+
+::: {.column width="40%"}
+```{webr}
+#| autorun: true
+scores <- c(44, 46, 47, 49, 63, 64, 66, 68, 68,
+            72, 72, 75, 76, 81, 84, 88, 106)
+stem(scores)
+```
+:::
+::::
+
+## Stem-and-Leaf Practice
+
+Read the plot: what is the smallest score? The most common stem?
+
+```{webr}
+scores <- c(44, 46, 47, 49, 63, 64, 66, 68, 68,
+            72, 72, 75, 76, 81, 84, 88, 106)
+# let's make a stem-and-leaf plot!
+```
+
+::: {.fragment fragment-index="0"}
+Now try `stem(scores, scale = 2)`: what changed?
+:::
+
+::: {.fragment fragment-index="1"}
+Bonus: compare `stem(scores)` with `hist(scores)`. What does the stemplot show that the histogram hides?
+:::
+
+## Lab Assignmnt 2
+Download the dataset
+save them in the same folder as your rmd. file 
+set the folder directory as working directory 
+```{r}
+#| eval: false
+#| echo: true
+dataframe <- read.csv("file_name")
+```
+
