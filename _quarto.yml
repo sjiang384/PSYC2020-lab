@@ -1,7 +1,16 @@
 project:
-  title: "PSYC2020-slides"
+  type: website
+  output-dir: _site
   render:
+    - "index.qmd"
     - "PSYC2020-slides.qmd"
     - "lab3-slides.qmd"
+
+website:
+  title: "PSYC 2020L Lab Slides"
+
+format:
+  html:
+    theme: cosmo
 
 editor: visual

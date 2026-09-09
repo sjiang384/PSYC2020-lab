@@ -1,0 +1,11 @@
+---
+title: "PSYC 2020L: Psychological Statistics Lab"
+subtitle: "Fall 2026 | Shuheng Jiang"
+---
+
+Lab slides. Click a link to open the interactive slides in your browser.
+
+| Lab | Topic | Slides |
+|-----|-------|--------|
+| 2 | Central Tendency | [Slides](PSYC2020-slides.html) |
+| 3 | Measures of Variability | [Slides](lab3-slides.html) |
