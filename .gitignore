@@ -4,3 +4,9 @@
 *_files/
 *.html
 *.qmd.bak
+
+**/*.quarto_ipynb
+
+.RData
+.Rhistory
+.DS_Store

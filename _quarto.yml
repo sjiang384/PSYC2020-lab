@@ -2,5 +2,6 @@ project:
   title: "PSYC2020-slides"
   render:
     - "PSYC2020-slides.qmd"
+    - "lab3-slides.qmd"
 
 editor: visual
