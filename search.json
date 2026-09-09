@@ -1,0 +1,338 @@
+[
+  {
+    "objectID": "lab3-slides.html#outline",
+    "href": "lab3-slides.html#outline",
+    "title": "Measures of Variability",
+    "section": "Outline",
+    "text": "Outline\n\nMeasures of variability review\nIndexing\nDescriptives by group\nVisualizations: boxplots"
+  },
+  {
+    "objectID": "lab3-slides.html#reminder-installing-vs.-loading-packages",
+    "href": "lab3-slides.html#reminder-installing-vs.-loading-packages",
+    "title": "Measures of Variability",
+    "section": "Reminder: Installing vs. Loading Packages",
+    "text": "Reminder: Installing vs. Loading Packages\n\nPackages are add-ons that give R extra functions (e.g., psych, ggplot2). Using one is a two-step process:\n\n\nStep 1: install.packages(\"name\")\nDownloads the package onto your computer\n\n○ Only need to do this once per computer\n\n\n○ Package name goes in quotes\n\n\n○ Needs an internet connection\n\n\ninstall.packages(\"psych\")\n\n\nStep 2: library(name)\nLoads the package into your current R session so its functions are available\n\n○ Need to do this every time you open R / RStudio\n\n\n○ Quotes are optional\n\n\n○ Put it at the top of your script\n\n\nlibrary(psych)\n\n\n\nInstalling is like buying a book; library() is taking it off the shelf to read it. Installing alone is not enough: without library(), you’ll see could not find function \"describeBy\"."
+  },
+  {
+    "objectID": "lab3-slides.html#measures-of-variability-review",
+    "href": "lab3-slides.html#measures-of-variability-review",
+    "title": "Measures of Variability",
+    "section": "Measures of Variability Review",
+    "text": "Measures of Variability Review\nDescribe the “spread” or “dispersion” of the data"
+  },
+  {
+    "objectID": "lab3-slides.html#measures-of-variability-functions",
+    "href": "lab3-slides.html#measures-of-variability-functions",
+    "title": "Measures of Variability",
+    "section": "Measures of Variability Functions",
+    "text": "Measures of Variability Functions\n\ntestscores &lt;- c(88, 93, 92, 99, 96)\n\nVariance: var(x) function\n\n○ x = vector\n\nStandard Deviation: sd(x) function\n\n○ x = vector\n\nInterquartile Range: IQR(x) function\n\n○ x = vector\n\n\n○ Difference between the 3rd and 1st quantile (so 50% of the data within this range)\n\n\n○ 25% of the data lower than the 1st quantile\n\n\n○ 75% of the data lower than the 3rd quantile\n\n\n○ IQR = 3rd - 1st\n\n\n\n\n\n\n\n\n\n\nQuantiles: quantile() function"
+  },
+  {
+    "objectID": "lab3-slides.html#indexing",
+    "href": "lab3-slides.html#indexing",
+    "title": "Measures of Variability",
+    "section": "Indexing",
+    "text": "Indexing\nTo access some subset of an object (vector, list, dataframe, etc.)\nWe already know one! The $ operator indexes by selecting a column\n\nmydataframe &lt;- data.frame(\n  pet = c(\"cat\", \"dog\"),\n  count = c(2, 2))"
+  },
+  {
+    "objectID": "lab3-slides.html#indexing-1",
+    "href": "lab3-slides.html#indexing-1",
+    "title": "Measures of Variability",
+    "section": "Indexing",
+    "text": "Indexing\nTo access some subset of an object (vector, list, dataframe, etc.)\nCan also use brackets []\n\nmyvector &lt;- c(2, 4, 6, 8)\n\nmyvector[1]\n\n[1] 2\n\n\nCan select more than one position at a time\n\nmyvector[c(1, 2, 3)]\n\n[1] 2 4 6\n\nmyvector[1:3]\n\n[1] 2 4 6"
+  },
+  {
+    "objectID": "lab3-slides.html#indexing-2",
+    "href": "lab3-slides.html#indexing-2",
+    "title": "Measures of Variability",
+    "section": "Indexing",
+    "text": "Indexing\nNeed to account for multiple dimensions\nMatrix: [row, column]\n\nmymatrix &lt;- matrix(c(0, 1, 2,\n                     1, 2, 3,\n                     2, 3, 4),\n                   nrow = 3, byrow = T,\n                   dimnames = list(NULL, c(\"Var1\", \"Var2\", \"Var3\")))\nmymatrix\n\n     Var1 Var2 Var3\n[1,]    0    1    2\n[2,]    1    2    3\n[3,]    2    3    4\n\n\n\nmymatrix[2, ]\n\nVar1 Var2 Var3 \n   1    2    3 \n\nmymatrix[3, 2]\n\nVar2 \n   3"
+  },
+  {
+    "objectID": "lab3-slides.html#indexing-3",
+    "href": "lab3-slides.html#indexing-3",
+    "title": "Measures of Variability",
+    "section": "Indexing",
+    "text": "Indexing\nDataframe: [column] or [row, column]\n\nmydataframe\n\n  pet count\n1 cat     2\n2 dog     2\n\n\n\n\n\nmydataframe[1]\n\n  pet\n1 cat\n2 dog\n\nmydataframe[\"pet\"]\n\n  pet\n1 cat\n2 dog\n\nmydataframe$pet\n\n[1] \"cat\" \"dog\"\n\n\n\n\nmydataframe[2, \"pet\"]\n\n[1] \"dog\"\n\n\nCan also do more than one element at a time:\n\nmydataframe[1:2, \"count\"]\n\n[1] 2 2"
+  },
+  {
+    "objectID": "lab3-slides.html#descriptives-by-group-visualization",
+    "href": "lab3-slides.html#descriptives-by-group-visualization",
+    "title": "Measures of Variability",
+    "section": "Descriptives by Group Visualization",
+    "text": "Descriptives by Group Visualization\nWhy visualize aggregated data?\n\n○ Makes group-level insights easier to interpret.\n\n\n○ Highlights patterns, trends, and outliers in grouped data\n\n\n○ Helps communicate findings effectively"
+  },
+  {
+    "objectID": "lab3-slides.html#descriptives-by-group",
+    "href": "lab3-slides.html#descriptives-by-group",
+    "title": "Measures of Variability",
+    "section": "Descriptives by Group",
+    "text": "Descriptives by Group\nAggregation involves summarizing or grouping data based on certain variables.\nCommonly used to calculate summary statistics like mean, variance, or sum for each group.\n\n\nBenefits:\n\n○ Data summary\n\n\n○ Data simplification\n\n\n○ Statistical analysis\n\n\n○ Trend identification\n\n\n○ Data privacy\n\n\n○ Data-driven decisions\n\n\naggregate(y ~ group, FUN)\n\n○ y = vector we want statistics for\n\n\n○ group = vector with grouping data\n\n\n○ FUN = function to apply"
+  },
+  {
+    "objectID": "lab3-slides.html#descriptives-by-group-example",
+    "href": "lab3-slides.html#descriptives-by-group-example",
+    "title": "Measures of Variability",
+    "section": "Descriptives by Group Example",
+    "text": "Descriptives by Group Example"
+  },
+  {
+    "objectID": "lab3-slides.html#descriptives-by-group-table-and-describeby",
+    "href": "lab3-slides.html#descriptives-by-group-table-and-describeby",
+    "title": "Measures of Variability",
+    "section": "Descriptives by Group: table() and describeBy()",
+    "text": "Descriptives by Group: table() and describeBy()\n\n\nCrosstab (counts): table(var1, var2)\n\n○ var1 = rows, var2 = columns (both categorical)\n\n\niris$Size &lt;- cut(iris$Sepal.Length,\n                 breaks = c(0, 5.8, 10),\n                 labels = c(\"Short\", \"Long\"))\n\ntable(iris$Species, iris$Size)\n\n            \n             Short Long\n  setosa        50    0\n  versicolor    24   26\n  virginica      6   44\n\n\n\nAll descriptives at once: describeBy(x, group)\n\n○ From the psych package: install.packages(\"psych\")\n\n\n○ x = numeric vector, group = grouping vector\n\n\n○ Add mat = TRUE for one compact table\n\n\nlibrary(psych)\n\ndescribeBy(iris$Sepal.Length, iris$Species,\n           mat = TRUE)[, c(\"group1\", \"n\", \"mean\",\n                           \"sd\", \"median\")]\n\n        group1  n  mean        sd median\nX11     setosa 50 5.006 0.3524897    5.0\nX12 versicolor 50 5.936 0.5161711    5.9\nX13  virginica 50 6.588 0.6358796    6.5"
+  },
+  {
+    "objectID": "lab3-slides.html#visualizations-boxplots",
+    "href": "lab3-slides.html#visualizations-boxplots",
+    "title": "Measures of Variability",
+    "section": "Visualizations: Boxplots",
+    "text": "Visualizations: Boxplots\n\n\nBack to the iris dataset, distribution of Sepal Length by species\nAnatomy of a boxplot:\n\n○ “Minimum”\n\n\n○ 25th Quantile (Q1)\n\n\n○ Median\n\n\n○ 75th Quantile (Q3)\n\n\n○ “Maximum”\n\n\n○ Points representing outliers\n\n\n\n\n\n\n\n\n\n\n\n“Minimum” and “maximum” are not the true min and max\n\n○ Minimum: \\(Q1 - 1.5 * IQR\\)\n\n\n○ Maximum: \\(Q3 + 1.5 * IQR\\)\n\nMeans that the whiskers contain ~99% of the data, rest are outliers\n\n\nFor more explanation of the anatomy of a boxplot, feel free to check this post out from Statistics by Jim"
+  },
+  {
+    "objectID": "lab3-slides.html#visualizations-boxplots-1",
+    "href": "lab3-slides.html#visualizations-boxplots-1",
+    "title": "Measures of Variability",
+    "section": "Visualizations: Boxplots",
+    "text": "Visualizations: Boxplots\nOne more resource for boxplot anatomy\n\n\nhttps://www.simplypsychology.org/boxplots.html"
+  },
+  {
+    "objectID": "lab3-slides.html#visualizations-boxplot",
+    "href": "lab3-slides.html#visualizations-boxplot",
+    "title": "Measures of Variability",
+    "section": "Visualizations: Boxplot",
+    "text": "Visualizations: Boxplot"
+  },
+  {
+    "objectID": "lab3-slides.html#lets-do-some-visualization",
+    "href": "lab3-slides.html#lets-do-some-visualization",
+    "title": "Measures of Variability",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Boxplot\n\n\nboxplot(x) function\nIts arguments are:\n\nRequired arguments:\n\n\n○ x = vector (variable) you want to plot\n\n\nOptional arguments:\n\n\n○ main = title\n\n\n○ xlab = label for x-axis\n\n\n○ ylab = label for y-axis\n\n\n○ border = color for bar borders\n\n\n○ col = color for bars\n\n\n○ horizontal = T/F to switch"
+  },
+  {
+    "objectID": "lab3-slides.html#lets-do-some-visualization-1",
+    "href": "lab3-slides.html#lets-do-some-visualization-1",
+    "title": "Measures of Variability",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Boxplot\n\n\nTo group them, you can change the x to a “formula”\noutcome_var ~ group_var\nJust like we saw with aggregate()"
+  },
+  {
+    "objectID": "lab3-slides.html#where-does-r-look-for-files-the-working-directory",
+    "href": "lab3-slides.html#where-does-r-look-for-files-the-working-directory",
+    "title": "Measures of Variability",
+    "section": "Where Does R Look for Files? The Working Directory",
+    "text": "Where Does R Look for Files? The Working Directory\n\nWhen you write read.csv(\"student_data.csv\"), R reads it as: “look for student_data.csv inside the current working directory”\n\n\nRule for beginners\n\nYour R Markdown file and all required data files should be placed in the same assignment folder before you begin working.\n\nLab_03/\n├── Lab_03.Rmd\n└── student_data.csv\nThen loading the data only needs the file name:\n\nstudent_data &lt;- read.csv(\"student_data.csv\")\n\n\nCheck before you load data\n\ngetwd()        # which folder is R looking in?\nlist.files()   # which files can R see there?\n\nIf the setup is correct you should see something like:\n[1] \"/Users/yourname/Documents/Lab_03\"\n[1] \"Lab_03.Rmd\"  \"student_data.csv\"\n\n○ Tip: when you knit an .Rmd, the working directory is the folder the .Rmd is saved in"
+  },
+  {
+    "objectID": "lab3-slides.html#the-common-mistake",
+    "href": "lab3-slides.html#the-common-mistake",
+    "title": "Measures of Variability",
+    "section": "The Common Mistake",
+    "text": "The Common Mistake\n\n\n\nFiles downloaded to different places\nDownloads/\n└── Lab_03.Rmd\n\nDesktop/\n└── student_data.csv\nThe working directory is Downloads, so this fails:\n\nread.csv(\"student_data.csv\")\n\nError in file(file, \"rt\") : cannot open the connection\nIn addition: Warning message:\n  cannot open file 'student_data.csv': No such file or directory\n\nWhat the error means\nR looked in the working directory but did not find a file with that exact name.\nThe fix\n\n○ Move both files into the same folder (e.g., Lab_03/)\n\n\n○ Open the .Rmd from that folder\n\n\n○ Re-run getwd() and list.files() to confirm\n\n\nFix the folder, not the code: don’t keep rewriting the path in read.csv().\nAlso check the exact file name: Student_Data.csv ≠ student_data.csv"
+  },
+  {
+    "objectID": "lab3-slides.html#lab-assignment-3",
+    "href": "lab3-slides.html#lab-assignment-3",
+    "title": "Measures of Variability",
+    "section": "Lab Assignment 3!",
+    "text": "Lab Assignment 3!\n\nCreate a folder for the assignment for your convenience\nHave the rmd. and the dataset for the assignment on the same folder\nSubmit both the rmd. and the knitted file"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "PSYC 2020L: Psychological Statistics Lab",
+    "section": "",
+    "text": "Lab slides. Click a link to open the interactive slides in your browser.\n\n\n\nLab\nTopic\nSlides\n\n\n\n\n2\nCentral Tendency\nSlides\n\n\n3\nMeasures of Variability\nSlides"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#absence-and-late-submission-policy",
+    "href": "PSYC2020-slides.html#absence-and-late-submission-policy",
+    "title": "Central Tendency",
+    "section": "Absence and Late Submission Policy",
+    "text": "Absence and Late Submission Policy\n\n\nHomework and quizzes will generally not be reopened once they have closed and been graded, except in exceptional circumstances.\nFor an unavoidable absence, students may submit an Institute Approved Absence (IAA) request through Georgia Tech. Approved IAA requests will be honored.\nAlternatively, students may provide appropriate supporting documentation, such as a doctor’s or dentist’s note. Such documentation will generally be accepted for absence or late-submission accommodations.\nFor non-emergency circumstances that you know about in advance, please contact me at least 3 days before the affected lab or assignment deadline. For emergencies or unexpected situations, please contact me as soon as reasonably possible."
+  },
+  {
+    "objectID": "PSYC2020-slides.html#homework-1",
+    "href": "PSYC2020-slides.html#homework-1",
+    "title": "Central Tendency",
+    "section": "Homework 1",
+    "text": "Homework 1\nEveryone has done a great job! remember to set up the second level header in the white text space, not within the gray code chunk"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#review-of-central-tendency",
+    "href": "PSYC2020-slides.html#review-of-central-tendency",
+    "title": "Central Tendency",
+    "section": "Review of Central Tendency!",
+    "text": "Review of Central Tendency!\nMean: Sum of all values divided by the total number of values\nMedian: When sorted lowest to highest, the middle value\nMode: The value that appears most often"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#central-tendency-in-r-mean",
+    "href": "PSYC2020-slides.html#central-tendency-in-r-mean",
+    "title": "Central Tendency",
+    "section": "Central Tendency in R: Mean",
+    "text": "Central Tendency in R: Mean\nWe can calculate central tendencies in two ways:\nGiven this dataset, calculate the mean\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\n\n\nBy hand (computer)\n\n\n\n\n\n\n\n\n\nWith the mean(x) function\n\n○ x = vector of data"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#central-tendency-in-r-median",
+    "href": "PSYC2020-slides.html#central-tendency-in-r-median",
+    "title": "Central Tendency",
+    "section": "Central Tendency in R: Median",
+    "text": "Central Tendency in R: Median\nGiven this dataset, calculate the median\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\n\n\nBy hand (computer)\n\n\n\n\n\n\n\n\n\nWith the median(x) function\n\n○ x = vector of data"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#central-tendency-in-r-mode",
+    "href": "PSYC2020-slides.html#central-tendency-in-r-mode",
+    "title": "Central Tendency",
+    "section": "Central Tendency in R: Mode",
+    "text": "Central Tendency in R: Mode\nGiven this dataset, calculate the mode\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\nWith the mode() function\n\n\n\n\n\n\n\n\n\nDoesn’t work :(\nHave to create our own"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#r-functions",
+    "href": "PSYC2020-slides.html#r-functions",
+    "title": "Central Tendency",
+    "section": "R Functions",
+    "text": "R Functions\nWe’ve seen some built-in R functions (e.g., mean(), median()), but we can also make our own\n\n\nfunction_name &lt;- function(argument) {\n  do some stuff\n  return(this stuff)\n}\n\nⓘ Don’t actually need to call return(); R will automatically return the last expression\n\n\nThen, you can call the function\nfunction_name(specific_argument)\n\n\nTo keep the results, make sure to assign them to some variable\nvery_important_results &lt;- function_name(specific_argument)"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#central-tendency-in-r-mode-1",
+    "href": "PSYC2020-slides.html#central-tendency-in-r-mode-1",
+    "title": "Central Tendency",
+    "section": "Central Tendency in R: Mode",
+    "text": "Central Tendency in R: Mode\nGiven this dataset, calculate the mode\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\n\nmode_func &lt;- function(x) {\n  sort(table(x), decreasing = T)[1]\n}\n\nHow does this work?"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#measures-of-variability-in-r",
+    "href": "PSYC2020-slides.html#measures-of-variability-in-r",
+    "title": "Central Tendency",
+    "section": "Measures of Variability in R",
+    "text": "Measures of Variability in R\nVariance: Average of the squared distances of each value from the mean \\(s^2 = \\dfrac{\\sum (x_i - \\bar{x})^2}{n - 1}\\)\nStandard deviation: Square root of the variance; the typical distance of a value from the mean, in the original units\nQuantile: A cut point that splits sorted data into equal-sized groups (e.g., 25% of values fall below the 1st quartile, 75% below the 3rd)\nIQR: 3rd quartile minus 1st quartile; the range of the middle 50% of the data"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#variability-in-r-variance-sd-iqr",
+    "href": "PSYC2020-slides.html#variability-in-r-variance-sd-iqr",
+    "title": "Central Tendency",
+    "section": "Variability in R: Variance, SD, IQR",
+    "text": "Variability in R: Variance, SD, IQR\nGiven this dataset, calculate the median\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\nWith the var(x) function\n○ x = vector of data\n\n\n\n\n\n\n\n\nWith the sd(x) function\n\n\n\n\n\n\n\n\nWith the IQR(x) function"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#descriptive-statistics-in-r",
+    "href": "PSYC2020-slides.html#descriptive-statistics-in-r",
+    "title": "Central Tendency",
+    "section": "Descriptive Statistics in R",
+    "text": "Descriptive Statistics in R\nTakes time to look at all these for a lot of variables, even with functions\nThe summary(object) function provides us a quick overview of this information\n\n○ object = for our purposes, a dataframe\n\n\n\n\n\n\n\n\n\nWhat all do we get?\n\nMinimum and maximum\n1st quartile, median, 3rd quartile\nMean"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#descriptive-statistics-in-r-1",
+    "href": "PSYC2020-slides.html#descriptive-statistics-in-r-1",
+    "title": "Central Tendency",
+    "section": "Descriptive Statistics in R:",
+    "text": "Descriptive Statistics in R:\nsummary() gives us the basics, but no variance, SD, or skew\nThe describe(object) function from the psych package gives us more\n\n○ object = a dataframe (or a single variable)\n\nDo need to install the psych package first\n\ninstall.packages(\"psych\")\n\n\n\n\n\n\n\n\n\n\nWhat all do we get?\nn, mean, sd, median, trimmed mean, mad, min, max, range, skew, kurtosis, se"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#visualizations",
+    "href": "PSYC2020-slides.html#visualizations",
+    "title": "Central Tendency",
+    "section": "Visualizations",
+    "text": "Visualizations\nDon’t rush: graph your data!\nWhat should graphs do?\n\n○ Show the data\n\n\n○ Draw the reader primarily to the data (not the graphical effects)\n\n\n○ Avoid distorting the data\n\n\n○ Present many numbers with minimum ink\n\n\n○ Make large data sets coherent\n\n\n○ Encourage the reader to compare different pieces of data"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#visualizations-histograms",
+    "href": "PSYC2020-slides.html#visualizations-histograms",
+    "title": "Central Tendency",
+    "section": "Visualizations: Histograms",
+    "text": "Visualizations: Histograms\n\n\nAn example of (simulated) SAT scores\nWhat do we see here?\n\n\n○ Outliers at zero! Not a possible SAT score\n\n\n\n\n○ Negatively skewed: more data on the left than on the right"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#skew",
+    "href": "PSYC2020-slides.html#skew",
+    "title": "Central Tendency",
+    "section": "Skew",
+    "text": "Skew\n\n\n\nPositive skew, right-tailed\nThe mass of the distribution is concentrated on the left of the figure\n\nNegative skew, left-tailed\nThe mass of the distribution is concentrated on the right of the figure"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#skewness-demonstration",
+    "href": "PSYC2020-slides.html#skewness-demonstration",
+    "title": "Central Tendency",
+    "section": "Skewness Demonstration",
+    "text": "Skewness Demonstration\n\n\n\n\n\nFull screen version here\n\nSkewness demonstration!\nCredits to Fabio Setti"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lets-do-some-visualization",
+    "href": "PSYC2020-slides.html#lets-do-some-visualization",
+    "title": "Central Tendency",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics\n\n\n\n\n\n\n\n\n\n\n\nWhat do we think about this?"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-1",
+    "href": "PSYC2020-slides.html#lets-do-some-visualization-1",
+    "title": "Central Tendency",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Histogram\n\n\nhist() function\n\nRequired arguments:\n\n\n○ x = vector (variable) you want to plot (remember the $ function!)\n\n\nOptional arguments:\n\n\n\n\n○ breaks = bin count\n\n\n○ main = title\n\n\n○ xlab = label for x-axis\n\n\n○ ylab = label for y-axis\n\n\n\n○ col = color for bars\n\n\n○ xlim = range for x-axis\n\n\n○ ylim = range for y-axis\n\n\n○ prob = T/F, proportion instead of frequency\n\n\n\nIf you do not set specific values for non-essential subarguments, it will use the default"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-2",
+    "href": "PSYC2020-slides.html#lets-do-some-visualization-2",
+    "title": "Central Tendency",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Bar Chart\n\n\nUseful to show frequency/percentage of categorical data\n\n○ Categorical data: not numerically meaningful, it’s a category of a type\n\nX-axis displays the variable; Y-axis displays frequency\nBars do not touch and have equal widths\nShould not be 3-dimensional!\nbarplot() function\n\n○ height = a table of counts (use table() first!)\n\n\n○ main, xlab, ylab, col work the same as hist()"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#histogram-vs.-bar-chart",
+    "href": "PSYC2020-slides.html#histogram-vs.-bar-chart",
+    "title": "Central Tendency",
+    "section": "Histogram vs. Bar Chart",
+    "text": "Histogram vs. Bar Chart\n\n\nHistogram\n\n○ Interval/ratio (numeric) data\n\n\n○ Bars touch: continuity of the data\n\n\n○ hist(x)\n\n\nBar chart\n\n○ Categorical data\n\n\n○ Bars do not touch: separate categories\n\n\n○ barplot(table(x))\n\n\nTry it: make a bar chart of mtcars$cyl (number of cylinders)"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-3",
+    "href": "PSYC2020-slides.html#lets-do-some-visualization-3",
+    "title": "Central Tendency",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Pie Chart\n\n\nCategorical data only\nNever use with more than 2–3 categories\nUse bar charts for comparisons\nIf unsure, don’t use a pie chart!!\n\nWhy?\n\n○ Eye is good at judging relative linear measures, not relative areas\n\n\n○ Anything a pie chart can show, a bar chart can show better (Cleveland, 1985)\n\n\npie() function\n\n○ x = a table of counts, just like barplot()"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#pie-chart-vs.-bar-chart",
+    "href": "PSYC2020-slides.html#pie-chart-vs.-bar-chart",
+    "title": "Central Tendency",
+    "section": "Pie Chart vs. Bar Chart",
+    "text": "Pie Chart vs. Bar Chart\nSame data, two graphs: which one is easier to read?\n\n\nTake away: don’t use a pie chart, use a bar chart for categorical data\nIf you use a pie chart, only when there are two categories"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-4",
+    "href": "PSYC2020-slides.html#lets-do-some-visualization-4",
+    "title": "Central Tendency",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Line Graph\n\n\nUsually displays a variable over the passage of time (x-axis)\nTime series graph: shows how things change\n\n○ Long term trends\n\n\n○ Seasonal components: same pattern every year\n\n\n○ Irregular cycles and random fluctuations\n\nplot() function, with one new argument\n\n○ type = \"l\" = line (\"b\" = both points and lines)"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#line-graph-practice",
+    "href": "PSYC2020-slides.html#line-graph-practice",
+    "title": "Central Tendency",
+    "section": "Line Graph Practice",
+    "text": "Line Graph Practice\nWhat do we see in this graph?\n\n\n○ Overall decreasing trend (the vaccine!)\n\n\n\n\n○ Small peak in 1987: irregular pattern or random fluctuation\n\n\nTry it: R has a built-in monthly time series called AirPassengers\n\n\n\n\n\n\n\n\n\nTrend? Seasonal component?"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-5",
+    "href": "PSYC2020-slides.html#lets-do-some-visualization-5",
+    "title": "Central Tendency",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Stem-and-Leaf Plot\n\n\nVisual display that orders numbers while also displaying shape\nAll data points are included\nTo create:\n\n○ Order data\n\n\n○ Create stems (the leading digit)\n\n\n○ Attach leaves (the last digit)\n\nstem() function\n\n○ x = vector of data\n\n\n○ scale = how many stems (2 = split each stem in two)"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#stem-and-leaf-practice",
+    "href": "PSYC2020-slides.html#stem-and-leaf-practice",
+    "title": "Central Tendency",
+    "section": "Stem-and-Leaf Practice",
+    "text": "Stem-and-Leaf Practice\nRead the plot: what is the smallest score? The most common stem?\n\n\n\n\n\n\n\n\n\nNow try stem(scores, scale = 2): what changed?\n\n\nBonus: compare stem(scores) with hist(scores). What does the stemplot show that the histogram hides?"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lab-assignmnt-2",
+    "href": "PSYC2020-slides.html#lab-assignmnt-2",
+    "title": "Central Tendency",
+    "section": "Lab Assignmnt 2",
+    "text": "Lab Assignmnt 2\nDownload the dataset save them in the same folder as your rmd. file set the folder directory as working directory\n\ndataframe &lt;- read.csv(\"file_name\")"
+  }
+]
