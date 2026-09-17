@@ -1,0 +1,624 @@
+---
+title: "*Z*-Scores"
+subtitle: "PSYC 2020-A01 / PSYC 6022-A01 | Lab 4"
+author: "Shuheng Jiang"
+format:
+  live-revealjs:
+    slide-number: true
+    show-slide-number: all
+    css: styles.css
+    width: 1200
+engine: knitr
+webr:
+  packages:
+    - ggplot2
+execute:
+  echo: true
+---
+
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
+
+## Outline
+
+* *Z*-Scores
+* *Z*-Scores in R
+* Generating Data
+* Probabilities of Normal Values
+
+Learning objectives:
+**R:** Generating data, normal distribution functions
+
+**Statistics:** *Z*-scores
+
+## *Z*-Scores
+
+To "*Z*-score" or "standardize" your data
+<div class="subpoint">○ Transform a variable such that the mean is zero and the standard deviation is one </div>
+<div class="subpoint">○ Matches the mean and SD of a "standard" normal distribution, $N(0, 1)$ </div>
+
+```{r, echo=F}
+#| fig-width: 4
+#| fig-height: 3
+#| layout-ncol: 3
+library(ggplot2)
+
+ggplot(data = iris, aes(x = Sepal.Width)) +
+  geom_histogram(aes(y = after_stat(density)),
+                 bins = 10) +
+  stat_function(inherit.aes = FALSE, fun = dnorm,
+                n = 101, args = list(mean = 0, sd = 1),
+                color = "lightblue", linewidth = 2,
+                xlim = c(-3, 3)) +
+  coord_cartesian(xlim = c(0, 6), ylim = c(0, 1)) +
+  theme_classic()
+
+ggplot(data = iris, aes(x = Sepal.Width - mean(Sepal.Width))) +
+  geom_histogram(aes(y = after_stat(density)),
+                 bins = 10) +
+  stat_function(inherit.aes = FALSE, fun = dnorm,
+                n = 101, args = list(mean = 0, sd = 1),
+                color = "lightblue", linewidth = 2,
+                xlim = c(-3, 3)) +
+  coord_cartesian(xlim = c(-3, 3), ylim = c(0, 1)) +
+  theme_classic()
+
+ggplot(data = iris, aes(x = (Sepal.Width - mean(Sepal.Width)) / sd(Sepal.Width))) +
+  geom_histogram(aes(y = after_stat(density)),
+                 bins = 10) +
+  stat_function(inherit.aes = FALSE, fun = dnorm,
+                n = 101, args = list(mean = 0, sd = 1),
+                color = "lightblue", linewidth = 2,
+                xlim = c(-3, 3)) +
+  coord_cartesian(xlim = c(-3, 3), ylim = c(0, 1)) +
+  theme_classic()
+```
+
+## *Z*-Scores
+
+Why standardize?
+
+* Puts variables on the same (interpretable) scale
+
+* Helps manage very large or very small numbers
+
+* Can compare across distributions
+
+* Gives information about location relative to the rest of the distribution
+
+## *Z*-Scores in R
+
+Need to:
+
+1. Take out the mean
+
+2. Scale by the standard deviation
+
+`data$variable_z <- (data$variable - mean(data$variable)) / sd(data$variable)`
+
+
+```{webr}
+# let's z-score Petal.Length
+
+```
+
+::: fragment
+Can check to make sure things look right
+:::
+
+## Generating Normal Data {style="font-size:85%"}
+
+Sometimes, we want to simulate data
+
+<div class="subpoint">○ Demonstration </div>
+<div class="subpoint">○ Comparison </div>
+<div class="subpoint">○ Sanity check </div>
+
+To generate data drawn from a normal distribution, we can use `rnorm(n, mean, sd)`
+<div class="subpoint">○ `n` = number of draws </div>
+<div class="subpoint">○ `mean` = desired mean of distribution </div>
+<div class="subpoint">○ `sd` = desired SD of distribution </div>
+
+```{r, echo=F}
+#| fig-width: 2.5
+#| fig-height: 2.5
+#| layout-ncol: 3
+
+ggplot(data = data.frame(x = rnorm(10, 0, 1)), aes(x = x)) +
+  geom_histogram(aes(y = after_stat(density)),
+                 bins = 10) +
+  stat_function(inherit.aes = FALSE, fun = dnorm,
+                n = 101, args = list(mean = 0, sd = 1),
+                color = "lightblue", linewidth = 2,
+                xlim = c(-3, 3)) +
+  coord_cartesian(xlim = c(-3, 3), ylim = c(0, 1)) +
+  labs(title = "n = 10") +
+  theme_classic()
+
+ggplot(data = data.frame(x = rnorm(50, 0, 1)), aes(x = x)) +
+  geom_histogram(aes(y = after_stat(density)),
+                 bins = 10) +
+  stat_function(inherit.aes = FALSE, fun = dnorm,
+                n = 101, args = list(mean = 0, sd = 1),
+                color = "lightblue", linewidth = 2,
+                xlim = c(-3, 3)) +
+  coord_cartesian(xlim = c(-3, 3), ylim = c(0, 1)) +
+  labs(title = "n = 50") +
+  theme_classic()
+
+ggplot(data = data.frame(x = rnorm(500, 0, 1)), aes(x = x)) +
+  geom_histogram(aes(y = after_stat(density)),
+                 bins = 10) +
+  stat_function(inherit.aes = FALSE, fun = dnorm,
+                n = 101, args = list(mean = 0, sd = 1),
+                color = "lightblue", linewidth = 2,
+                xlim = c(-3, 3)) +
+  coord_cartesian(xlim = c(-3, 3), ylim = c(0, 1)) +
+  labs(title = "n = 500") +
+  theme_classic()
+
+```
+
+## Generating Normal Data
+
+```{webr}
+# let's generate some data and then plot it
+
+```
+
+## Probabilities of Normal Values
+
+Within a normal distribution, we can check the probability of a given value and the value at a given probability
+
+:::: {.columns}
+::: {.column}
+#### Probability of a Value
+`pnorm(q)`
+<div class="subpoint">○ `q` = value (or vector of values) </div>
+```{r}
+pnorm(0)
+pnorm(1)
+pnorm(c(-3, 3))
+```
+:::
+
+::: {.column}
+#### Value at a Probability
+`qnorm(p)`
+<div class="subpoint">○ `p` = probability (or vector of probabilities) </div>
+```{r}
+qnorm(.5)
+qnorm(.9)
+qnorm(c(.025, .975))
+```
+:::
+::::
+
+## Visualize: `ggplot2`
+
+So many numbers! Can we please visualize our data?
+
+::: {style="font-size:75%;"}
+> "The simple graph has brought more information to the data analyst's mind than any other device." — John Tukey
+:::
+
+Yes! With the `ggplot2` package
+
+A bit of a different plotting system than the base R plots we've used
+
+But much more expansive and flexible (and much nicer looking, if you ask me!)
+
+## Visualize: Setup {style="font-size:85%"}
+
+Run this cell first — everything on the next slides builds on it
+
+<div class="subpoint">○ Loads `ggplot2` </div>
+<div class="subpoint">○ Adds a grouping variable to `iris` with `cut()`, just like we did in Lab 3 </div>
+
+```{webr}
+#| autorun: true
+library(ggplot2)
+
+iris$Size <- cut(iris$Sepal.Width,
+                 breaks = c(0, 3, 10),
+                 labels = c("Narrow sepal", "Wide sepal"))
+
+head(iris)
+```
+
+## Visualize: `ggplot2`
+
+Our question: what is the relationship between sepal length and petal length?
+
+:::: {.columns}
+::: {.column width=66%}
+```{r, echo=F}
+#| fig-width: 6
+#| fig-height: 4
+library(ggplot2)
+iris$Size <- cut(iris$Sepal.Width, breaks = c(0, 3, 10),
+                 labels = c("Narrow sepal", "Wide sepal"))
+
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species, fill = Species)) +
+  geom_point(size = 2.4) +
+  geom_smooth(method = "lm") +
+  coord_cartesian(xlim = c(0, 8), ylim = c(0, 8)) +
+  labs(x = "Sepal Length (cm)", y = "Petal Length (cm)") +
+  facet_wrap(~ Size) +
+  theme_classic(base_size = 16) +
+  theme(legend.position = "bottom",
+        aspect.ratio = 1)
+```
+:::
+
+::: {.column width=33%}
+Let's begin at the end:
+
+This is where we're headed. We'll build it up one layer at a time.
+:::
+::::
+
+## Visualize: `ggplot2`
+
+Our question: what is the relationship between sepal length and petal length?
+
+:::: {.columns style="font-size:60%"}
+::: {.column width=66%}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+ggplot(data = iris)
+```
+:::
+
+::: {.column width=33%}
+When we just call the `ggplot()` function with our data as the first argument, we get this blank area
+
+`ggplot()` works by adding layers and layers onto a plot object
+
+> This is not a very exciting plot, but you can think of it like an empty canvas you'll paint the remaining layers of your plot onto. — R4DS
+:::
+::::
+
+## Visualize: `ggplot2`
+
+Our question: what is the relationship between sepal length and petal length?
+
+:::: {.columns style="font-size:60%"}
+::: {.column width=66%}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+ggplot(data = iris,
+       mapping = aes(x = Sepal.Length, y = Petal.Length))
+```
+:::
+
+::: {.column width=33%}
+Next, we want to tell `ggplot()` what information we want in our plot and where we want it
+
+We do this with the `aes()` ("aesthetics") function in the `mapping =` argument
+
+How variables are *mapped* onto specific parts of the plot
+
+To investigate the relationship between sepal length and petal length, we can put `Sepal.Length` on the x-axis and `Petal.Length` on the y-axis
+
+What do we get?
+:::
+::::
+
+## Visualize: `ggplot2`
+
+Our question: what is the relationship between sepal length and petal length?
+
+:::: {.columns style="font-size:60%"}
+::: {.column width=66%}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+ggplot(data = iris,
+       mapping = aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point()
+```
+:::
+
+::: {.column width=33%}
+Still no data, though
+
+Need to define some **geom**, a geometric display of our data
+
+Will usually start with `geom_`
+
+<div style="font-size:70%">
+|   |   |
+|---|---|
+| `geom_line()` | line graph |
+| `geom_bar()` | bar graph |
+| `geom_boxplot()` | boxplot |
+| `geom_point()` | scatterplot |
+</div>
+
+Can start addressing questions here!
+:::
+::::
+
+## Visualize: `ggplot2`
+
+Our question: what is the relationship between sepal length and petal length?
+
+:::: {.columns style="font-size:60%"}
+::: {.column width=66%}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+ggplot(data = iris,
+       mapping = aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point() +
+  coord_cartesian(xlim = c(0, 8), ylim = c(0, 8))
+```
+:::
+
+::: {.column width=33%}
+These variables are conceptually similar (both lengths in cm) and should probably have the same scale
+
+Automatically generated axes are a good place to start
+
+But good practice to consider them each time
+
+Try changing the limits and re-running!
+:::
+::::
+
+## Visualize: `ggplot2`
+
+Our question: what is the relationship between sepal length and petal length?
+
+:::: {.columns style="font-size:60%"}
+::: {.column width=66%}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+ggplot(data = iris,
+       mapping = aes(x = Sepal.Length, y = Petal.Length,
+                     color = Species)) +
+  geom_point() +
+  coord_cartesian(xlim = c(0, 8), ylim = c(0, 8))
+```
+:::
+
+::: {.column width=33%}
+Adding aesthetics and layers
+
+Which of these flowers belong to which species?
+
+Start: do we need to modify the aesthetic or the geom?
+
+What can we tell from this?
+:::
+::::
+
+## Visualize: `ggplot2`
+
+Our question: what is the relationship between sepal length and petal length?
+
+:::: {.columns style="font-size:60%"}
+::: {.column width=66%}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+ggplot(data = iris,
+       mapping = aes(x = Sepal.Length, y = Petal.Length,
+                     color = Species)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  coord_cartesian(xlim = c(0, 8), ylim = c(0, 8))
+```
+:::
+
+::: {.column width=33%}
+Adding aesthetics and layers
+
+Let's say we want to add a line to better represent the overall trend
+
+Start: do we need to modify the aesthetic or the geom?
+
+What can we tell from this?
+:::
+::::
+
+## Visualize: `ggplot2`
+
+Our question: what is the relationship between sepal length and petal length?
+
+:::: {.columns style="font-size:60%"}
+::: {.column width=66%}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+ggplot(data = iris,
+       mapping = aes(x = Sepal.Length, y = Petal.Length,
+                     color = Species)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  coord_cartesian(xlim = c(0, 8), ylim = c(0, 8)) +
+  facet_wrap(~ Size)
+```
+:::
+
+::: {.column width=33%}
+Let's say we want to look at this separately for narrow-sepal vs wide-sepal flowers
+
+`facet_wrap()` splits the plot into panels by a grouping variable
+
+What can we tell from this?
+:::
+::::
+
+## Visualize: `ggplot2`
+
+Our question: what is the relationship between sepal length and petal length?
+
+:::: {.columns style="font-size:60%"}
+::: {.column width=66%}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+ggplot(data = iris,
+       mapping = aes(x = Sepal.Length, y = Petal.Length,
+                     color = Species)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  coord_cartesian(xlim = c(0, 8), ylim = c(0, 8)) +
+  facet_wrap(~ Size) +
+  theme_classic()
+```
+:::
+
+::: {.column width=33%}
+Let's say we want this plot to look nicer!!
+
+Built in themes
+
+<div class="subpoint">○ Try `theme_minimal()` or `theme_bw()` instead </div>
+:::
+::::
+
+## Visualize: `ggplot2`
+
+Our question: what is the relationship between sepal length and petal length?
+
+:::: {.columns style="font-size:60%"}
+::: {.column width=66%}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length,
+                 color = Species, fill = Species)) +
+  geom_point(size = 2.4) +
+  geom_smooth(method = "lm") +
+  coord_cartesian(xlim = c(0, 8), ylim = c(0, 8)) +
+  labs(x = "Sepal Length (cm)", y = "Petal Length (cm)") +
+  facet_wrap(~ Size) +
+  theme_classic(base_size = 16) +
+  theme(legend.position = "bottom",
+        aspect.ratio = 1)
+```
+:::
+
+::: {.column width=33%}
+Let's say we want this plot to look nicer!!
+
+Additional theming with `theme()`, `labs()`, and various arguments
+
+And we're back to the plot we started with!
+:::
+::::
+
+## Visualize: Boxplots
+
+:::: {.columns style="font-size:60%"}
+::: {.column width=66%}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+ggplot(data = iris,
+       mapping = aes(x = Species, y = Sepal.Length,
+                     fill = Species)) +
+  geom_boxplot() +
+  labs(x = "Species", y = "Sepal Length (cm)") +
+  theme_classic()
+```
+:::
+
+::: {.column width=33%}
+`geom_boxplot()` shows a distribution for each group
+
+<div class="subpoint">○ `x` = the grouping variable (categorical) </div>
+<div class="subpoint">○ `y` = the variable you're describing (numeric) </div>
+
+Same anatomy as before: median, Q1, Q3, whiskers, outliers
+
+Things to try:
+<div class="subpoint">○ Swap `x` and `y` to flip it sideways </div>
+<div class="subpoint">○ Add `geom_jitter(width = .1)` to show the raw data points on top </div>
+:::
+::::
+
+## Visualize: Barplots
+
+:::: {.columns style="font-size:60%"}
+::: {.column width=66%}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+# geom_bar() counts rows for you
+ggplot(data = iris,
+       mapping = aes(x = Size, fill = Species)) +
+  geom_bar() +
+  labs(x = "Sepal width group", y = "Count") +
+  theme_classic()
+```
+:::
+
+::: {.column width=33%}
+Two different bar geoms, and the difference matters:
+
+`geom_bar()`
+<div class="subpoint">○ Counts the rows in each category for you </div>
+<div class="subpoint">○ Only needs an `x` </div>
+
+`geom_col()`
+<div class="subpoint">○ Uses a value you already computed </div>
+<div class="subpoint">○ Needs both `x` and `y` </div>
+
+Things to try:
+<div class="subpoint">○ Add `position = "dodge"` inside `geom_bar()` to put bars side by side </div>
+:::
+::::
+
+## Visualize: Barplots with `geom_col()`
+
+:::: {.columns style="font-size:60%"}
+::: {.column width=66%}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+# first compute the means, then plot them
+mean_lengths <- aggregate(Sepal.Length ~ Species,
+                          data = iris,
+                          FUN = mean)
+mean_lengths
+
+ggplot(data = mean_lengths,
+       mapping = aes(x = Species, y = Sepal.Length,
+                     fill = Species)) +
+  geom_col() +
+  labs(x = "Species", y = "Mean Sepal Length (cm)") +
+  theme_classic()
+```
+:::
+
+::: {.column width=33%}
+Here we use `aggregate()` from Lab 3 to get one number per group, then `geom_col()` draws those numbers directly
+
+A note on bar plots of means:
+<div class="subpoint">○ They hide the spread of the data </div>
+<div class="subpoint">○ A boxplot usually tells you more </div>
+:::
+::::
+
+## Lab 4 Assignment!
+
+<!-- Add assignment reminders here. -->
+- Please submit both the knitted file and the rmd. on Canvas!

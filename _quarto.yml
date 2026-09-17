@@ -5,6 +5,7 @@ project:
     - "index.qmd"
     - "PSYC2020-slides.qmd"
     - "lab3-slides.qmd"
+    - "lab4-slides.qmd"
 
 website:
   title: "PSYC 2020L Lab Slides"
