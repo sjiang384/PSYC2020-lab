@@ -1,150 +1,164 @@
 [
   {
-    "objectID": "lab3-slides.html#outline",
-    "href": "lab3-slides.html#outline",
-    "title": "Measures of Variability",
+    "objectID": "lab4-slides.html#outline",
+    "href": "lab4-slides.html#outline",
+    "title": "Z-Scores",
     "section": "Outline",
-    "text": "Outline\n\nMeasures of variability review\nIndexing\nDescriptives by group\nVisualizations: boxplots"
+    "text": "Outline\n\nZ-Scores\nZ-Scores in R\nGenerating Data\nProbabilities of Normal Values\n\nLearning objectives: R: Generating data, normal distribution functions\nStatistics: Z-scores"
   },
   {
-    "objectID": "lab3-slides.html#reminder-installing-vs.-loading-packages",
-    "href": "lab3-slides.html#reminder-installing-vs.-loading-packages",
-    "title": "Measures of Variability",
-    "section": "Reminder: Installing vs. Loading Packages",
-    "text": "Reminder: Installing vs. Loading Packages\n\nPackages are add-ons that give R extra functions (e.g., psych, ggplot2). Using one is a two-step process:\n\n\nStep 1: install.packages(\"name\")\nDownloads the package onto your computer\n\n○ Only need to do this once per computer\n\n\n○ Package name goes in quotes\n\n\n○ Needs an internet connection\n\n\ninstall.packages(\"psych\")\n\n\nStep 2: library(name)\nLoads the package into your current R session so its functions are available\n\n○ Need to do this every time you open R / RStudio\n\n\n○ Quotes are optional\n\n\n○ Put it at the top of your script\n\n\nlibrary(psych)\n\n\n\nInstalling is like buying a book; library() is taking it off the shelf to read it. Installing alone is not enough: without library(), you’ll see could not find function \"describeBy\"."
+    "objectID": "lab4-slides.html#z-scores",
+    "href": "lab4-slides.html#z-scores",
+    "title": "Z-Scores",
+    "section": "Z-Scores",
+    "text": "Z-Scores\nTo “Z-score” or “standardize” your data\n\n○ Transform a variable such that the mean is zero and the standard deviation is one\n\n\n○ Matches the mean and SD of a “standard” normal distribution, \\(N(0, 1)\\)"
   },
   {
-    "objectID": "lab3-slides.html#measures-of-variability-review",
-    "href": "lab3-slides.html#measures-of-variability-review",
-    "title": "Measures of Variability",
-    "section": "Measures of Variability Review",
-    "text": "Measures of Variability Review\nDescribe the “spread” or “dispersion” of the data"
+    "objectID": "lab4-slides.html#z-scores-1",
+    "href": "lab4-slides.html#z-scores-1",
+    "title": "Z-Scores",
+    "section": "Z-Scores",
+    "text": "Z-Scores\nWhy standardize?\n\nPuts variables on the same (interpretable) scale\nHelps manage very large or very small numbers\nCan compare across distributions\nGives information about location relative to the rest of the distribution"
   },
   {
-    "objectID": "lab3-slides.html#measures-of-variability-functions",
-    "href": "lab3-slides.html#measures-of-variability-functions",
-    "title": "Measures of Variability",
-    "section": "Measures of Variability Functions",
-    "text": "Measures of Variability Functions\n\ntestscores &lt;- c(88, 93, 92, 99, 96)\n\nVariance: var(x) function\n\n○ x = vector\n\nStandard Deviation: sd(x) function\n\n○ x = vector\n\nInterquartile Range: IQR(x) function\n\n○ x = vector\n\n\n○ Difference between the 3rd and 1st quantile (so 50% of the data within this range)\n\n\n○ 25% of the data lower than the 1st quantile\n\n\n○ 75% of the data lower than the 3rd quantile\n\n\n○ IQR = 3rd - 1st\n\n\n\n\n\n\n\n\n\n\nQuantiles: quantile() function"
+    "objectID": "lab4-slides.html#z-scores-in-r",
+    "href": "lab4-slides.html#z-scores-in-r",
+    "title": "Z-Scores",
+    "section": "Z-Scores in R",
+    "text": "Z-Scores in R\nNeed to:\n\nTake out the mean\nScale by the standard deviation\n\ndata$variable_z &lt;- (data$variable - mean(data$variable)) / sd(data$variable)\n\n\n\n\n\n\n\n\n\nCan check to make sure things look right"
   },
   {
-    "objectID": "lab3-slides.html#indexing",
-    "href": "lab3-slides.html#indexing",
-    "title": "Measures of Variability",
-    "section": "Indexing",
-    "text": "Indexing\nTo access some subset of an object (vector, list, dataframe, etc.)\nWe already know one! The $ operator indexes by selecting a column\n\nmydataframe &lt;- data.frame(\n  pet = c(\"cat\", \"dog\"),\n  count = c(2, 2))"
+    "objectID": "lab4-slides.html#generating-normal-data",
+    "href": "lab4-slides.html#generating-normal-data",
+    "title": "Z-Scores",
+    "section": "Generating Normal Data",
+    "text": "Generating Normal Data\nSometimes, we want to simulate data\n\n○ Demonstration\n\n\n○ Comparison\n\n\n○ Sanity check\n\nTo generate data drawn from a normal distribution, we can use rnorm(n, mean, sd)\n\n○ n = number of draws\n\n\n○ mean = desired mean of distribution\n\n\n○ sd = desired SD of distribution"
   },
   {
-    "objectID": "lab3-slides.html#indexing-1",
-    "href": "lab3-slides.html#indexing-1",
-    "title": "Measures of Variability",
-    "section": "Indexing",
-    "text": "Indexing\nTo access some subset of an object (vector, list, dataframe, etc.)\nCan also use brackets []\n\nmyvector &lt;- c(2, 4, 6, 8)\n\nmyvector[1]\n\n[1] 2\n\n\nCan select more than one position at a time\n\nmyvector[c(1, 2, 3)]\n\n[1] 2 4 6\n\nmyvector[1:3]\n\n[1] 2 4 6"
+    "objectID": "lab4-slides.html#generating-normal-data-1",
+    "href": "lab4-slides.html#generating-normal-data-1",
+    "title": "Z-Scores",
+    "section": "Generating Normal Data",
+    "text": "Generating Normal Data"
   },
   {
-    "objectID": "lab3-slides.html#indexing-2",
-    "href": "lab3-slides.html#indexing-2",
-    "title": "Measures of Variability",
-    "section": "Indexing",
-    "text": "Indexing\nNeed to account for multiple dimensions\nMatrix: [row, column]\n\nmymatrix &lt;- matrix(c(0, 1, 2,\n                     1, 2, 3,\n                     2, 3, 4),\n                   nrow = 3, byrow = T,\n                   dimnames = list(NULL, c(\"Var1\", \"Var2\", \"Var3\")))\nmymatrix\n\n     Var1 Var2 Var3\n[1,]    0    1    2\n[2,]    1    2    3\n[3,]    2    3    4\n\n\n\nmymatrix[2, ]\n\nVar1 Var2 Var3 \n   1    2    3 \n\nmymatrix[3, 2]\n\nVar2 \n   3"
+    "objectID": "lab4-slides.html#probabilities-of-normal-values",
+    "href": "lab4-slides.html#probabilities-of-normal-values",
+    "title": "Z-Scores",
+    "section": "Probabilities of Normal Values",
+    "text": "Probabilities of Normal Values\nWithin a normal distribution, we can check the probability of a given value and the value at a given probability\n\n\nProbability of a Value\npnorm(q)\n\n○ q = value (or vector of values)\n\n\npnorm(0)\n\n[1] 0.5\n\npnorm(1)\n\n[1] 0.8413447\n\npnorm(c(-3, 3))\n\n[1] 0.001349898 0.998650102\n\n\n\nValue at a Probability\nqnorm(p)\n\n○ p = probability (or vector of probabilities)\n\n\nqnorm(.5)\n\n[1] 0\n\nqnorm(.9)\n\n[1] 1.281552\n\nqnorm(c(.025, .975))\n\n[1] -1.959964  1.959964"
   },
   {
-    "objectID": "lab3-slides.html#indexing-3",
-    "href": "lab3-slides.html#indexing-3",
-    "title": "Measures of Variability",
-    "section": "Indexing",
-    "text": "Indexing\nDataframe: [column] or [row, column]\n\nmydataframe\n\n  pet count\n1 cat     2\n2 dog     2\n\n\n\n\n\nmydataframe[1]\n\n  pet\n1 cat\n2 dog\n\nmydataframe[\"pet\"]\n\n  pet\n1 cat\n2 dog\n\nmydataframe$pet\n\n[1] \"cat\" \"dog\"\n\n\n\n\nmydataframe[2, \"pet\"]\n\n[1] \"dog\"\n\n\nCan also do more than one element at a time:\n\nmydataframe[1:2, \"count\"]\n\n[1] 2 2"
+    "objectID": "lab4-slides.html#visualize-ggplot2",
+    "href": "lab4-slides.html#visualize-ggplot2",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nSo many numbers! Can we please visualize our data?\n\n\n“The simple graph has brought more information to the data analyst’s mind than any other device.” — John Tukey\n\n\nYes! With the ggplot2 package\nA bit of a different plotting system than the base R plots we’ve used\nBut much more expansive and flexible (and much nicer looking, if you ask me!)"
   },
   {
-    "objectID": "lab3-slides.html#descriptives-by-group-visualization",
-    "href": "lab3-slides.html#descriptives-by-group-visualization",
-    "title": "Measures of Variability",
-    "section": "Descriptives by Group Visualization",
-    "text": "Descriptives by Group Visualization\nWhy visualize aggregated data?\n\n○ Makes group-level insights easier to interpret.\n\n\n○ Highlights patterns, trends, and outliers in grouped data\n\n\n○ Helps communicate findings effectively"
+    "objectID": "lab4-slides.html#visualize-setup",
+    "href": "lab4-slides.html#visualize-setup",
+    "title": "Z-Scores",
+    "section": "Visualize: Setup",
+    "text": "Visualize: Setup\nRun this cell first — everything on the next slides builds on it\n\n○ Loads ggplot2\n\n\n○ Adds a grouping variable to iris with cut(), just like we did in Lab 3"
   },
   {
-    "objectID": "lab3-slides.html#descriptives-by-group",
-    "href": "lab3-slides.html#descriptives-by-group",
-    "title": "Measures of Variability",
-    "section": "Descriptives by Group",
-    "text": "Descriptives by Group\nAggregation involves summarizing or grouping data based on certain variables.\nCommonly used to calculate summary statistics like mean, variance, or sum for each group.\n\n\nBenefits:\n\n○ Data summary\n\n\n○ Data simplification\n\n\n○ Statistical analysis\n\n\n○ Trend identification\n\n\n○ Data privacy\n\n\n○ Data-driven decisions\n\n\naggregate(y ~ group, FUN)\n\n○ y = vector we want statistics for\n\n\n○ group = vector with grouping data\n\n\n○ FUN = function to apply"
+    "objectID": "lab4-slides.html#visualize-ggplot2-1",
+    "href": "lab4-slides.html#visualize-ggplot2-1",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\n\nLet’s begin at the end:\nThis is where we’re headed. We’ll build it up one layer at a time."
   },
   {
-    "objectID": "lab3-slides.html#descriptives-by-group-example",
-    "href": "lab3-slides.html#descriptives-by-group-example",
-    "title": "Measures of Variability",
-    "section": "Descriptives by Group Example",
-    "text": "Descriptives by Group Example"
+    "objectID": "lab4-slides.html#visualize-ggplot2-2",
+    "href": "lab4-slides.html#visualize-ggplot2-2",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nWhen we just call the ggplot() function with our data as the first argument, we get this blank area\nggplot() works by adding layers and layers onto a plot object\n\nThis is not a very exciting plot, but you can think of it like an empty canvas you’ll paint the remaining layers of your plot onto. — R4DS"
   },
   {
-    "objectID": "lab3-slides.html#descriptives-by-group-table-and-describeby",
-    "href": "lab3-slides.html#descriptives-by-group-table-and-describeby",
-    "title": "Measures of Variability",
-    "section": "Descriptives by Group: table() and describeBy()",
-    "text": "Descriptives by Group: table() and describeBy()\n\n\nCrosstab (counts): table(var1, var2)\n\n○ var1 = rows, var2 = columns (both categorical)\n\n\niris$Size &lt;- cut(iris$Sepal.Length,\n                 breaks = c(0, 5.8, 10),\n                 labels = c(\"Short\", \"Long\"))\n\ntable(iris$Species, iris$Size)\n\n            \n             Short Long\n  setosa        50    0\n  versicolor    24   26\n  virginica      6   44\n\n\n\nAll descriptives at once: describeBy(x, group)\n\n○ From the psych package: install.packages(\"psych\")\n\n\n○ x = numeric vector, group = grouping vector\n\n\n○ Add mat = TRUE for one compact table\n\n\nlibrary(psych)\n\ndescribeBy(iris$Sepal.Length, iris$Species,\n           mat = TRUE)[, c(\"group1\", \"n\", \"mean\",\n                           \"sd\", \"median\")]\n\n        group1  n  mean        sd median\nX11     setosa 50 5.006 0.3524897    5.0\nX12 versicolor 50 5.936 0.5161711    5.9\nX13  virginica 50 6.588 0.6358796    6.5"
+    "objectID": "lab4-slides.html#visualize-ggplot2-3",
+    "href": "lab4-slides.html#visualize-ggplot2-3",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nNext, we want to tell ggplot() what information we want in our plot and where we want it\nWe do this with the aes() (“aesthetics”) function in the mapping = argument\nHow variables are mapped onto specific parts of the plot\nTo investigate the relationship between sepal length and petal length, we can put Sepal.Length on the x-axis and Petal.Length on the y-axis\nWhat do we get?"
   },
   {
-    "objectID": "lab3-slides.html#visualizations-boxplots",
-    "href": "lab3-slides.html#visualizations-boxplots",
-    "title": "Measures of Variability",
-    "section": "Visualizations: Boxplots",
-    "text": "Visualizations: Boxplots\n\n\nBack to the iris dataset, distribution of Sepal Length by species\nAnatomy of a boxplot:\n\n○ “Minimum”\n\n\n○ 25th Quantile (Q1)\n\n\n○ Median\n\n\n○ 75th Quantile (Q3)\n\n\n○ “Maximum”\n\n\n○ Points representing outliers\n\n\n\n\n\n\n\n\n\n\n\n“Minimum” and “maximum” are not the true min and max\n\n○ Minimum: \\(Q1 - 1.5 * IQR\\)\n\n\n○ Maximum: \\(Q3 + 1.5 * IQR\\)\n\nMeans that the whiskers contain ~99% of the data, rest are outliers\n\n\nFor more explanation of the anatomy of a boxplot, feel free to check this post out from Statistics by Jim"
+    "objectID": "lab4-slides.html#visualize-ggplot2-4",
+    "href": "lab4-slides.html#visualize-ggplot2-4",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nStill no data, though\nNeed to define some geom, a geometric display of our data\nWill usually start with geom_\n\n\n\n\ngeom_line()\nline graph\n\n\ngeom_bar()\nbar graph\n\n\ngeom_boxplot()\nboxplot\n\n\ngeom_point()\nscatterplot\n\n\n\n\nCan start addressing questions here!"
   },
   {
-    "objectID": "lab3-slides.html#visualizations-boxplots-1",
-    "href": "lab3-slides.html#visualizations-boxplots-1",
-    "title": "Measures of Variability",
-    "section": "Visualizations: Boxplots",
-    "text": "Visualizations: Boxplots\nOne more resource for boxplot anatomy\n\n\nhttps://www.simplypsychology.org/boxplots.html"
+    "objectID": "lab4-slides.html#visualize-ggplot2-5",
+    "href": "lab4-slides.html#visualize-ggplot2-5",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nThese variables are conceptually similar (both lengths in cm) and should probably have the same scale\nAutomatically generated axes are a good place to start\nBut good practice to consider them each time\nTry changing the limits and re-running!"
   },
   {
-    "objectID": "lab3-slides.html#visualizations-boxplot",
-    "href": "lab3-slides.html#visualizations-boxplot",
-    "title": "Measures of Variability",
-    "section": "Visualizations: Boxplot",
-    "text": "Visualizations: Boxplot"
+    "objectID": "lab4-slides.html#visualize-ggplot2-6",
+    "href": "lab4-slides.html#visualize-ggplot2-6",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nAdding aesthetics and layers\nWhich of these flowers belong to which species?\nStart: do we need to modify the aesthetic or the geom?\nWhat can we tell from this?"
   },
   {
-    "objectID": "lab3-slides.html#lets-do-some-visualization",
-    "href": "lab3-slides.html#lets-do-some-visualization",
-    "title": "Measures of Variability",
-    "section": "Let’s Do Some Visualization",
-    "text": "Let’s Do Some Visualization\nBase R Graphics: Boxplot\n\n\nboxplot(x) function\nIts arguments are:\n\nRequired arguments:\n\n\n○ x = vector (variable) you want to plot\n\n\nOptional arguments:\n\n\n○ main = title\n\n\n○ xlab = label for x-axis\n\n\n○ ylab = label for y-axis\n\n\n○ border = color for bar borders\n\n\n○ col = color for bars\n\n\n○ horizontal = T/F to switch"
+    "objectID": "lab4-slides.html#visualize-ggplot2-7",
+    "href": "lab4-slides.html#visualize-ggplot2-7",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nAdding aesthetics and layers\nLet’s say we want to add a line to better represent the overall trend\nStart: do we need to modify the aesthetic or the geom?\nWhat can we tell from this?"
   },
   {
-    "objectID": "lab3-slides.html#lets-do-some-visualization-1",
-    "href": "lab3-slides.html#lets-do-some-visualization-1",
-    "title": "Measures of Variability",
-    "section": "Let’s Do Some Visualization",
-    "text": "Let’s Do Some Visualization\nBase R Graphics: Boxplot\n\n\nTo group them, you can change the x to a “formula”\noutcome_var ~ group_var\nJust like we saw with aggregate()"
+    "objectID": "lab4-slides.html#visualize-ggplot2-8",
+    "href": "lab4-slides.html#visualize-ggplot2-8",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nLet’s say we want to look at this separately for narrow-sepal vs wide-sepal flowers\nfacet_wrap() splits the plot into panels by a grouping variable\nWhat can we tell from this?"
   },
   {
-    "objectID": "lab3-slides.html#where-does-r-look-for-files-the-working-directory",
-    "href": "lab3-slides.html#where-does-r-look-for-files-the-working-directory",
-    "title": "Measures of Variability",
-    "section": "Where Does R Look for Files? The Working Directory",
-    "text": "Where Does R Look for Files? The Working Directory\n\nWhen you write read.csv(\"student_data.csv\"), R reads it as: “look for student_data.csv inside the current working directory”\n\n\nRule for beginners\n\nYour R Markdown file and all required data files should be placed in the same assignment folder before you begin working.\n\nLab_03/\n├── Lab_03.Rmd\n└── student_data.csv\nThen loading the data only needs the file name:\n\nstudent_data &lt;- read.csv(\"student_data.csv\")\n\n\nCheck before you load data\n\ngetwd()        # which folder is R looking in?\nlist.files()   # which files can R see there?\n\nIf the setup is correct you should see something like:\n[1] \"/Users/yourname/Documents/Lab_03\"\n[1] \"Lab_03.Rmd\"  \"student_data.csv\"\n\n○ Tip: when you knit an .Rmd, the working directory is the folder the .Rmd is saved in"
+    "objectID": "lab4-slides.html#visualize-ggplot2-9",
+    "href": "lab4-slides.html#visualize-ggplot2-9",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nLet’s say we want this plot to look nicer!!\nBuilt in themes\n\n○ Try theme_minimal() or theme_bw() instead"
   },
   {
-    "objectID": "lab3-slides.html#the-common-mistake",
-    "href": "lab3-slides.html#the-common-mistake",
-    "title": "Measures of Variability",
-    "section": "The Common Mistake",
-    "text": "The Common Mistake\n\n\n\nFiles downloaded to different places\nDownloads/\n└── Lab_03.Rmd\n\nDesktop/\n└── student_data.csv\nThe working directory is Downloads, so this fails:\n\nread.csv(\"student_data.csv\")\n\nError in file(file, \"rt\") : cannot open the connection\nIn addition: Warning message:\n  cannot open file 'student_data.csv': No such file or directory\n\nWhat the error means\nR looked in the working directory but did not find a file with that exact name.\nThe fix\n\n○ Move both files into the same folder (e.g., Lab_03/)\n\n\n○ Open the .Rmd from that folder\n\n\n○ Re-run getwd() and list.files() to confirm\n\n\nFix the folder, not the code: don’t keep rewriting the path in read.csv().\nAlso check the exact file name: Student_Data.csv ≠ student_data.csv"
+    "objectID": "lab4-slides.html#visualize-ggplot2-10",
+    "href": "lab4-slides.html#visualize-ggplot2-10",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nLet’s say we want this plot to look nicer!!\nAdditional theming with theme(), labs(), and various arguments\nAnd we’re back to the plot we started with!"
   },
   {
-    "objectID": "lab3-slides.html#lab-assignment-3",
-    "href": "lab3-slides.html#lab-assignment-3",
-    "title": "Measures of Variability",
-    "section": "Lab Assignment 3!",
-    "text": "Lab Assignment 3!\n\nCreate a folder for the assignment for your convenience\nHave the rmd. and the dataset for the assignment on the same folder\nSubmit both the rmd. and the knitted file"
+    "objectID": "lab4-slides.html#visualize-boxplots",
+    "href": "lab4-slides.html#visualize-boxplots",
+    "title": "Z-Scores",
+    "section": "Visualize: Boxplots",
+    "text": "Visualize: Boxplots\n\n\n\n\n\n\n\n\n\n\n\ngeom_boxplot() shows a distribution for each group\n\n○ x = the grouping variable (categorical)\n\n\n○ y = the variable you’re describing (numeric)\n\nSame anatomy as before: median, Q1, Q3, whiskers, outliers\nThings to try:\n\n○ Swap x and y to flip it sideways\n\n\n○ Add geom_jitter(width = .1) to show the raw data points on top"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "PSYC 2020L: Psychological Statistics Lab",
-    "section": "",
-    "text": "Lab slides. Click a link to open the interactive slides in your browser.\n\n\n\nLab\nTopic\nSlides\n\n\n\n\n2\nCentral Tendency\nSlides\n\n\n3\nMeasures of Variability\nSlides"
+    "objectID": "lab4-slides.html#visualize-barplots",
+    "href": "lab4-slides.html#visualize-barplots",
+    "title": "Z-Scores",
+    "section": "Visualize: Barplots",
+    "text": "Visualize: Barplots\n\n\n\n\n\n\n\n\n\n\n\nTwo different bar geoms, and the difference matters:\ngeom_bar()\n\n○ Counts the rows in each category for you\n\n\n○ Only needs an x\n\ngeom_col()\n\n○ Uses a value you already computed\n\n\n○ Needs both x and y\n\nThings to try:\n\n○ Add position = \"dodge\" inside geom_bar() to put bars side by side"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-barplots-with-geom_col",
+    "href": "lab4-slides.html#visualize-barplots-with-geom_col",
+    "title": "Z-Scores",
+    "section": "Visualize: Barplots with geom_col()",
+    "text": "Visualize: Barplots with geom_col()\n\n\n\n\n\n\n\n\n\n\n\nHere we use aggregate() from Lab 3 to get one number per group, then geom_col() draws those numbers directly\nA note on bar plots of means:\n\n○ They hide the spread of the data\n\n\n○ A boxplot usually tells you more"
+  },
+  {
+    "objectID": "lab4-slides.html#lab-4-assignment",
+    "href": "lab4-slides.html#lab-4-assignment",
+    "title": "Z-Scores",
+    "section": "Lab 4 Assignment!",
+    "text": "Lab 4 Assignment!\n\n\nPlease submit both the knitted file and the rmd. on Canvas!"
   },
   {
     "objectID": "PSYC2020-slides.html#absence-and-late-submission-policy",
@@ -334,5 +348,152 @@
     "title": "Central Tendency",
     "section": "Lab Assignmnt 2",
     "text": "Lab Assignmnt 2\nDownload the dataset save them in the same folder as your rmd. file set the folder directory as working directory\n\ndataframe &lt;- read.csv(\"file_name\")"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "PSYC 2020L: Psychological Statistics Lab",
+    "section": "",
+    "text": "Lab slides. Click a link to open the interactive slides in your browser.\n\n\n\nLab\nTopic\nSlides\n\n\n\n\n2\nCentral Tendency\nSlides\n\n\n3\nMeasures of Variability\nSlides\n\n\n4\nZ-Scores\nSlides"
+  },
+  {
+    "objectID": "lab3-slides.html#outline",
+    "href": "lab3-slides.html#outline",
+    "title": "Measures of Variability",
+    "section": "Outline",
+    "text": "Outline\n\nMeasures of variability review\nIndexing\nDescriptives by group\nVisualizations: boxplots"
+  },
+  {
+    "objectID": "lab3-slides.html#reminder-installing-vs.-loading-packages",
+    "href": "lab3-slides.html#reminder-installing-vs.-loading-packages",
+    "title": "Measures of Variability",
+    "section": "Reminder: Installing vs. Loading Packages",
+    "text": "Reminder: Installing vs. Loading Packages\n\nPackages are add-ons that give R extra functions (e.g., psych, ggplot2). Using one is a two-step process:\n\n\nStep 1: install.packages(\"name\")\nDownloads the package onto your computer\n\n○ Only need to do this once per computer\n\n\n○ Package name goes in quotes\n\n\n○ Needs an internet connection\n\n\ninstall.packages(\"psych\")\n\n\nStep 2: library(name)\nLoads the package into your current R session so its functions are available\n\n○ Need to do this every time you open R / RStudio\n\n\n○ Quotes are optional\n\n\n○ Put it at the top of your script\n\n\nlibrary(psych)\n\n\n\nInstalling is like buying a book; library() is taking it off the shelf to read it. Installing alone is not enough: without library(), you’ll see could not find function \"describeBy\"."
+  },
+  {
+    "objectID": "lab3-slides.html#measures-of-variability-review",
+    "href": "lab3-slides.html#measures-of-variability-review",
+    "title": "Measures of Variability",
+    "section": "Measures of Variability Review",
+    "text": "Measures of Variability Review\nDescribe the “spread” or “dispersion” of the data"
+  },
+  {
+    "objectID": "lab3-slides.html#measures-of-variability-functions",
+    "href": "lab3-slides.html#measures-of-variability-functions",
+    "title": "Measures of Variability",
+    "section": "Measures of Variability Functions",
+    "text": "Measures of Variability Functions\n\ntestscores &lt;- c(88, 93, 92, 99, 96)\n\nVariance: var(x) function\n\n○ x = vector\n\nStandard Deviation: sd(x) function\n\n○ x = vector\n\nInterquartile Range: IQR(x) function\n\n○ x = vector\n\n\n○ Difference between the 3rd and 1st quantile (so 50% of the data within this range)\n\n\n○ 25% of the data lower than the 1st quantile\n\n\n○ 75% of the data lower than the 3rd quantile\n\n\n○ IQR = 3rd - 1st\n\n\n\n\n\n\n\n\n\n\nQuantiles: quantile() function"
+  },
+  {
+    "objectID": "lab3-slides.html#indexing",
+    "href": "lab3-slides.html#indexing",
+    "title": "Measures of Variability",
+    "section": "Indexing",
+    "text": "Indexing\nTo access some subset of an object (vector, list, dataframe, etc.)\nWe already know one! The $ operator indexes by selecting a column\n\nmydataframe &lt;- data.frame(\n  pet = c(\"cat\", \"dog\"),\n  count = c(2, 2))"
+  },
+  {
+    "objectID": "lab3-slides.html#indexing-1",
+    "href": "lab3-slides.html#indexing-1",
+    "title": "Measures of Variability",
+    "section": "Indexing",
+    "text": "Indexing\nTo access some subset of an object (vector, list, dataframe, etc.)\nCan also use brackets []\n\nmyvector &lt;- c(2, 4, 6, 8)\n\nmyvector[1]\n\n[1] 2\n\n\nCan select more than one position at a time\n\nmyvector[c(1, 2, 3)]\n\n[1] 2 4 6\n\nmyvector[1:3]\n\n[1] 2 4 6"
+  },
+  {
+    "objectID": "lab3-slides.html#indexing-2",
+    "href": "lab3-slides.html#indexing-2",
+    "title": "Measures of Variability",
+    "section": "Indexing",
+    "text": "Indexing\nNeed to account for multiple dimensions\nMatrix: [row, column]\n\nmymatrix &lt;- matrix(c(0, 1, 2,\n                     1, 2, 3,\n                     2, 3, 4),\n                   nrow = 3, byrow = T,\n                   dimnames = list(NULL, c(\"Var1\", \"Var2\", \"Var3\")))\nmymatrix\n\n     Var1 Var2 Var3\n[1,]    0    1    2\n[2,]    1    2    3\n[3,]    2    3    4\n\n\n\nmymatrix[2, ]\n\nVar1 Var2 Var3 \n   1    2    3 \n\nmymatrix[3, 2]\n\nVar2 \n   3"
+  },
+  {
+    "objectID": "lab3-slides.html#indexing-3",
+    "href": "lab3-slides.html#indexing-3",
+    "title": "Measures of Variability",
+    "section": "Indexing",
+    "text": "Indexing\nDataframe: [column] or [row, column]\n\nmydataframe\n\n  pet count\n1 cat     2\n2 dog     2\n\n\n\n\n\nmydataframe[1]\n\n  pet\n1 cat\n2 dog\n\nmydataframe[\"pet\"]\n\n  pet\n1 cat\n2 dog\n\nmydataframe$pet\n\n[1] \"cat\" \"dog\"\n\n\n\n\nmydataframe[2, \"pet\"]\n\n[1] \"dog\"\n\n\nCan also do more than one element at a time:\n\nmydataframe[1:2, \"count\"]\n\n[1] 2 2"
+  },
+  {
+    "objectID": "lab3-slides.html#descriptives-by-group-visualization",
+    "href": "lab3-slides.html#descriptives-by-group-visualization",
+    "title": "Measures of Variability",
+    "section": "Descriptives by Group Visualization",
+    "text": "Descriptives by Group Visualization\nWhy visualize aggregated data?\n\n○ Makes group-level insights easier to interpret.\n\n\n○ Highlights patterns, trends, and outliers in grouped data\n\n\n○ Helps communicate findings effectively"
+  },
+  {
+    "objectID": "lab3-slides.html#descriptives-by-group",
+    "href": "lab3-slides.html#descriptives-by-group",
+    "title": "Measures of Variability",
+    "section": "Descriptives by Group",
+    "text": "Descriptives by Group\nAggregation involves summarizing or grouping data based on certain variables.\nCommonly used to calculate summary statistics like mean, variance, or sum for each group.\n\n\nBenefits:\n\n○ Data summary\n\n\n○ Data simplification\n\n\n○ Statistical analysis\n\n\n○ Trend identification\n\n\n○ Data privacy\n\n\n○ Data-driven decisions\n\n\naggregate(y ~ group, FUN)\n\n○ y = vector we want statistics for\n\n\n○ group = vector with grouping data\n\n\n○ FUN = function to apply"
+  },
+  {
+    "objectID": "lab3-slides.html#descriptives-by-group-example",
+    "href": "lab3-slides.html#descriptives-by-group-example",
+    "title": "Measures of Variability",
+    "section": "Descriptives by Group Example",
+    "text": "Descriptives by Group Example"
+  },
+  {
+    "objectID": "lab3-slides.html#descriptives-by-group-table-and-describeby",
+    "href": "lab3-slides.html#descriptives-by-group-table-and-describeby",
+    "title": "Measures of Variability",
+    "section": "Descriptives by Group: table() and describeBy()",
+    "text": "Descriptives by Group: table() and describeBy()\n\n\nCrosstab (counts): table(var1, var2)\n\n○ var1 = rows, var2 = columns (both categorical)\n\n\niris$Size &lt;- cut(iris$Sepal.Length,\n                 breaks = c(0, 5.8, 10),\n                 labels = c(\"Short\", \"Long\"))\n\ntable(iris$Species, iris$Size)\n\n            \n             Short Long\n  setosa        50    0\n  versicolor    24   26\n  virginica      6   44\n\n\n\nAll descriptives at once: describeBy(x, group)\n\n○ From the psych package: install.packages(\"psych\")\n\n\n○ x = numeric vector, group = grouping vector\n\n\n○ Add mat = TRUE for one compact table\n\n\nlibrary(psych)\n\ndescribeBy(iris$Sepal.Length, iris$Species,\n           mat = TRUE)[, c(\"group1\", \"n\", \"mean\",\n                           \"sd\", \"median\")]\n\n        group1  n  mean        sd median\nX11     setosa 50 5.006 0.3524897    5.0\nX12 versicolor 50 5.936 0.5161711    5.9\nX13  virginica 50 6.588 0.6358796    6.5"
+  },
+  {
+    "objectID": "lab3-slides.html#visualizations-boxplots",
+    "href": "lab3-slides.html#visualizations-boxplots",
+    "title": "Measures of Variability",
+    "section": "Visualizations: Boxplots",
+    "text": "Visualizations: Boxplots\n\n\nBack to the iris dataset, distribution of Sepal Length by species\nAnatomy of a boxplot:\n\n○ “Minimum”\n\n\n○ 25th Quantile (Q1)\n\n\n○ Median\n\n\n○ 75th Quantile (Q3)\n\n\n○ “Maximum”\n\n\n○ Points representing outliers\n\n\n\n\n\n\n\n\n\n\n\n“Minimum” and “maximum” are not the true min and max\n\n○ Minimum: \\(Q1 - 1.5 * IQR\\)\n\n\n○ Maximum: \\(Q3 + 1.5 * IQR\\)\n\nMeans that the whiskers contain ~99% of the data, rest are outliers\n\n\nFor more explanation of the anatomy of a boxplot, feel free to check this post out from Statistics by Jim"
+  },
+  {
+    "objectID": "lab3-slides.html#visualizations-boxplots-1",
+    "href": "lab3-slides.html#visualizations-boxplots-1",
+    "title": "Measures of Variability",
+    "section": "Visualizations: Boxplots",
+    "text": "Visualizations: Boxplots\nOne more resource for boxplot anatomy\n\n\nhttps://www.simplypsychology.org/boxplots.html"
+  },
+  {
+    "objectID": "lab3-slides.html#visualizations-boxplot",
+    "href": "lab3-slides.html#visualizations-boxplot",
+    "title": "Measures of Variability",
+    "section": "Visualizations: Boxplot",
+    "text": "Visualizations: Boxplot"
+  },
+  {
+    "objectID": "lab3-slides.html#lets-do-some-visualization",
+    "href": "lab3-slides.html#lets-do-some-visualization",
+    "title": "Measures of Variability",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Boxplot\n\n\nboxplot(x) function\nIts arguments are:\n\nRequired arguments:\n\n\n○ x = vector (variable) you want to plot\n\n\nOptional arguments:\n\n\n○ main = title\n\n\n○ xlab = label for x-axis\n\n\n○ ylab = label for y-axis\n\n\n○ border = color for bar borders\n\n\n○ col = color for bars\n\n\n○ horizontal = T/F to switch"
+  },
+  {
+    "objectID": "lab3-slides.html#lets-do-some-visualization-1",
+    "href": "lab3-slides.html#lets-do-some-visualization-1",
+    "title": "Measures of Variability",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Boxplot\n\n\nTo group them, you can change the x to a “formula”\noutcome_var ~ group_var\nJust like we saw with aggregate()"
+  },
+  {
+    "objectID": "lab3-slides.html#where-does-r-look-for-files-the-working-directory",
+    "href": "lab3-slides.html#where-does-r-look-for-files-the-working-directory",
+    "title": "Measures of Variability",
+    "section": "Where Does R Look for Files? The Working Directory",
+    "text": "Where Does R Look for Files? The Working Directory\n\nWhen you write read.csv(\"student_data.csv\"), R reads it as: “look for student_data.csv inside the current working directory”\n\n\nRule for beginners\n\nYour R Markdown file and all required data files should be placed in the same assignment folder before you begin working.\n\nLab_03/\n├── Lab_03.Rmd\n└── student_data.csv\nThen loading the data only needs the file name:\n\nstudent_data &lt;- read.csv(\"student_data.csv\")\n\n\nCheck before you load data\n\ngetwd()        # which folder is R looking in?\nlist.files()   # which files can R see there?\n\nIf the setup is correct you should see something like:\n[1] \"/Users/yourname/Documents/Lab_03\"\n[1] \"Lab_03.Rmd\"  \"student_data.csv\"\n\n○ Tip: when you knit an .Rmd, the working directory is the folder the .Rmd is saved in"
+  },
+  {
+    "objectID": "lab3-slides.html#the-common-mistake",
+    "href": "lab3-slides.html#the-common-mistake",
+    "title": "Measures of Variability",
+    "section": "The Common Mistake",
+    "text": "The Common Mistake\n\n\n\nFiles downloaded to different places\nDownloads/\n└── Lab_03.Rmd\n\nDesktop/\n└── student_data.csv\nThe working directory is Downloads, so this fails:\n\nread.csv(\"student_data.csv\")\n\nError in file(file, \"rt\") : cannot open the connection\nIn addition: Warning message:\n  cannot open file 'student_data.csv': No such file or directory\n\nWhat the error means\nR looked in the working directory but did not find a file with that exact name.\nThe fix\n\n○ Move both files into the same folder (e.g., Lab_03/)\n\n\n○ Open the .Rmd from that folder\n\n\n○ Re-run getwd() and list.files() to confirm\n\n\nFix the folder, not the code: don’t keep rewriting the path in read.csv().\nAlso check the exact file name: Student_Data.csv ≠ student_data.csv"
+  },
+  {
+    "objectID": "lab3-slides.html#lab-assignment-3",
+    "href": "lab3-slides.html#lab-assignment-3",
+    "title": "Measures of Variability",
+    "section": "Lab Assignment 3!",
+    "text": "Lab Assignment 3!\n\nCreate a folder for the assignment for your convenience\nHave the rmd. and the dataset for the assignment on the same folder\nSubmit both the rmd. and the knitted file"
   }
 ]
