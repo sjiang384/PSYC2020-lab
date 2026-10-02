@@ -1,0 +1,783 @@
+---
+title: "Sampling Distributions & the Central Limit Theorem"
+subtitle: "PSYC 2020-A01 / PSYC 6022-A01 | Lab 6"
+author: "Shuheng Jiang"
+format:
+  live-revealjs:
+    slide-number: true
+    show-slide-number: all
+    css: styles.css
+    width: 1200
+engine: knitr
+execute:
+  echo: true
+---
+
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{webr}
+#| edit: false
+#| output: false
+# hidden setup: runs when the page loads so every live cell below has the U-shaped data
+Ushape <- c(rep(5, 250), rep(4.5, 200), rep(4, 100), rep(3.5, 50), rep(3, 25),
+            rep(2.5, 50), rep(2, 100), rep(1.5, 200), rep(1, 250))
+```
+
+```{r}
+#| include: false
+Ushape <- c(rep(5, 250), rep(4.5, 200), rep(4, 100), rep(3.5, 50), rep(3, 25),
+            rep(2.5, 50), rep(2, 100), rep(1.5, 200), rep(1, 250))
+```
+
+## Outline
+
+-   Population Parameters & Estimation
+-   Sampling Distributions
+-   Central Limit Theorem
+-   Sampling Distributions in R
+
+Learning objectives: **R:** `sample()`, `set.seed()`, `for` loops, `rnorm()` / `runif()` / `rexp()`
+
+**Statistics:** Population vs. sample vs. sampling distributions, Central Limit Theorem, standard error
+
+# Population Parameters {.center}
+
+## What does a researcher want to know? {style="font-size:85%"}
+
+| Data (what we have) | Research question is about… (what we want to know) |
+|----|----|
+| Randomly selected 1000 people's IQ in Georgia | IQ of people living in GA |
+| 30 students' height in the Psych department | Height of students in Psych |
+| Randomly selected 100 GT students' sleeping hours | Sleeping time of students at GT |
+| Product ratings from 300 people | Product satisfaction for customers |
+
+::: fragment
+We are interested in *population* properties (i.e., population **parameters**)
+
+We infer information about the population from the data we have
+:::
+
+## Population Parameters
+
+Population parameters are…
+
+::: subpoint
+○ Assumed to be constant (fixed)
+:::
+
+::: subpoint
+○ Unknown and unknowable
+:::
+
+::: subpoint
+○ Estimated using statistics
+:::
+
+::: {style="font-size:80%"}
+ⓘ *μ* (mu; mean) and *σ* (sigma; standard deviation) are parameters of the normal distribution; different distributions have different parameters
+:::
+
+. . .
+
+Statistics is the science of testing hypotheses about values of these (and other) parameters
+
+::: subpoint
+○ Point estimation
+:::
+
+::: subpoint
+○ Interval estimation
+:::
+
+## Two Types of Estimation {style="font-size:85%"}
+
+::::::::: columns
+::::: column
+**Point estimation**
+
+A single value (point) estimate of the parameter's true value
+
+::: subpoint
+○ e.g., $\hat{\mu} = 52$
+:::
+
+::: subpoint
+○ $\hat{\mu}$ and $M$ both refer to the sample estimate of the mean
+:::
+:::::
+
+::::: {.column .fragment}
+**Interval estimation**
+
+A range of values that may contain the population parameter
+
+::: subpoint
+○ e.g., $\hat{\mu} = (100, 150)$
+:::
+
+::: subpoint
+○ Usually reported with a confidence level (e.g., 95%) to indicate the method's reliability
+:::
+:::::
+:::::::::
+
+::: {.fragment style="font-size:80%"}
+If we drew 100 random samples and computed a 95% confidence interval (CI) for each one, we would expect about 95 of those 100 CIs to include the true population mean
+:::
+
+# Sampling Distributions {.center}
+
+## Let's Get a Sample
+
+::::: columns
+::: {.column width="55%"}
+A *sample* consists of multiple observations drawn from the population
+
+$$X_1, X_2, X_3, \dots, X_{n}$$
+
+We summarize the sample with its **sample mean**
+
+$$\bar{X} = \frac{\sum x}{n}$$
+:::
+
+::: {.column width="45%"}
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4.5
+par(mar = c(0, 0, 0, 0))
+plot(NA, xlim = c(0, 10), ylim = c(0, 10), axes = FALSE, xlab = "", ylab = "", asp = 1)
+symbols(2.5, 5, circles = 2.3, inches = FALSE, add = TRUE, bg = "#7fd6a4", fg = "#4a9c6e")
+text(2.5, 5, "Population", cex = 1.4)
+ys <- seq(9, 1, length.out = 6)
+arrows(4.8, 5, 7.3, ys, col = "red", lwd = 2, length = 0.1)
+symbols(rep(7.9, 6), ys, circles = rep(0.55, 6), inches = FALSE, add = TRUE, bg = "#7fd6a4", fg = "#4a9c6e")
+text(7.9, ys, c(expression(X[1]), expression(X[2]), expression(X[3]),
+                expression(X[4]), expression(X[5]), expression(X[n])), cex = 1.1)
+```
+:::
+:::::
+
+## Sampling Distribution
+
+:::::::: columns
+:::::: {.column width="55%"}
+Multiple means from multiple samples
+
+$$\bar{X}_1, \bar{X}_2, \bar{X}_3, \dots$$
+
+The distribution of those means is the **sampling distribution**
+
+. . .
+
+…and it is (approximately) a *normal distribution!*
+
+::: subpoint
+○ Unimodal, symmetrical
+:::
+
+::: subpoint
+○ Mean = median = mode
+:::
+
+::: subpoint
+○ 68% / 95% / 99.7% within 1 / 2 / 3 SDs
+:::
+::::::
+
+::: {.column width="45%"}
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+x <- seq(-3.5, 3.5, length.out = 400)
+plot(x, dnorm(x), type = "l", lwd = 3, col = "#377EB8", axes = FALSE,
+     xlab = "", ylab = "", main = "Distribution of sample means")
+axis(1, at = -3:3, labels = c(expression(mu-3*sigma), expression(mu-2*sigma), expression(mu-sigma),
+                              expression(mu), expression(mu+sigma), expression(mu+2*sigma), expression(mu+3*sigma)))
+for (k in 1:3) segments(c(-k, k), 0, c(-k, k), dnorm(k), lty = 2, col = "grey50")
+text(0, 0.2, "68%"); text(0, 0.06, "95% within ±2σ", cex = 0.8)
+```
+:::
+::::::::
+
+## Picturing the Sampling Distribution {style="font-size:85%"}
+
+::::::::: columns
+::: {.column width="55%"}
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 5.5
+set.seed(2)
+k <- 50; n <- 20
+m <- replicate(k, mean(rnorm(n, 15, 8)))
+se <- 8 / sqrt(n)
+lo <- m - 1.96 * se; hi <- m + 1.96 * se
+miss <- lo > 15 | hi < 15
+plot(m, 1:k, xlim = c(5, 25), pch = 19, col = ifelse(miss, "red", "black"),
+     xlab = "Sample mean", ylab = "Sample number", main = "95% CIs from 50 samples")
+segments(lo, 1:k, hi, 1:k, col = ifelse(miss, "red", "black"))
+abline(v = 15, lty = 2, col = "#377EB8", lwd = 2)
+text(15, k + 1.5, "true mean", col = "#377EB8", xpd = TRUE)
+```
+:::
+
+::::::: {.column width="45%"}
+Each dot is the mean of one sample; each line is that sample's 95% CI
+
+Red intervals don't contain the "true" value of the mean
+
+::::: fragment
+If the dots dropped to the ground, they would pile up into a **normal distribution**
+
+::: subpoint
+○ More dots around the middle
+:::
+
+::: subpoint
+○ Fewer dots toward the tails
+:::
+:::::
+
+::: {style="font-size:60%"}
+Simulated to mirror textbook Figure 2.8 (p. 46)
+:::
+:::::::
+:::::::::
+
+## What the Sampling Distribution Tells Us
+
+It allows us to…
+
+::: subpoint
+○ specify a range of scores the population mean is expected to fall within
+:::
+
+::: subpoint
+○ determine how accurate our sample mean is in estimating the true population mean
+:::
+
+::: subpoint
+○ determine how likely an observed statistic (e.g., a sample mean) is, assuming some hypothesized parameter holds in the population
+:::
+
+:::: fragment
+::: callout-note
+If people in GA have an average IQ of 100, what is the probability that 100 randomly selected people in GA have a mean IQ of 120?
+:::
+::::
+
+# Central Limit Theorem {.center}
+
+## Central Limit Theorem (CLT)
+
+**Definition:** if you take sufficiently large random samples from the population, then the distribution of the sample means will be approximately normally distributed
+
+::: {style="font-size:70%"}
+ⓘ It doesn't have to be a mean for the CLT to hold. It can also be a sum (a sum is part of calculating the mean!)
+:::
+
+. . .
+
+Two things I want to point out:
+
+1.  Repeatedly sampling from a **non-normal** population still gives you a normal sampling distribution
+2.  The variance of the sampling distribution is **smaller** than the original variance
+
+## 1) Sampling Distribution → Normal
+
+Regardless of the population's skewness / kurtosis, the distribution of the means becomes normal
+
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 4
+set.seed(6)
+pops <- list(`U-shape` = Ushape, Uniform = runif(2000, 1, 10),
+             Exponential = rexp(2000, 3), `Right-skewed` = rgamma(2000, 2, 1))
+par(mfrow = c(2, 4), mar = c(3, 2, 2, 1))
+for (nm in names(pops)) hist(pops[[nm]], main = paste("Population:", nm), col = "#b22222",
+                             border = "white", xlab = "", ylab = "", yaxt = "n")
+for (nm in names(pops)) hist(replicate(2000, mean(sample(pops[[nm]], 30, replace = TRUE))),
+                             main = "Sample means (n = 30)", col = "#377EB8", border = "white",
+                             xlab = "", ylab = "", yaxt = "n")
+```
+
+::: subpoint
+○ U-shape, uniform, exponential, extremely skewed… whatever the original distribution is
+:::
+
+## Example: U-shaped Distribution {style="font-size:85%"}
+
+::::: columns
+::: {.column width="45%"}
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4
+hist(Ushape, breaks = seq(0.75, 5.25, 0.5), col = "#4472C4", border = "white",
+     main = "Population", xlab = "Value")
+```
+
+Population: $N$ = `r length(Ushape)`, $\mu$ = `r mean(Ushape)`, $\sigma$ = `r round(sd(Ushape), 2)`
+:::
+
+::: {.column width="55%"}
+```{r}
+#| echo: false
+set.seed(12345)
+tab <- t(sapply(1:10, function(i) {
+  s <- sample(Ushape, 100, replace = TRUE); c(Mean = mean(s), SD = sd(s))
+}))
+knitr::kable(data.frame(Sample = paste("Sample", 1:10), round(tab, 2)))
+```
+
+Sampling with $n$ = 100: the 10 means average `r round(mean(tab[, "Mean"]), 3)` with an SD of only `r round(sd(tab[, "Mean"]), 3)`
+:::
+:::::
+
+## Sample Size Matters
+
+How does the sampling distribution change as $n$ (observations per sample) increases?
+
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 3.8
+set.seed(1)
+par(mfrow = c(1, 4), mar = c(4, 3, 3, 1))
+hist(Ushape, breaks = seq(0.75, 5.25, 0.5), col = "#4472C4", border = "white",
+     main = "Population (U-shape)", xlab = "", xlim = c(1, 5))
+for (n in c(5, 30, 50)) hist(replicate(100, mean(sample(Ushape, n, replace = TRUE))),
+                             xlim = c(1, 5), col = "grey80", border = "white",
+                             main = paste("Sample means, n =", n), xlab = "")
+```
+
+::: fragment
+The bigger $n$ is, the **narrower** the sampling distribution
+:::
+
+## Sample Size Matters: Standard Error
+
+::::: columns
+::: {.column width="60%"}
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 4.5
+n <- 1:100
+plot(n, sd(Ushape) / sqrt(n), xlab = "n (sample size)", ylab = "Standard error", pch = 1,
+     main = "SE of the mean for the U-shaped population")
+abline(v = 30, col = "red", lty = 2, lwd = 2)
+```
+:::
+
+::: {.column width="40%"}
+Large reductions in the standard error as $n$ increases from 1 to about 30
+
+Beyond about $n$ = 30, there is not as much benefit to adding more subjects in terms of standard error
+:::
+:::::
+
+## 2) Sampling Variance \< Original Variance
+
+The variance of the sampling distribution of the mean is **always** smaller than the original population variance
+
+::: subpoint
+○ Less variability in the sample means than in the population
+:::
+
+::: subpoint
+○ As the sample size increases, the sampling distribution becomes narrower
+:::
+
+. . .
+
+Because the original variance is divided by $n$, the sample size:
+
+| mean | variance | standard deviation |
+|:--:|:--:|:--:|
+| $\mu_{\bar{X}} = \mu$ | $\sigma^2_{\bar{X}} = \dfrac{\sigma^2}{n}$ | $\sigma_{\bar{X}} = \dfrac{\sigma}{\sqrt{n}}$ |
+
+::: {style="font-size:80%"}
+The SD of the sampling distribution is called the **standard error (SE)**
+
+Intuition: when the sample size equals the population size, the sampling variance is essentially 0 — no error in the estimate
+:::
+
+# Sampling Distributions in R {.center}
+
+## R Demonstrations
+
+Two factors we're going to test:
+
+**Different original distributions**
+
+::: subpoint
+○ If the data are not normal (e.g., uniform or exponential), is the sampling distribution still normal?
+:::
+
+**Different sample sizes**
+
+::: subpoint
+○ When each sample has 5, 30, or 200 observations
+:::
+
+## Warm-up: Functions from Earlier Labs
+
+```{webr}
+# Generate a sample
+data <- c(7, 3, 5, 1, 9, 8)
+sort(data)      # sort the data
+length(data)    # number of data points
+mean(data)
+median(data)
+```
+
+## Example: U-shaped Distribution {style="font-size:85%"}
+
+::::::: columns
+::: {.column width="50%"}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 3.5
+Ushape <- c(rep(5, 250), rep(4.5, 200),
+            rep(4, 100), rep(3.5, 50),
+            rep(3, 25), rep(2.5, 50),
+            rep(2, 100), rep(1.5, 200),
+            rep(1, 250))
+hist(Ushape)
+mean(Ushape)
+sd(Ushape)
+```
+:::
+
+::::: {.column width="50%"}
+`rep(x, times)` repeats a value
+
+::: subpoint
+○ `rep(5, 250)` = the number 5, 250 times
+:::
+
+Type `?rep` in the console for more info
+
+::: fragment
+What does this population look like? Is it normal?
+:::
+:::::
+:::::::
+
+## R Functions: `sample()` {style="font-size:85%"}
+
+Extract a sample from a given dataset
+
+`sample(dataname, size = n, replace = T)`
+
+::: subpoint
+○ `size` = number of observations *n*
+:::
+
+::: subpoint
+○ `replace = TRUE` (or `T`): sampling *with* replacement
+:::
+
+::: subpoint
+○ `replace = FALSE` (or `F`): sampling *without* replacement
+:::
+
+`set.seed()` makes random results reproducible: same seed, same samples
+
+```{webr}
+set.seed(12345)
+samp1 <- sample(Ushape, size = 100, replace = T)
+samp2 <- sample(Ushape, 100, replace = T)   # don't need to type "size ="
+mean(samp1)
+mean(samp2)
+```
+
+## Building a Sampling Distribution by Hand {style="font-size:85%"}
+
+:::::: columns
+::: {.column width="55%"}
+```{webr}
+set.seed(12345)
+samp.dist <- c(mean(sample(Ushape, 100, replace = T)),
+               mean(sample(Ushape, 100, replace = T)),
+               mean(sample(Ushape, 100, replace = T)),
+               mean(sample(Ushape, 100, replace = T)),
+               mean(sample(Ushape, 100, replace = T)),
+               mean(sample(Ushape, 100, replace = T)),
+               mean(sample(Ushape, 100, replace = T)),
+               mean(sample(Ushape, 100, replace = T)),
+               mean(sample(Ushape, 100, replace = T)),
+               mean(sample(Ushape, 100, replace = T)))
+hist(samp.dist, xlim = c(1, 5))
+mean(samp.dist)
+sd(samp.dist)   # this is the standard error (SE)!
+```
+:::
+
+:::: {.column width="45%"}
+10 samples of $n$ = 100, one mean each
+
+Compare with `hist(Ushape, xlim = c(1, 5))`
+
+::: fragment
+Typing this out gets old fast…
+
+What if we want 1,000 samples?
+:::
+::::
+::::::
+
+## R Functions: `for` Loops {style="font-size:85%"}
+
+Repeat the same code many times
+
+```{r}
+#| eval: false
+samples <- rep(NA, N)             # 1. "blank" vector of N placeholders
+for (i in 1:N) {                  # 2. do this N times...
+  samples[i] <- mean(sample(dataname, size = n, replace = T))   # 3. ...fill slot i
+}
+```
+
+::: subpoint
+○ **N** = number of sample sets; **n** = number of observations per sample (sample size)
+:::
+
+::: subpoint
+○ `NA` is a placeholder we fill in later
+:::
+
+```{webr}
+#| fig-width: 5
+#| fig-height: 3
+samples <- rep(NA, 10)
+for (i in 1:10) {
+  samples[i] <- mean(sample(Ushape, 100, replace = T))
+}
+samples
+hist(samples, xlim = c(1, 5))
+```
+
+::: {style="font-size:70%"}
+ⓘ Every run gives different values: it's random! Add `set.seed()` first to make it reproducible
+:::
+
+## Different Sample Sizes (*n*) {style="font-size:85%"}
+
+:::::::: columns
+::: {.column width="55%"}
+```{webr}
+#| autorun: true
+#| fig-width: 5
+#| fig-height: 4
+n <- 5   # try 10, 30, 50, 100, 200, 500!
+
+samples_n <- rep(NA, 100)
+for (i in 1:100) {
+  samples_n[i] <- mean(sample(Ushape, n, replace = T))
+}
+
+hist(samples_n, xlim = c(1, 5),
+     main = paste("Sample means, n =", n))
+sd(samples_n)
+```
+:::
+
+:::::: {.column width="45%"}
+$N$ = 100 sample sets each time; only $n$ changes
+
+Change `n` and re-run: what happens to
+
+::: subpoint
+○ the shape?
+:::
+
+::: subpoint
+○ the spread (`sd()`, i.e., the SE)?
+:::
+
+::: fragment
+Check: $\sigma / \sqrt{n}$ = `sd(Ushape) / sqrt(n)`
+:::
+::::::
+::::::::
+
+## FYI: The Number of Samplings (*N*)
+
+The number of sample sets does **not** change the essential properties of the sampling distribution
+
+::: subpoint
+○ The sampling distribution is (hypothetically) fixed once the sample size *n* is set
+:::
+
+::: subpoint
+○ More samplings just make the visualization easier
+:::
+
+```{webr}
+#| fig-width: 10
+#| fig-height: 3
+par(mfrow = c(1, 3))
+for (N in c(10, 100, 10000)) {
+  m <- rep(NA, N)
+  for (i in 1:N) m[i] <- mean(sample(Ushape, 100, replace = T))
+  hist(m, xlim = c(2.4, 3.6), main = paste(N, "samplings"))
+}
+```
+
+## R Functions: Making Distributions {style="font-size:85%"}
+
+| Function | Generates *n* random numbers from a… |
+|----|----|
+| `rnorm(n, mean = , sd = )` | normal distribution with the specified mean and SD |
+| `runif(n, min = , max = )` | uniform distribution with the specified min and max |
+| `rexp(n, rate = )` | exponential distribution with the specified rate (λ) |
+
+We saw `rnorm()` in Lab 4; `runif()` and `rexp()` work the same way
+
+## Normal Distribution Sampling
+
+:::::: columns
+::: {.column width="55%"}
+```{webr}
+#| autorun: true
+#| fig-width: 6
+#| fig-height: 3
+norm.dist <- rnorm(500, mean = 100, sd = 10)
+
+sample.norm <- rep(NA, 500)
+for (i in 1:500) {
+  sample.norm[i] <- mean(sample(norm.dist, 30, replace = T))
+}
+
+par(mfrow = c(1, 2))
+hist(norm.dist, main = "Population")
+hist(sample.norm, main = "Sample means (n = 30)")
+mean(sample.norm)
+sd(sample.norm)
+```
+:::
+
+:::: {.column width="45%"}
+Population: normal, *σ* = 10
+
+Sampling distribution: centered at the same mean, but much narrower
+
+::: fragment
+Predicted SE: $10 / \sqrt{30} \approx$ `r round(10 / sqrt(30), 2)`
+:::
+::::
+::::::
+
+## Uniform Distribution Sampling
+
+::::: columns
+::: {.column width="55%"}
+```{webr}
+#| autorun: true
+#| fig-width: 6
+#| fig-height: 3
+uni.dist <- runif(600, min = 1, max = 10)
+
+sample_means <- rep(NA, 1000)
+for (i in 1:1000) {
+  sample_means[i] <- mean(sample(uni.dist, 30, replace = T))
+}
+
+par(mfrow = c(1, 2))
+hist(uni.dist, main = "Population")
+hist(sample_means, main = "Sample means (n = 30)")
+mean(sample_means)
+sd(sample_means)
+```
+:::
+
+::: {.column width="45%"}
+Population: flat, not normal at all
+
+Sampling distribution: normal!
+:::
+:::::
+
+## Exponential Distribution Sampling
+
+:::::: columns
+::: {.column width="55%"}
+```{webr}
+#| autorun: true
+#| fig-width: 6
+#| fig-height: 3
+exp.dist <- rexp(1000, rate = 3)
+
+sample.exp <- rep(NA, 1000)
+for (i in 1:1000) {
+  sample.exp[i] <- mean(sample(exp.dist, 40, replace = T))
+}
+
+par(mfrow = c(1, 2))
+hist(exp.dist, main = "Population")
+hist(sample.exp, main = "Sample means (n = 40)")
+mean(sample.exp)
+sd(sample.exp)
+```
+:::
+
+:::: {.column width="45%"}
+Population: extremely right-skewed
+
+Sampling distribution: still normal!
+
+::: fragment
+Try `n = 5` instead of 40: is it still normal? (Remember "sufficiently large")
+:::
+::::
+::::::
+
+## Must-Take-Home Message {style="font-size:90%"}
+
+**Population distribution**
+
+::: subpoint
+○ The distribution of the population of research interest
+:::
+
+::: subpoint
+○ Unknown, so estimated with statistics, but assumed to be fixed
+:::
+
+**Sample distribution**
+
+::: subpoint
+○ The distribution of the dataset we get from experiments/surveys
+:::
+
+::: subpoint
+○ Used to infer the population parameters
+:::
+
+**Sampling distribution**
+
+::: subpoint
+○ Distribution of the MEANS of samples
+:::
+
+::: subpoint
+○ CLT: approximately NORMALLY distributed, if certain conditions are met (e.g., *n* \> 30)
+:::
+
+::: subpoint
+○ Its SD is the standard error: $\sigma / \sqrt{n}$
+:::
+
+## Lab 6 Assignment!
+
+<!-- Add assignment reminders here. -->
+
+-   Look back at the slides and the live code to help you work through this week's assignment
+-   Read the instructions carefully, and check your work before you turn it in!
+-   Please submit both the knitted file and the .Rmd on Canvas!

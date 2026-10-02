@@ -7,6 +7,7 @@ project:
     - "lab3-slides.qmd"
     - "lab4-slides.qmd"
     - "lab5-slides.qmd"
+    - "lab6-slides.qmd"
 
 website:
   title: "PSYC 2020/6022 - A01"
