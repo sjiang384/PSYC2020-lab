@@ -45,7 +45,7 @@ Learning objectives: **R:** `sample()`, `set.seed()`, `for` loops, `rnorm()` / `
 ## What does a researcher want to know? {style="font-size:85%"}
 
 | Data (what we have) | Research question is about… (what we want to know) |
-|----|----|
+|---------------------|---------------------------------------------------|
 | Randomly selected 1000 people's IQ in Georgia | IQ of people living in GA |
 | 30 students' height in the Psych department | Height of students in Psych |
 | Randomly selected 100 GT students' sleeping hours | Sleeping time of students at GT |
@@ -397,7 +397,7 @@ The variance of the sampling distribution of the mean is **always** smaller than
 Because the original variance is divided by $n$, the sample size:
 
 | mean | variance | standard deviation |
-|:--:|:--:|:--:|
+|:---------------:|:----------------:|:-----------------------------------:|
 | $\mu_{\bar{X}} = \mu$ | $\sigma^2_{\bar{X}} = \dfrac{\sigma^2}{n}$ | $\sigma_{\bar{X}} = \dfrac{\sigma}{\sqrt{n}}$ |
 
 ::: {style="font-size:80%"}
@@ -633,7 +633,7 @@ for (N in c(10, 100, 10000)) {
 ## R Functions: Making Distributions {style="font-size:85%"}
 
 | Function | Generates *n* random numbers from a… |
-|----|----|
+|-----------------|-------------------------------------------------------|
 | `rnorm(n, mean = , sd = )` | normal distribution with the specified mean and SD |
 | `runif(n, min = , max = )` | uniform distribution with the specified min and max |
 | `rexp(n, rate = )` | exponential distribution with the specified rate (λ) |

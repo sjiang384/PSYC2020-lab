@@ -12,3 +12,4 @@ Lab slides. Click a link to open the interactive slides in your browser.
 | 4 | *Z*-Scores | [Slides](lab4-slides.html) |
 | 5 | Intermediate R: `tidyverse` | [Slides](lab5-slides.html) |
 | 6 | Sampling Distributions & the CLT | [Slides](lab6-slides.html) |
+| 7 | NHST I | [Slides](lab7-slides.html) |
