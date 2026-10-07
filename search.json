@@ -1,696 +1,136 @@
 [
   {
-    "objectID": "lab6-slides.html#outline",
-    "href": "lab6-slides.html#outline",
-    "title": "Sampling Distributions & the Central Limit Theorem",
+    "objectID": "lab7-slides.html#quiz-5-review",
+    "href": "lab7-slides.html#quiz-5-review",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "Quiz 5 Review",
+    "text": "Quiz 5 Review\n\n\n\n\n\n\nNote\n\n\nRandom samples of \\(n\\) = 9 scores are selected from a population that is strongly positively skewed. What can be said about the shape of the distribution of sample means?\n\n\n\n\nThe shape cannot be assumed to be normal. It will most likely still be positively skewed (though less skewed than the population)\n\n\nWhy? The Central Limit Theorem needs either\n\n○ a normal population (then any \\(n\\) works), or\n\n\n○ a large sample, roughly \\(n \\ge 30\\)\n\nHere we have neither: a skewed population and a small \\(n\\) = 9"
+  },
+  {
+    "objectID": "lab7-slides.html#quiz-5-review-lets-check-in-r",
+    "href": "lab7-slides.html#quiz-5-review-lets-check-in-r",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "Quiz 5 Review: Let’s Check in R",
+    "text": "Quiz 5 Review: Let’s Check in R\n\n\n\n\n\n\n\n\n\n\n\nSame for loop as Lab 6\nWith \\(n\\) = 9, the sample means still have a long right tail\n\nChange n to 30 and 100 and re-run: the tail shrinks and the shape becomes normal. That is the CLT at work"
+  },
+  {
+    "objectID": "lab7-slides.html#outline",
+    "href": "lab7-slides.html#outline",
+    "title": "Null Hypothesis Significance Testing I",
     "section": "Outline",
-    "text": "Outline\n\nPopulation Parameters & Estimation\nSampling Distributions\nCentral Limit Theorem\nSampling Distributions in R\n\nLearning objectives: R: sample(), set.seed(), for loops, rnorm() / runif() / rexp()\nStatistics: Population vs. sample vs. sampling distributions, Central Limit Theorem, standard error"
+    "text": "Outline\n\nFrom Sampling Distributions to Hypothesis Testing\nThe z-Distribution in R\nHypothesis Testing Step by Step\nOne-Tailed vs. Two-Tailed Tests\n\nLearning objectives: R: pnorm(), qnorm(), lower.tail, writing a z-test by hand\nStatistics: z-test for a sample mean, p-values, critical values, reject vs. retain"
   },
   {
-    "objectID": "lab6-slides.html#what-does-a-researcher-want-to-know",
-    "href": "lab6-slides.html#what-does-a-researcher-want-to-know",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "What does a researcher want to know?",
-    "text": "What does a researcher want to know?\n\n\n\n\n\n\n\nData (what we have)\nResearch question is about… (what we want to know)\n\n\n\n\nRandomly selected 1000 people’s IQ in Georgia\nIQ of people living in GA\n\n\n30 students’ height in the Psych department\nHeight of students in Psych\n\n\nRandomly selected 100 GT students’ sleeping hours\nSleeping time of students at GT\n\n\nProduct ratings from 300 people\nProduct satisfaction for customers\n\n\n\n\nWe are interested in population properties (i.e., population parameters)\nWe infer information about the population from the data we have"
+    "objectID": "lab7-slides.html#quick-review-sampling-distributions",
+    "href": "lab7-slides.html#quick-review-sampling-distributions",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "Quick Review: Sampling Distributions",
+    "text": "Quick Review: Sampling Distributions\nFrom Lab 6: the sampling distribution of the mean has\n\n\n\n\n\n\n\nmean\nstandard error\n\n\n\n\n\\(\\mu_{\\bar{X}} = \\mu\\)\n\\(\\sigma_{\\bar{X}} = \\dfrac{\\sigma}{\\sqrt{n}}\\)\n\n\n\n\nLearning check: samples of \\(n\\) = 36 from a population with \\(\\mu\\) = 80, \\(\\sigma\\) = 12"
   },
   {
-    "objectID": "lab6-slides.html#population-parameters-1",
-    "href": "lab6-slides.html#population-parameters-1",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Population Parameters",
-    "text": "Population Parameters\nPopulation parameters are…\n\n○ Assumed to be constant (fixed)\n\n\n○ Unknown and unknowable\n\n\n○ Estimated using statistics\n\n\nⓘ μ (mu; mean) and σ (sigma; standard deviation) are parameters of the normal distribution; different distributions have different parameters\n\n\nStatistics is the science of testing hypotheses about values of these (and other) parameters\n\n○ Point estimation\n\n\n○ Interval estimation"
+    "objectID": "lab7-slides.html#two-distributions-two-z-scores",
+    "href": "lab7-slides.html#two-distributions-two-z-scores",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "Two Distributions, Two z-Scores",
+    "text": "Two Distributions, Two z-Scores\n\n\nDistribution of the data\n\n○ Score: \\(x\\)\n\n\n○ Mean: \\(\\mu\\), SD: \\(\\sigma\\)\n\n\n○ \\(z = \\dfrac{x - \\mu}{\\sigma}\\) (Lab 4!)\n\n\nSampling distribution\n\n○ Score: \\(\\bar{x}\\)\n\n\n○ Mean: \\(\\mu\\), SE: \\(\\sigma / \\sqrt{n}\\)\n\n\n○ \\(z_{\\bar{x}} = \\dfrac{\\bar{x} - \\mu}{\\sigma / \\sqrt{n}}\\)\n\n\n\nThe second one is our test statistic: how many standard errors is our sample mean away from the hypothesized population mean?"
   },
   {
-    "objectID": "lab6-slides.html#two-types-of-estimation",
-    "href": "lab6-slides.html#two-types-of-estimation",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Two Types of Estimation",
-    "text": "Two Types of Estimation\n\n\nPoint estimation\nA single value (point) estimate of the parameter’s true value\n\n○ e.g., \\(\\hat{\\mu} = 52\\)\n\n\n○ \\(\\hat{\\mu}\\) and \\(M\\) both refer to the sample estimate of the mean\n\n\nInterval estimation\nA range of values that may contain the population parameter\n\n○ e.g., \\(\\hat{\\mu} = (100, 150)\\)\n\n\n○ Usually reported with a confidence level (e.g., 95%) to indicate the method’s reliability\n\n\n\nIf we drew 100 random samples and computed a 95% confidence interval (CI) for each one, we would expect about 95 of those 100 CIs to include the true population mean"
+    "objectID": "lab7-slides.html#seeing-the-test-statistic",
+    "href": "lab7-slides.html#seeing-the-test-statistic",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "Seeing the Test Statistic",
+    "text": "Seeing the Test Statistic\nPopulation under \\(H_0\\): \\(\\mu\\) = 10, \\(\\sigma\\) = 2. We collect a sample of \\(n\\) = 20 with \\(\\bar{x}\\) = 12\n\n\n\n\n\n\n\n\n\n\n\nThe curve is the sampling distribution if \\(H_0\\) were true; the blue line is where our sample lands\nChange one number at a time and re-run:\n\n○ pop_sd &lt;- 8 (noisier population)\n\n\n○ n_samp &lt;- 200 (bigger sample)\n\n\n○ samp_mean &lt;- 20, n_samp &lt;- 5 (big difference, tiny sample)\n\n\nWhat makes \\(z\\) bigger? Smaller?"
   },
   {
-    "objectID": "lab6-slides.html#lets-get-a-sample",
-    "href": "lab6-slides.html#lets-get-a-sample",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Let’s Get a Sample",
-    "text": "Let’s Get a Sample\n\n\nA sample consists of multiple observations drawn from the population\n\\[X_1, X_2, X_3, \\dots, X_{n}\\]\nWe summarize the sample with its sample mean\n\\[\\bar{X} = \\frac{\\sum x}{n}\\]"
+    "objectID": "lab7-slides.html#the-norm-family",
+    "href": "lab7-slides.html#the-norm-family",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "The norm() Family",
+    "text": "The norm() Family\nA standard normal distribution is the z-distribution, so the norm() functions (Lab 4) do all the work\n\n\n\nFunction\nGives you…\n\n\n\n\nrnorm(n)\nn random z-values\n\n\npnorm(z)\nthe probability at or below a z-value\n\n\nqnorm(p)\nthe z-value at a given probability\n\n\n\n\n○ Default is mean = 0, sd = 1, so we don’t need to type them"
   },
   {
-    "objectID": "lab6-slides.html#sampling-distribution",
-    "href": "lab6-slides.html#sampling-distribution",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Sampling Distribution",
-    "text": "Sampling Distribution\n\n\nMultiple means from multiple samples\n\\[\\bar{X}_1, \\bar{X}_2, \\bar{X}_3, \\dots\\]\nThe distribution of those means is the sampling distribution\n. . .\n…and it is (approximately) a normal distribution!\n\n○ Unimodal, symmetrical\n\n\n○ Mean = median = mode\n\n\n○ 68% / 95% / 99.7% within 1 / 2 / 3 SDs"
+    "objectID": "lab7-slides.html#pnorm-from-z-to-probability",
+    "href": "lab7-slides.html#pnorm-from-z-to-probability",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "pnorm(): From z to Probability",
+    "text": "pnorm(): From z to Probability\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\npnorm() gives the area at or below the value. For a positive z, the p-value is the area above it, so use lower.tail = FALSE\n\n\n\nThese match the lecture: z = −1.00 → .16; z = 1.23 → .11"
   },
   {
-    "objectID": "lab6-slides.html#picturing-the-sampling-distribution",
-    "href": "lab6-slides.html#picturing-the-sampling-distribution",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Picturing the Sampling Distribution",
-    "text": "Picturing the Sampling Distribution\n\n\n\n\n\n\n\n\n\n\n\n\nEach dot is the mean of one sample; each line is that sample’s 95% CI\nRed intervals don’t contain the “true” value of the mean\n\nIf the dots dropped to the ground, they would pile up into a normal distribution\n\n○ More dots around the middle\n\n\n○ Fewer dots toward the tails\n\n\n\nSimulated to mirror textbook Figure 2.8 (p. 46)"
+    "objectID": "lab7-slides.html#qnorm-from-probability-to-z-critical-values",
+    "href": "lab7-slides.html#qnorm-from-probability-to-z-critical-values",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "qnorm(): From Probability to z (Critical Values)",
+    "text": "qnorm(): From Probability to z (Critical Values)\nWhere does ±1.96 come from?\n\n\n\n\n\n\n\n\n\n\n○ Two-tailed: \\(z_{crit}\\) = ±1.96\n\n\n○ One-tailed: \\(z_{crit}\\) = −1.65 (left) or +1.65 (right)"
   },
   {
-    "objectID": "lab6-slides.html#what-the-sampling-distribution-tells-us",
-    "href": "lab6-slides.html#what-the-sampling-distribution-tells-us",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "What the Sampling Distribution Tells Us",
-    "text": "What the Sampling Distribution Tells Us\nIt allows us to…\n\n○ specify a range of scores the population mean is expected to fall within\n\n\n○ determine how accurate our sample mean is in estimating the true population mean\n\n\n○ determine how likely an observed statistic (e.g., a sample mean) is, assuming some hypothesized parameter holds in the population\n\n\n\n\n\n\n\n\nNote\n\n\nIf people in GA have an average IQ of 100, what is the probability that 100 randomly selected people in GA have a mean IQ of 120?"
+    "objectID": "lab7-slides.html#getting-a-p-value-for-any-z",
+    "href": "lab7-slides.html#getting-a-p-value-for-any-z",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "Getting a p-Value for Any z",
+    "text": "Getting a p-Value for Any z\n\n\n\n\n\n\n\n\n\n\n\n-abs(z) always puts us in the lower tail, so this works for positive and negative z\nTwo-tailed p = 2 × one tail\n\nTry z &lt;- 3, z &lt;- 0, z &lt;- 1.96\nWhat p-value do you get at exactly 1.96?"
   },
   {
-    "objectID": "lab6-slides.html#central-limit-theorem-clt",
-    "href": "lab6-slides.html#central-limit-theorem-clt",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Central Limit Theorem (CLT)",
-    "text": "Central Limit Theorem (CLT)\nDefinition: if you take sufficiently large random samples from the population, then the distribution of the sample means will be approximately normally distributed\n\nⓘ It doesn’t have to be a mean for the CLT to hold. It can also be a sum (a sum is part of calculating the mean!)\n\n\nTwo things I want to point out:\n\nRepeatedly sampling from a non-normal population still gives you a normal sampling distribution\nThe variance of the sampling distribution is smaller than the original variance"
+    "objectID": "lab7-slides.html#the-logic-of-hypothesis-testing",
+    "href": "lab7-slides.html#the-logic-of-hypothesis-testing",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "The Logic of Hypothesis Testing",
+    "text": "The Logic of Hypothesis Testing\n1. State the hypotheses\n\n○ \\(H_0\\): no effect / no difference (e.g., \\(\\mu\\) = 100)\n\n\n○ \\(H_1\\): there is an effect / a difference (e.g., \\(\\mu \\neq\\) 100)\n\n2. Set the significance level: \\(\\alpha\\) = .05, and find the critical value\n3. Compute the test statistic (\\(z\\)) and its p-value, assuming \\(H_0\\) is true\n4. Make a decision\n\n\n\n\n\n\n\n\n\nDecision\n\n\n\n\n\\(p \\le \\alpha\\), or \\(|z| \\ge |z_{crit}|\\)\nReject \\(H_0\\): statistically significant\n\n\n\\(p &gt; \\alpha\\), or \\(|z| &lt; |z_{crit}|\\)\nFail to reject (retain) \\(H_0\\): not significant\n\n\n\n\nⓘ We never say we “accept” \\(H_0\\) or that \\(H_0\\) is true"
   },
   {
-    "objectID": "lab6-slides.html#sampling-distribution-normal",
-    "href": "lab6-slides.html#sampling-distribution-normal",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "1) Sampling Distribution → Normal",
-    "text": "1) Sampling Distribution → Normal\nRegardless of the population’s skewness / kurtosis, the distribution of the means becomes normal\n\n\n○ U-shape, uniform, exponential, extremely skewed… whatever the original distribution is"
+    "objectID": "lab7-slides.html#example-weight-of-cats",
+    "href": "lab7-slides.html#example-weight-of-cats",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "Example: Weight of Cats",
+    "text": "Example: Weight of Cats\nNormal cats: \\(\\mu\\) = 100 g, \\(\\sigma\\) = 40. A sample of \\(n\\) = 16 cats with prenatal alcohol exposure has \\(\\bar{x}\\) = 70. Does alcohol affect birth weight?\n\n\n\n\n\n\n\n\n\n\n\n\n\\(z\\) = −3 is far in the rejection region\n\\(p\\) &lt; .05 → reject \\(H_0\\)\nPrenatal alcohol exposure has a statistically significant effect on cats’ birth weight\n\n\nⓘ The lecture reports the one-tail area, pnorm(-3) = .00135; the two-tailed p doubles it (.0027). Same decision either way"
   },
   {
-    "objectID": "lab6-slides.html#example-u-shaped-distribution",
-    "href": "lab6-slides.html#example-u-shaped-distribution",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Example: U-shaped Distribution",
-    "text": "Example: U-shaped Distribution\n\n\n\n\n\n\n\n\n\n\n\nPopulation: \\(N\\) = 1225, \\(\\mu\\) = 3, \\(\\sigma\\) = 1.6\n\n\n\n\n\n\nSample\nMean\nSD\n\n\n\n\nSample 1\n3.06\n1.58\n\n\nSample 2\n3.08\n1.66\n\n\nSample 3\n2.99\n1.61\n\n\nSample 4\n2.95\n1.62\n\n\nSample 5\n2.80\n1.71\n\n\nSample 6\n2.84\n1.66\n\n\nSample 7\n2.87\n1.64\n\n\nSample 8\n3.00\n1.58\n\n\nSample 9\n2.84\n1.54\n\n\nSample 10\n2.96\n1.64\n\n\n\n\n\nSampling with \\(n\\) = 100: the 10 means average 2.938 with an SD of only 0.099"
+    "objectID": "lab7-slides.html#your-turn-the-evil-professor",
+    "href": "lab7-slides.html#your-turn-the-evil-professor",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "Your Turn: The “Evil” Professor",
+    "text": "Your Turn: The “Evil” Professor\nYour professor believes extra homework changes final exam scores. Population: \\(\\mu\\) = 70, \\(\\sigma\\) = 15. A sample of \\(n\\) = 25 students who got 50 extra HW questions a week scored \\(\\bar{x}\\) = 75.\n\n\n\n\n\n\n\n\n\nCheck: \\(z = \\dfrac{75 - 70}{15 / \\sqrt{25}} = \\dfrac{5}{3}\\) = 1.67, which is less than 1.96 → retain \\(H_0\\)"
   },
   {
-    "objectID": "lab6-slides.html#sample-size-matters",
-    "href": "lab6-slides.html#sample-size-matters",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Sample Size Matters",
-    "text": "Sample Size Matters\nHow does the sampling distribution change as \\(n\\) (observations per sample) increases?\n\n\nThe bigger \\(n\\) is, the narrower the sampling distribution"
+    "objectID": "lab7-slides.html#example-z-test-with-real-data",
+    "href": "lab7-slides.html#example-z-test-with-real-data",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "Example z-Test with Real Data",
+    "text": "Example z-Test with Real Data\nA flower researcher tells us the population mean of iris petal length is 4 cm and of petal width is 3 cm, both with \\(\\sigma^2\\) = 4. Do the iris sample means differ?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsum(!is.na(x)) counts only the non-missing values, which is safer than length() or nrow() if there are NAs\n\n\nInterpretation? Which test is significant?"
   },
   {
-    "objectID": "lab6-slides.html#sample-size-matters-standard-error",
-    "href": "lab6-slides.html#sample-size-matters-standard-error",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Sample Size Matters: Standard Error",
-    "text": "Sample Size Matters: Standard Error\n\n\n\n\n\n\n\n\n\n\n\n\nLarge reductions in the standard error as \\(n\\) increases from 1 to about 30\nBeyond about \\(n\\) = 30, there is not as much benefit to adding more subjects in terms of standard error"
+    "objectID": "lab7-slides.html#directional-vs.-non-directional-hypotheses",
+    "href": "lab7-slides.html#directional-vs.-non-directional-hypotheses",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "Directional vs. Non-Directional Hypotheses",
+    "text": "Directional vs. Non-Directional Hypotheses\n\n\nNon-directional → two-tailed test\n“There is a difference…”\n\n○ \\(H_1\\): \\(\\mu \\neq \\mu_0\\)\n\n\n○ \\(\\alpha\\)/2 = .025 in each tail\n\n\n○ \\(z_{crit}\\) = ±1.96\n\n\nDirectional → one-tailed test\n“…increases / decreases / better than…”\n\n○ \\(H_1\\): \\(\\mu &gt; \\mu_0\\) (upper) or \\(\\mu &lt; \\mu_0\\) (lower)\n\n\n○ all of \\(\\alpha\\) = .05 in one tail\n\n\n○ \\(z_{crit}\\) = +1.65 or −1.65"
   },
   {
-    "objectID": "lab6-slides.html#sampling-variance-original-variance",
-    "href": "lab6-slides.html#sampling-variance-original-variance",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "2) Sampling Variance < Original Variance",
-    "text": "2) Sampling Variance &lt; Original Variance\nThe variance of the sampling distribution of the mean is always smaller than the original population variance\n\n○ Less variability in the sample means than in the population\n\n\n○ As the sample size increases, the sampling distribution becomes narrower\n\n\nBecause the original variance is divided by \\(n\\), the sample size:\n\n\n\n\n\n\n\n\nmean\nvariance\nstandard deviation\n\n\n\n\n\\(\\mu_{\\bar{X}} = \\mu\\)\n\\(\\sigma^2_{\\bar{X}} = \\dfrac{\\sigma^2}{n}\\)\n\\(\\sigma_{\\bar{X}} = \\dfrac{\\sigma}{\\sqrt{n}}\\)\n\n\n\n\nThe SD of the sampling distribution is called the standard error (SE)\nIntuition: when the sample size equals the population size, the sampling variance is essentially 0 — no error in the estimate"
+    "objectID": "lab7-slides.html#practice-directional-or-non-directional",
+    "href": "lab7-slides.html#practice-directional-or-non-directional",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "Practice: Directional or Non-Directional?",
+    "text": "Practice: Directional or Non-Directional?\n\nThere is a difference in body weights, with men weighing more than women.\nWomen are better at concentrating on more than one thing at a time than men.\nThere is a relationship between studying and final exam score.\nAs employees earn more money, they become less likely to leave for a new job.\n\n\nDirectional: 1, 2, 4 | Non-directional: 3"
   },
   {
-    "objectID": "lab6-slides.html#r-demonstrations",
-    "href": "lab6-slides.html#r-demonstrations",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "R Demonstrations",
-    "text": "R Demonstrations\nTwo factors we’re going to test:\nDifferent original distributions\n\n○ If the data are not normal (e.g., uniform or exponential), is the sampling distribution still normal?\n\nDifferent sample sizes\n\n○ When each sample has 5, 30, or 200 observations"
+    "objectID": "lab7-slides.html#the-evil-professor-revisited",
+    "href": "lab7-slides.html#the-evil-professor-revisited",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "The “Evil” Professor, Revisited",
+    "text": "The “Evil” Professor, Revisited\nNow your professor believes extra homework increases final exam scores (same data: \\(\\mu\\) = 70, \\(\\sigma\\) = 15, \\(n\\) = 25, \\(\\bar{x}\\) = 75)\n\n\n\n\n\n\n\n\n\n\n\nSame data, same \\(z\\) = 1.67…\n\n\n○ Two-tailed: 1.67 &lt; 1.96 → retain \\(H_0\\)\n\n\n○ Upper-tailed: 1.67 &gt; 1.65 → reject \\(H_0\\)\n\n\n\nThis is why the direction must be decided before looking at the data!"
   },
   {
-    "objectID": "lab6-slides.html#warm-up-functions-from-earlier-labs",
-    "href": "lab6-slides.html#warm-up-functions-from-earlier-labs",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Warm-up: Functions from Earlier Labs",
-    "text": "Warm-up: Functions from Earlier Labs"
-  },
-  {
-    "objectID": "lab6-slides.html#example-u-shaped-distribution-1",
-    "href": "lab6-slides.html#example-u-shaped-distribution-1",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Example: U-shaped Distribution",
-    "text": "Example: U-shaped Distribution\n\n\n\n\n\n\n\n\n\n\n\nrep(x, times) repeats a value\n\n○ rep(5, 250) = the number 5, 250 times\n\nType ?rep in the console for more info\n\nWhat does this population look like? Is it normal?"
-  },
-  {
-    "objectID": "lab6-slides.html#r-functions-sample",
-    "href": "lab6-slides.html#r-functions-sample",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "R Functions: sample()",
-    "text": "R Functions: sample()\nExtract a sample from a given dataset\nsample(dataname, size = n, replace = T)\n\n○ size = number of observations n\n\n\n○ replace = TRUE (or T): sampling with replacement\n\n\n○ replace = FALSE (or F): sampling without replacement\n\nset.seed() makes random results reproducible: same seed, same samples"
-  },
-  {
-    "objectID": "lab6-slides.html#building-a-sampling-distribution-by-hand",
-    "href": "lab6-slides.html#building-a-sampling-distribution-by-hand",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Building a Sampling Distribution by Hand",
-    "text": "Building a Sampling Distribution by Hand\n\n\n\n\n\n\n\n\n\n\n\n10 samples of \\(n\\) = 100, one mean each\nCompare with hist(Ushape, xlim = c(1, 5))\n\nTyping this out gets old fast…\nWhat if we want 1,000 samples?"
-  },
-  {
-    "objectID": "lab6-slides.html#r-functions-for-loops",
-    "href": "lab6-slides.html#r-functions-for-loops",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "R Functions: for Loops",
-    "text": "R Functions: for Loops\nRepeat the same code many times\n\nsamples &lt;- rep(NA, N)             # 1. \"blank\" vector of N placeholders\nfor (i in 1:N) {                  # 2. do this N times...\n  samples[i] &lt;- mean(sample(dataname, size = n, replace = T))   # 3. ...fill slot i\n}\n\n\n○ N = number of sample sets; n = number of observations per sample (sample size)\n\n\n○ NA is a placeholder we fill in later\n\n\n\n\n\n\n\n\n\n\nⓘ Every run gives different values: it’s random! Add set.seed() first to make it reproducible"
-  },
-  {
-    "objectID": "lab6-slides.html#different-sample-sizes-n",
-    "href": "lab6-slides.html#different-sample-sizes-n",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Different Sample Sizes (n)",
-    "text": "Different Sample Sizes (n)\n\n\n\n\n\n\n\n\n\n\n\n\\(N\\) = 100 sample sets each time; only \\(n\\) changes\nChange n and re-run: what happens to\n\n○ the shape?\n\n\n○ the spread (sd(), i.e., the SE)?\n\n\nCheck: \\(\\sigma / \\sqrt{n}\\) = sd(Ushape) / sqrt(n)"
-  },
-  {
-    "objectID": "lab6-slides.html#fyi-the-number-of-samplings-n",
-    "href": "lab6-slides.html#fyi-the-number-of-samplings-n",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "FYI: The Number of Samplings (N)",
-    "text": "FYI: The Number of Samplings (N)\nThe number of sample sets does not change the essential properties of the sampling distribution\n\n○ The sampling distribution is (hypothetically) fixed once the sample size n is set\n\n\n○ More samplings just make the visualization easier"
-  },
-  {
-    "objectID": "lab6-slides.html#r-functions-making-distributions",
-    "href": "lab6-slides.html#r-functions-making-distributions",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "R Functions: Making Distributions",
-    "text": "R Functions: Making Distributions\n\n\n\n\n\n\n\nFunction\nGenerates n random numbers from a…\n\n\n\n\nrnorm(n, mean = , sd = )\nnormal distribution with the specified mean and SD\n\n\nrunif(n, min = , max = )\nuniform distribution with the specified min and max\n\n\nrexp(n, rate = )\nexponential distribution with the specified rate (λ)\n\n\n\nWe saw rnorm() in Lab 4; runif() and rexp() work the same way"
-  },
-  {
-    "objectID": "lab6-slides.html#normal-distribution-sampling",
-    "href": "lab6-slides.html#normal-distribution-sampling",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Normal Distribution Sampling",
-    "text": "Normal Distribution Sampling\n\n\n\n\n\n\n\n\n\n\n\nPopulation: normal, σ = 10\nSampling distribution: centered at the same mean, but much narrower\n\nPredicted SE: \\(10 / \\sqrt{30} \\approx\\) 1.83"
-  },
-  {
-    "objectID": "lab6-slides.html#uniform-distribution-sampling",
-    "href": "lab6-slides.html#uniform-distribution-sampling",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Uniform Distribution Sampling",
-    "text": "Uniform Distribution Sampling\n\n\n\n\n\n\n\n\n\n\n\nPopulation: flat, not normal at all\nSampling distribution: normal!"
-  },
-  {
-    "objectID": "lab6-slides.html#exponential-distribution-sampling",
-    "href": "lab6-slides.html#exponential-distribution-sampling",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Exponential Distribution Sampling",
-    "text": "Exponential Distribution Sampling\n\n\n\n\n\n\n\n\n\n\n\nPopulation: extremely right-skewed\nSampling distribution: still normal!\n\nTry n = 5 instead of 40: is it still normal? (Remember “sufficiently large”)"
-  },
-  {
-    "objectID": "lab6-slides.html#must-take-home-message",
-    "href": "lab6-slides.html#must-take-home-message",
-    "title": "Sampling Distributions & the Central Limit Theorem",
+    "objectID": "lab7-slides.html#must-take-home-message",
+    "href": "lab7-slides.html#must-take-home-message",
+    "title": "Null Hypothesis Significance Testing I",
     "section": "Must-Take-Home Message",
-    "text": "Must-Take-Home Message\nPopulation distribution\n\n○ The distribution of the population of research interest\n\n\n○ Unknown, so estimated with statistics, but assumed to be fixed\n\nSample distribution\n\n○ The distribution of the dataset we get from experiments/surveys\n\n\n○ Used to infer the population parameters\n\nSampling distribution\n\n○ Distribution of the MEANS of samples\n\n\n○ CLT: approximately NORMALLY distributed, if certain conditions are met (e.g., n &gt; 30)\n\n\n○ Its SD is the standard error: \\(\\sigma / \\sqrt{n}\\)"
+    "text": "Must-Take-Home Message\n\\[z_{\\bar{x}} = \\frac{\\bar{x} - \\mu}{\\sigma / \\sqrt{n}}\\]\n\n○ pnorm() turns a z into a probability; use lower.tail = F or -abs(z) for the upper tail\n\n\n○ qnorm() turns \\(\\alpha\\) into a critical value: ±1.96 (two-tailed), ±1.65 (one-tailed)\n\n\n○ Two-tailed p = 2 × one-tailed p\n\n\n○ \\(p \\le \\alpha\\) → reject \\(H_0\\); \\(p &gt; \\alpha\\) → fail to reject (never “accept”) \\(H_0\\)\n\n\n○ Directional hypothesis → one-tailed test; decide before collecting data"
   },
   {
-    "objectID": "lab6-slides.html#lab-6-assignment",
-    "href": "lab6-slides.html#lab-6-assignment",
-    "title": "Sampling Distributions & the Central Limit Theorem",
-    "section": "Lab 6 Assignment!",
-    "text": "Lab 6 Assignment!\n\n\nLook back at the slides and the live code to help you work through this week’s assignment\nRead the instructions carefully, and check your work before you turn it in!\nPlease submit both the knitted file and the .Rmd on Canvas!"
-  },
-  {
-    "objectID": "lab4-slides.html#outline",
-    "href": "lab4-slides.html#outline",
-    "title": "Z-Scores",
-    "section": "Outline",
-    "text": "Outline\n\nZ-Scores\nZ-Scores in R\nGenerating Data\nProbabilities of Normal Values\n\nLearning objectives: R: Generating data, normal distribution functions\nStatistics: Z-scores"
-  },
-  {
-    "objectID": "lab4-slides.html#z-scores",
-    "href": "lab4-slides.html#z-scores",
-    "title": "Z-Scores",
-    "section": "Z-Scores",
-    "text": "Z-Scores\nTo “Z-score” or “standardize” your data\n\n○ Transform a variable such that the mean is zero and the standard deviation is one\n\n\n○ Matches the mean and SD of a “standard” normal distribution, \\(N(0, 1)\\)"
-  },
-  {
-    "objectID": "lab4-slides.html#z-scores-1",
-    "href": "lab4-slides.html#z-scores-1",
-    "title": "Z-Scores",
-    "section": "Z-Scores",
-    "text": "Z-Scores\nWhy standardize?\n\nPuts variables on the same (interpretable) scale\nHelps manage very large or very small numbers\nCan compare across distributions\nGives information about location relative to the rest of the distribution"
-  },
-  {
-    "objectID": "lab4-slides.html#z-scores-in-r",
-    "href": "lab4-slides.html#z-scores-in-r",
-    "title": "Z-Scores",
-    "section": "Z-Scores in R",
-    "text": "Z-Scores in R\nNeed to:\n\nTake out the mean\nScale by the standard deviation\n\ndata$variable_z &lt;- (data$variable - mean(data$variable)) / sd(data$variable)\n\n\n\n\n\n\n\n\n\nCan check to make sure things look right"
-  },
-  {
-    "objectID": "lab4-slides.html#generating-normal-data",
-    "href": "lab4-slides.html#generating-normal-data",
-    "title": "Z-Scores",
-    "section": "Generating Normal Data",
-    "text": "Generating Normal Data\nSometimes, we want to simulate data\n\n○ Demonstration\n\n\n○ Comparison\n\n\n○ Sanity check\n\nTo generate data drawn from a normal distribution, we can use rnorm(n, mean, sd)\n\n○ n = number of draws\n\n\n○ mean = desired mean of distribution\n\n\n○ sd = desired SD of distribution"
-  },
-  {
-    "objectID": "lab4-slides.html#generating-normal-data-1",
-    "href": "lab4-slides.html#generating-normal-data-1",
-    "title": "Z-Scores",
-    "section": "Generating Normal Data",
-    "text": "Generating Normal Data"
-  },
-  {
-    "objectID": "lab4-slides.html#probabilities-of-normal-values",
-    "href": "lab4-slides.html#probabilities-of-normal-values",
-    "title": "Z-Scores",
-    "section": "Probabilities of Normal Values",
-    "text": "Probabilities of Normal Values\nWithin a normal distribution, we can check the probability of a given value and the value at a given probability\n\n\nProbability of a Value\npnorm(q)\n\n○ q = value (or vector of values)\n\n\npnorm(0)\n\n[1] 0.5\n\npnorm(1)\n\n[1] 0.8413447\n\npnorm(c(-3, 3))\n\n[1] 0.001349898 0.998650102\n\n\n\nValue at a Probability\nqnorm(p)\n\n○ p = probability (or vector of probabilities)\n\n\nqnorm(.5)\n\n[1] 0\n\nqnorm(.9)\n\n[1] 1.281552\n\nqnorm(c(.025, .975))\n\n[1] -1.959964  1.959964"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-ggplot2",
-    "href": "lab4-slides.html#visualize-ggplot2",
-    "title": "Z-Scores",
-    "section": "Visualize: ggplot2",
-    "text": "Visualize: ggplot2\nSo many numbers! Can we please visualize our data?\n\n\n“The simple graph has brought more information to the data analyst’s mind than any other device.” — John Tukey\n\n\nYes! With the ggplot2 package\nA bit of a different plotting system than the base R plots we’ve used\nBut much more expansive and flexible (and much nicer looking, if you ask me!)"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-setup",
-    "href": "lab4-slides.html#visualize-setup",
-    "title": "Z-Scores",
-    "section": "Visualize: Setup",
-    "text": "Visualize: Setup\nRun this cell first — everything on the next slides builds on it\n\n○ Loads ggplot2\n\n\n○ Adds a grouping variable to iris with cut(), just like we did in Lab 3"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-ggplot2-1",
-    "href": "lab4-slides.html#visualize-ggplot2-1",
-    "title": "Z-Scores",
-    "section": "Visualize: ggplot2",
-    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\n\nLet’s begin at the end:\nThis is where we’re headed. We’ll build it up one layer at a time."
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-ggplot2-2",
-    "href": "lab4-slides.html#visualize-ggplot2-2",
-    "title": "Z-Scores",
-    "section": "Visualize: ggplot2",
-    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nWhen we just call the ggplot() function with our data as the first argument, we get this blank area\nggplot() works by adding layers and layers onto a plot object\n\nThis is not a very exciting plot, but you can think of it like an empty canvas you’ll paint the remaining layers of your plot onto. — R4DS"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-ggplot2-3",
-    "href": "lab4-slides.html#visualize-ggplot2-3",
-    "title": "Z-Scores",
-    "section": "Visualize: ggplot2",
-    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nNext, we want to tell ggplot() what information we want in our plot and where we want it\nWe do this with the aes() (“aesthetics”) function in the mapping = argument\nHow variables are mapped onto specific parts of the plot\nTo investigate the relationship between sepal length and petal length, we can put Sepal.Length on the x-axis and Petal.Length on the y-axis\nWhat do we get?"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-ggplot2-4",
-    "href": "lab4-slides.html#visualize-ggplot2-4",
-    "title": "Z-Scores",
-    "section": "Visualize: ggplot2",
-    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nStill no data, though\nNeed to define some geom, a geometric display of our data\nWill usually start with geom_\n\n\n\n\ngeom_line()\nline graph\n\n\ngeom_bar()\nbar graph\n\n\ngeom_boxplot()\nboxplot\n\n\ngeom_point()\nscatterplot\n\n\n\n\nCan start addressing questions here!"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-ggplot2-5",
-    "href": "lab4-slides.html#visualize-ggplot2-5",
-    "title": "Z-Scores",
-    "section": "Visualize: ggplot2",
-    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nThese variables are conceptually similar (both lengths in cm) and should probably have the same scale\nAutomatically generated axes are a good place to start\nBut good practice to consider them each time\nTry changing the limits and re-running!"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-ggplot2-6",
-    "href": "lab4-slides.html#visualize-ggplot2-6",
-    "title": "Z-Scores",
-    "section": "Visualize: ggplot2",
-    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nAdding aesthetics and layers\nWhich of these flowers belong to which species?\nStart: do we need to modify the aesthetic or the geom?\nWhat can we tell from this?"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-ggplot2-7",
-    "href": "lab4-slides.html#visualize-ggplot2-7",
-    "title": "Z-Scores",
-    "section": "Visualize: ggplot2",
-    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nAdding aesthetics and layers\nLet’s say we want to add a line to better represent the overall trend\nStart: do we need to modify the aesthetic or the geom?\nWhat can we tell from this?"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-ggplot2-8",
-    "href": "lab4-slides.html#visualize-ggplot2-8",
-    "title": "Z-Scores",
-    "section": "Visualize: ggplot2",
-    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nLet’s say we want to look at this separately for narrow-sepal vs wide-sepal flowers\nfacet_wrap() splits the plot into panels by a grouping variable\nWhat can we tell from this?"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-ggplot2-9",
-    "href": "lab4-slides.html#visualize-ggplot2-9",
-    "title": "Z-Scores",
-    "section": "Visualize: ggplot2",
-    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nLet’s say we want this plot to look nicer!!\nBuilt in themes\n\n○ Try theme_minimal() or theme_bw() instead"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-ggplot2-10",
-    "href": "lab4-slides.html#visualize-ggplot2-10",
-    "title": "Z-Scores",
-    "section": "Visualize: ggplot2",
-    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nLet’s say we want this plot to look nicer!!\nAdditional theming with theme(), labs(), and various arguments\nAnd we’re back to the plot we started with!"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-boxplots",
-    "href": "lab4-slides.html#visualize-boxplots",
-    "title": "Z-Scores",
-    "section": "Visualize: Boxplots",
-    "text": "Visualize: Boxplots\n\n\n\n\n\n\n\n\n\n\n\ngeom_boxplot() shows a distribution for each group\n\n○ x = the grouping variable (categorical)\n\n\n○ y = the variable you’re describing (numeric)\n\nSame anatomy as before: median, Q1, Q3, whiskers, outliers\nThings to try:\n\n○ Swap x and y to flip it sideways\n\n\n○ Add geom_jitter(width = .1) to show the raw data points on top"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-barplots",
-    "href": "lab4-slides.html#visualize-barplots",
-    "title": "Z-Scores",
-    "section": "Visualize: Barplots",
-    "text": "Visualize: Barplots\n\n\n\n\n\n\n\n\n\n\n\nTwo different bar geoms, and the difference matters:\ngeom_bar()\n\n○ Counts the rows in each category for you\n\n\n○ Only needs an x\n\ngeom_col()\n\n○ Uses a value you already computed\n\n\n○ Needs both x and y\n\nThings to try:\n\n○ Add position = \"dodge\" inside geom_bar() to put bars side by side"
-  },
-  {
-    "objectID": "lab4-slides.html#visualize-barplots-with-geom_col",
-    "href": "lab4-slides.html#visualize-barplots-with-geom_col",
-    "title": "Z-Scores",
-    "section": "Visualize: Barplots with geom_col()",
-    "text": "Visualize: Barplots with geom_col()\n\n\n\n\n\n\n\n\n\n\n\nHere we use aggregate() from Lab 3 to get one number per group, then geom_col() draws those numbers directly\nA note on bar plots of means:\n\n○ They hide the spread of the data\n\n\n○ A boxplot usually tells you more"
-  },
-  {
-    "objectID": "lab4-slides.html#lab-4-assignment",
-    "href": "lab4-slides.html#lab-4-assignment",
-    "title": "Z-Scores",
-    "section": "Lab 4 Assignment!",
-    "text": "Lab 4 Assignment!\n\n\nPlease submit both the knitted file and the rmd. on Canvas!"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#absence-and-late-submission-policy",
-    "href": "PSYC2020-slides.html#absence-and-late-submission-policy",
-    "title": "Central Tendency",
-    "section": "Absence and Late Submission Policy",
-    "text": "Absence and Late Submission Policy\n\n\nHomework and quizzes will generally not be reopened once they have closed and been graded, except in exceptional circumstances.\nFor an unavoidable absence, students may submit an Institute Approved Absence (IAA) request through Georgia Tech. Approved IAA requests will be honored.\nAlternatively, students may provide appropriate supporting documentation, such as a doctor’s or dentist’s note. Such documentation will generally be accepted for absence or late-submission accommodations.\nFor non-emergency circumstances that you know about in advance, please contact me at least 3 days before the affected lab or assignment deadline. For emergencies or unexpected situations, please contact me as soon as reasonably possible."
-  },
-  {
-    "objectID": "PSYC2020-slides.html#homework-1",
-    "href": "PSYC2020-slides.html#homework-1",
-    "title": "Central Tendency",
-    "section": "Homework 1",
-    "text": "Homework 1\nEveryone has done a great job! remember to set up the second level header in the white text space, not within the gray code chunk"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#review-of-central-tendency",
-    "href": "PSYC2020-slides.html#review-of-central-tendency",
-    "title": "Central Tendency",
-    "section": "Review of Central Tendency!",
-    "text": "Review of Central Tendency!\nMean: Sum of all values divided by the total number of values\nMedian: When sorted lowest to highest, the middle value\nMode: The value that appears most often"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#central-tendency-in-r-mean",
-    "href": "PSYC2020-slides.html#central-tendency-in-r-mean",
-    "title": "Central Tendency",
-    "section": "Central Tendency in R: Mean",
-    "text": "Central Tendency in R: Mean\nWe can calculate central tendencies in two ways:\nGiven this dataset, calculate the mean\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\n\n\nBy hand (computer)\n\n\n\n\n\n\n\n\n\nWith the mean(x) function\n\n○ x = vector of data"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#central-tendency-in-r-median",
-    "href": "PSYC2020-slides.html#central-tendency-in-r-median",
-    "title": "Central Tendency",
-    "section": "Central Tendency in R: Median",
-    "text": "Central Tendency in R: Median\nGiven this dataset, calculate the median\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\n\n\nBy hand (computer)\n\n\n\n\n\n\n\n\n\nWith the median(x) function\n\n○ x = vector of data"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#central-tendency-in-r-mode",
-    "href": "PSYC2020-slides.html#central-tendency-in-r-mode",
-    "title": "Central Tendency",
-    "section": "Central Tendency in R: Mode",
-    "text": "Central Tendency in R: Mode\nGiven this dataset, calculate the mode\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\nWith the mode() function\n\n\n\n\n\n\n\n\n\nDoesn’t work :(\nHave to create our own"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#r-functions",
-    "href": "PSYC2020-slides.html#r-functions",
-    "title": "Central Tendency",
-    "section": "R Functions",
-    "text": "R Functions\nWe’ve seen some built-in R functions (e.g., mean(), median()), but we can also make our own\n\n\nfunction_name &lt;- function(argument) {\n  do some stuff\n  return(this stuff)\n}\n\nⓘ Don’t actually need to call return(); R will automatically return the last expression\n\n\nThen, you can call the function\nfunction_name(specific_argument)\n\n\nTo keep the results, make sure to assign them to some variable\nvery_important_results &lt;- function_name(specific_argument)"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#central-tendency-in-r-mode-1",
-    "href": "PSYC2020-slides.html#central-tendency-in-r-mode-1",
-    "title": "Central Tendency",
-    "section": "Central Tendency in R: Mode",
-    "text": "Central Tendency in R: Mode\nGiven this dataset, calculate the mode\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\n\nmode_func &lt;- function(x) {\n  sort(table(x), decreasing = T)[1]\n}\n\nHow does this work?"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#measures-of-variability-in-r",
-    "href": "PSYC2020-slides.html#measures-of-variability-in-r",
-    "title": "Central Tendency",
-    "section": "Measures of Variability in R",
-    "text": "Measures of Variability in R\nVariance: Average of the squared distances of each value from the mean \\(s^2 = \\dfrac{\\sum (x_i - \\bar{x})^2}{n - 1}\\)\nStandard deviation: Square root of the variance; the typical distance of a value from the mean, in the original units\nQuantile: A cut point that splits sorted data into equal-sized groups (e.g., 25% of values fall below the 1st quartile, 75% below the 3rd)\nIQR: 3rd quartile minus 1st quartile; the range of the middle 50% of the data"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#variability-in-r-variance-sd-iqr",
-    "href": "PSYC2020-slides.html#variability-in-r-variance-sd-iqr",
-    "title": "Central Tendency",
-    "section": "Variability in R: Variance, SD, IQR",
-    "text": "Variability in R: Variance, SD, IQR\nGiven this dataset, calculate the median\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\nWith the var(x) function\n○ x = vector of data\n\n\n\n\n\n\n\n\nWith the sd(x) function\n\n\n\n\n\n\n\n\nWith the IQR(x) function"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#descriptive-statistics-in-r",
-    "href": "PSYC2020-slides.html#descriptive-statistics-in-r",
-    "title": "Central Tendency",
-    "section": "Descriptive Statistics in R",
-    "text": "Descriptive Statistics in R\nTakes time to look at all these for a lot of variables, even with functions\nThe summary(object) function provides us a quick overview of this information\n\n○ object = for our purposes, a dataframe\n\n\n\n\n\n\n\n\n\nWhat all do we get?\n\nMinimum and maximum\n1st quartile, median, 3rd quartile\nMean"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#descriptive-statistics-in-r-1",
-    "href": "PSYC2020-slides.html#descriptive-statistics-in-r-1",
-    "title": "Central Tendency",
-    "section": "Descriptive Statistics in R:",
-    "text": "Descriptive Statistics in R:\nsummary() gives us the basics, but no variance, SD, or skew\nThe describe(object) function from the psych package gives us more\n\n○ object = a dataframe (or a single variable)\n\nDo need to install the psych package first\n\ninstall.packages(\"psych\")\n\n\n\n\n\n\n\n\n\n\nWhat all do we get?\nn, mean, sd, median, trimmed mean, mad, min, max, range, skew, kurtosis, se"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#visualizations",
-    "href": "PSYC2020-slides.html#visualizations",
-    "title": "Central Tendency",
-    "section": "Visualizations",
-    "text": "Visualizations\nDon’t rush: graph your data!\nWhat should graphs do?\n\n○ Show the data\n\n\n○ Draw the reader primarily to the data (not the graphical effects)\n\n\n○ Avoid distorting the data\n\n\n○ Present many numbers with minimum ink\n\n\n○ Make large data sets coherent\n\n\n○ Encourage the reader to compare different pieces of data"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#visualizations-histograms",
-    "href": "PSYC2020-slides.html#visualizations-histograms",
-    "title": "Central Tendency",
-    "section": "Visualizations: Histograms",
-    "text": "Visualizations: Histograms\n\n\nAn example of (simulated) SAT scores\nWhat do we see here?\n\n\n○ Outliers at zero! Not a possible SAT score\n\n\n\n\n○ Negatively skewed: more data on the left than on the right"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#skew",
-    "href": "PSYC2020-slides.html#skew",
-    "title": "Central Tendency",
-    "section": "Skew",
-    "text": "Skew\n\n\n\nPositive skew, right-tailed\nThe mass of the distribution is concentrated on the left of the figure\n\nNegative skew, left-tailed\nThe mass of the distribution is concentrated on the right of the figure"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#skewness-demonstration",
-    "href": "PSYC2020-slides.html#skewness-demonstration",
-    "title": "Central Tendency",
-    "section": "Skewness Demonstration",
-    "text": "Skewness Demonstration\n\n\n\n\n\nFull screen version here\n\nSkewness demonstration!\nCredits to Fabio Setti"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#lets-do-some-visualization",
-    "href": "PSYC2020-slides.html#lets-do-some-visualization",
-    "title": "Central Tendency",
-    "section": "Let’s Do Some Visualization",
-    "text": "Let’s Do Some Visualization\nBase R Graphics\n\n\n\n\n\n\n\n\n\n\n\nWhat do we think about this?"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-1",
-    "href": "PSYC2020-slides.html#lets-do-some-visualization-1",
-    "title": "Central Tendency",
-    "section": "Let’s Do Some Visualization",
-    "text": "Let’s Do Some Visualization\nBase R Graphics: Histogram\n\n\nhist() function\n\nRequired arguments:\n\n\n○ x = vector (variable) you want to plot (remember the $ function!)\n\n\nOptional arguments:\n\n\n\n\n○ breaks = bin count\n\n\n○ main = title\n\n\n○ xlab = label for x-axis\n\n\n○ ylab = label for y-axis\n\n\n\n○ col = color for bars\n\n\n○ xlim = range for x-axis\n\n\n○ ylim = range for y-axis\n\n\n○ prob = T/F, proportion instead of frequency\n\n\n\nIf you do not set specific values for non-essential subarguments, it will use the default"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-2",
-    "href": "PSYC2020-slides.html#lets-do-some-visualization-2",
-    "title": "Central Tendency",
-    "section": "Let’s Do Some Visualization",
-    "text": "Let’s Do Some Visualization\nBase R Graphics: Bar Chart\n\n\nUseful to show frequency/percentage of categorical data\n\n○ Categorical data: not numerically meaningful, it’s a category of a type\n\nX-axis displays the variable; Y-axis displays frequency\nBars do not touch and have equal widths\nShould not be 3-dimensional!\nbarplot() function\n\n○ height = a table of counts (use table() first!)\n\n\n○ main, xlab, ylab, col work the same as hist()"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#histogram-vs.-bar-chart",
-    "href": "PSYC2020-slides.html#histogram-vs.-bar-chart",
-    "title": "Central Tendency",
-    "section": "Histogram vs. Bar Chart",
-    "text": "Histogram vs. Bar Chart\n\n\nHistogram\n\n○ Interval/ratio (numeric) data\n\n\n○ Bars touch: continuity of the data\n\n\n○ hist(x)\n\n\nBar chart\n\n○ Categorical data\n\n\n○ Bars do not touch: separate categories\n\n\n○ barplot(table(x))\n\n\nTry it: make a bar chart of mtcars$cyl (number of cylinders)"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-3",
-    "href": "PSYC2020-slides.html#lets-do-some-visualization-3",
-    "title": "Central Tendency",
-    "section": "Let’s Do Some Visualization",
-    "text": "Let’s Do Some Visualization\nBase R Graphics: Pie Chart\n\n\nCategorical data only\nNever use with more than 2–3 categories\nUse bar charts for comparisons\nIf unsure, don’t use a pie chart!!\n\nWhy?\n\n○ Eye is good at judging relative linear measures, not relative areas\n\n\n○ Anything a pie chart can show, a bar chart can show better (Cleveland, 1985)\n\n\npie() function\n\n○ x = a table of counts, just like barplot()"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#pie-chart-vs.-bar-chart",
-    "href": "PSYC2020-slides.html#pie-chart-vs.-bar-chart",
-    "title": "Central Tendency",
-    "section": "Pie Chart vs. Bar Chart",
-    "text": "Pie Chart vs. Bar Chart\nSame data, two graphs: which one is easier to read?\n\n\nTake away: don’t use a pie chart, use a bar chart for categorical data\nIf you use a pie chart, only when there are two categories"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-4",
-    "href": "PSYC2020-slides.html#lets-do-some-visualization-4",
-    "title": "Central Tendency",
-    "section": "Let’s Do Some Visualization",
-    "text": "Let’s Do Some Visualization\nBase R Graphics: Line Graph\n\n\nUsually displays a variable over the passage of time (x-axis)\nTime series graph: shows how things change\n\n○ Long term trends\n\n\n○ Seasonal components: same pattern every year\n\n\n○ Irregular cycles and random fluctuations\n\nplot() function, with one new argument\n\n○ type = \"l\" = line (\"b\" = both points and lines)"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#line-graph-practice",
-    "href": "PSYC2020-slides.html#line-graph-practice",
-    "title": "Central Tendency",
-    "section": "Line Graph Practice",
-    "text": "Line Graph Practice\nWhat do we see in this graph?\n\n\n○ Overall decreasing trend (the vaccine!)\n\n\n\n\n○ Small peak in 1987: irregular pattern or random fluctuation\n\n\nTry it: R has a built-in monthly time series called AirPassengers\n\n\n\n\n\n\n\n\n\nTrend? Seasonal component?"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-5",
-    "href": "PSYC2020-slides.html#lets-do-some-visualization-5",
-    "title": "Central Tendency",
-    "section": "Let’s Do Some Visualization",
-    "text": "Let’s Do Some Visualization\nBase R Graphics: Stem-and-Leaf Plot\n\n\nVisual display that orders numbers while also displaying shape\nAll data points are included\nTo create:\n\n○ Order data\n\n\n○ Create stems (the leading digit)\n\n\n○ Attach leaves (the last digit)\n\nstem() function\n\n○ x = vector of data\n\n\n○ scale = how many stems (2 = split each stem in two)"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#stem-and-leaf-practice",
-    "href": "PSYC2020-slides.html#stem-and-leaf-practice",
-    "title": "Central Tendency",
-    "section": "Stem-and-Leaf Practice",
-    "text": "Stem-and-Leaf Practice\nRead the plot: what is the smallest score? The most common stem?\n\n\n\n\n\n\n\n\n\nNow try stem(scores, scale = 2): what changed?\n\n\nBonus: compare stem(scores) with hist(scores). What does the stemplot show that the histogram hides?"
-  },
-  {
-    "objectID": "PSYC2020-slides.html#lab-assignmnt-2",
-    "href": "PSYC2020-slides.html#lab-assignmnt-2",
-    "title": "Central Tendency",
-    "section": "Lab Assignmnt 2",
-    "text": "Lab Assignmnt 2\nDownload the dataset save them in the same folder as your rmd. file set the folder directory as working directory\n\ndataframe &lt;- read.csv(\"file_name\")"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "PSYC 2020/6022 - A01",
-    "section": "",
-    "text": "Lab slides. Click a link to open the interactive slides in your browser.\n\n\n\nLab\nTopic\nSlides\n\n\n\n\n2\nCentral Tendency\nSlides\n\n\n3\nMeasures of Variability\nSlides\n\n\n4\nZ-Scores\nSlides\n\n\n5\nIntermediate R: tidyverse\nSlides\n\n\n6\nSampling Distributions & the CLT\nSlides"
-  },
-  {
-    "objectID": "lab3-slides.html#outline",
-    "href": "lab3-slides.html#outline",
-    "title": "Measures of Variability",
-    "section": "Outline",
-    "text": "Outline\n\nMeasures of variability review\nIndexing\nDescriptives by group\nVisualizations: boxplots"
-  },
-  {
-    "objectID": "lab3-slides.html#reminder-installing-vs.-loading-packages",
-    "href": "lab3-slides.html#reminder-installing-vs.-loading-packages",
-    "title": "Measures of Variability",
-    "section": "Reminder: Installing vs. Loading Packages",
-    "text": "Reminder: Installing vs. Loading Packages\n\nPackages are add-ons that give R extra functions (e.g., psych, ggplot2). Using one is a two-step process:\n\n\nStep 1: install.packages(\"name\")\nDownloads the package onto your computer\n\n○ Only need to do this once per computer\n\n\n○ Package name goes in quotes\n\n\n○ Needs an internet connection\n\n\ninstall.packages(\"psych\")\n\n\nStep 2: library(name)\nLoads the package into your current R session so its functions are available\n\n○ Need to do this every time you open R / RStudio\n\n\n○ Quotes are optional\n\n\n○ Put it at the top of your script\n\n\nlibrary(psych)\n\n\n\nInstalling is like buying a book; library() is taking it off the shelf to read it. Installing alone is not enough: without library(), you’ll see could not find function \"describeBy\"."
-  },
-  {
-    "objectID": "lab3-slides.html#measures-of-variability-review",
-    "href": "lab3-slides.html#measures-of-variability-review",
-    "title": "Measures of Variability",
-    "section": "Measures of Variability Review",
-    "text": "Measures of Variability Review\nDescribe the “spread” or “dispersion” of the data"
-  },
-  {
-    "objectID": "lab3-slides.html#measures-of-variability-functions",
-    "href": "lab3-slides.html#measures-of-variability-functions",
-    "title": "Measures of Variability",
-    "section": "Measures of Variability Functions",
-    "text": "Measures of Variability Functions\n\ntestscores &lt;- c(88, 93, 92, 99, 96)\n\nVariance: var(x) function\n\n○ x = vector\n\nStandard Deviation: sd(x) function\n\n○ x = vector\n\nInterquartile Range: IQR(x) function\n\n○ x = vector\n\n\n○ Difference between the 3rd and 1st quantile (so 50% of the data within this range)\n\n\n○ 25% of the data lower than the 1st quantile\n\n\n○ 75% of the data lower than the 3rd quantile\n\n\n○ IQR = 3rd - 1st\n\n\n\n\n\n\n\n\n\n\nQuantiles: quantile() function"
-  },
-  {
-    "objectID": "lab3-slides.html#indexing",
-    "href": "lab3-slides.html#indexing",
-    "title": "Measures of Variability",
-    "section": "Indexing",
-    "text": "Indexing\nTo access some subset of an object (vector, list, dataframe, etc.)\nWe already know one! The $ operator indexes by selecting a column\n\nmydataframe &lt;- data.frame(\n  pet = c(\"cat\", \"dog\"),\n  count = c(2, 2))"
-  },
-  {
-    "objectID": "lab3-slides.html#indexing-1",
-    "href": "lab3-slides.html#indexing-1",
-    "title": "Measures of Variability",
-    "section": "Indexing",
-    "text": "Indexing\nTo access some subset of an object (vector, list, dataframe, etc.)\nCan also use brackets []\n\nmyvector &lt;- c(2, 4, 6, 8)\n\nmyvector[1]\n\n[1] 2\n\n\nCan select more than one position at a time\n\nmyvector[c(1, 2, 3)]\n\n[1] 2 4 6\n\nmyvector[1:3]\n\n[1] 2 4 6"
-  },
-  {
-    "objectID": "lab3-slides.html#indexing-2",
-    "href": "lab3-slides.html#indexing-2",
-    "title": "Measures of Variability",
-    "section": "Indexing",
-    "text": "Indexing\nNeed to account for multiple dimensions\nMatrix: [row, column]\n\nmymatrix &lt;- matrix(c(0, 1, 2,\n                     1, 2, 3,\n                     2, 3, 4),\n                   nrow = 3, byrow = T,\n                   dimnames = list(NULL, c(\"Var1\", \"Var2\", \"Var3\")))\nmymatrix\n\n     Var1 Var2 Var3\n[1,]    0    1    2\n[2,]    1    2    3\n[3,]    2    3    4\n\n\n\nmymatrix[2, ]\n\nVar1 Var2 Var3 \n   1    2    3 \n\nmymatrix[3, 2]\n\nVar2 \n   3"
-  },
-  {
-    "objectID": "lab3-slides.html#indexing-3",
-    "href": "lab3-slides.html#indexing-3",
-    "title": "Measures of Variability",
-    "section": "Indexing",
-    "text": "Indexing\nDataframe: [column] or [row, column]\n\nmydataframe\n\n  pet count\n1 cat     2\n2 dog     2\n\n\n\n\n\nmydataframe[1]\n\n  pet\n1 cat\n2 dog\n\nmydataframe[\"pet\"]\n\n  pet\n1 cat\n2 dog\n\nmydataframe$pet\n\n[1] \"cat\" \"dog\"\n\n\n\n\nmydataframe[2, \"pet\"]\n\n[1] \"dog\"\n\n\nCan also do more than one element at a time:\n\nmydataframe[1:2, \"count\"]\n\n[1] 2 2"
-  },
-  {
-    "objectID": "lab3-slides.html#descriptives-by-group-visualization",
-    "href": "lab3-slides.html#descriptives-by-group-visualization",
-    "title": "Measures of Variability",
-    "section": "Descriptives by Group Visualization",
-    "text": "Descriptives by Group Visualization\nWhy visualize aggregated data?\n\n○ Makes group-level insights easier to interpret.\n\n\n○ Highlights patterns, trends, and outliers in grouped data\n\n\n○ Helps communicate findings effectively"
-  },
-  {
-    "objectID": "lab3-slides.html#descriptives-by-group",
-    "href": "lab3-slides.html#descriptives-by-group",
-    "title": "Measures of Variability",
-    "section": "Descriptives by Group",
-    "text": "Descriptives by Group\nAggregation involves summarizing or grouping data based on certain variables.\nCommonly used to calculate summary statistics like mean, variance, or sum for each group.\n\n\nBenefits:\n\n○ Data summary\n\n\n○ Data simplification\n\n\n○ Statistical analysis\n\n\n○ Trend identification\n\n\n○ Data privacy\n\n\n○ Data-driven decisions\n\n\naggregate(y ~ group, FUN)\n\n○ y = vector we want statistics for\n\n\n○ group = vector with grouping data\n\n\n○ FUN = function to apply"
-  },
-  {
-    "objectID": "lab3-slides.html#descriptives-by-group-example",
-    "href": "lab3-slides.html#descriptives-by-group-example",
-    "title": "Measures of Variability",
-    "section": "Descriptives by Group Example",
-    "text": "Descriptives by Group Example"
-  },
-  {
-    "objectID": "lab3-slides.html#descriptives-by-group-table-and-describeby",
-    "href": "lab3-slides.html#descriptives-by-group-table-and-describeby",
-    "title": "Measures of Variability",
-    "section": "Descriptives by Group: table() and describeBy()",
-    "text": "Descriptives by Group: table() and describeBy()\n\n\nCrosstab (counts): table(var1, var2)\n\n○ var1 = rows, var2 = columns (both categorical)\n\n\niris$Size &lt;- cut(iris$Sepal.Length,\n                 breaks = c(0, 5.8, 10),\n                 labels = c(\"Short\", \"Long\"))\n\ntable(iris$Species, iris$Size)\n\n            \n             Short Long\n  setosa        50    0\n  versicolor    24   26\n  virginica      6   44\n\n\n\nAll descriptives at once: describeBy(x, group)\n\n○ From the psych package: install.packages(\"psych\")\n\n\n○ x = numeric vector, group = grouping vector\n\n\n○ Add mat = TRUE for one compact table\n\n\nlibrary(psych)\n\ndescribeBy(iris$Sepal.Length, iris$Species,\n           mat = TRUE)[, c(\"group1\", \"n\", \"mean\",\n                           \"sd\", \"median\")]\n\n        group1  n  mean        sd median\nX11     setosa 50 5.006 0.3524897    5.0\nX12 versicolor 50 5.936 0.5161711    5.9\nX13  virginica 50 6.588 0.6358796    6.5"
-  },
-  {
-    "objectID": "lab3-slides.html#visualizations-boxplots",
-    "href": "lab3-slides.html#visualizations-boxplots",
-    "title": "Measures of Variability",
-    "section": "Visualizations: Boxplots",
-    "text": "Visualizations: Boxplots\n\n\nBack to the iris dataset, distribution of Sepal Length by species\nAnatomy of a boxplot:\n\n○ “Minimum”\n\n\n○ 25th Quantile (Q1)\n\n\n○ Median\n\n\n○ 75th Quantile (Q3)\n\n\n○ “Maximum”\n\n\n○ Points representing outliers\n\n\n\n\n\n\n\n\n\n\n\n“Minimum” and “maximum” are not the true min and max\n\n○ Minimum: \\(Q1 - 1.5 * IQR\\)\n\n\n○ Maximum: \\(Q3 + 1.5 * IQR\\)\n\nMeans that the whiskers contain ~99% of the data, rest are outliers\n\n\nFor more explanation of the anatomy of a boxplot, feel free to check this post out from Statistics by Jim"
-  },
-  {
-    "objectID": "lab3-slides.html#visualizations-boxplots-1",
-    "href": "lab3-slides.html#visualizations-boxplots-1",
-    "title": "Measures of Variability",
-    "section": "Visualizations: Boxplots",
-    "text": "Visualizations: Boxplots\nOne more resource for boxplot anatomy\n\n\nhttps://www.simplypsychology.org/boxplots.html"
-  },
-  {
-    "objectID": "lab3-slides.html#visualizations-boxplot",
-    "href": "lab3-slides.html#visualizations-boxplot",
-    "title": "Measures of Variability",
-    "section": "Visualizations: Boxplot",
-    "text": "Visualizations: Boxplot"
-  },
-  {
-    "objectID": "lab3-slides.html#lets-do-some-visualization",
-    "href": "lab3-slides.html#lets-do-some-visualization",
-    "title": "Measures of Variability",
-    "section": "Let’s Do Some Visualization",
-    "text": "Let’s Do Some Visualization\nBase R Graphics: Boxplot\n\n\nboxplot(x) function\nIts arguments are:\n\nRequired arguments:\n\n\n○ x = vector (variable) you want to plot\n\n\nOptional arguments:\n\n\n○ main = title\n\n\n○ xlab = label for x-axis\n\n\n○ ylab = label for y-axis\n\n\n○ border = color for bar borders\n\n\n○ col = color for bars\n\n\n○ horizontal = T/F to switch"
-  },
-  {
-    "objectID": "lab3-slides.html#lets-do-some-visualization-1",
-    "href": "lab3-slides.html#lets-do-some-visualization-1",
-    "title": "Measures of Variability",
-    "section": "Let’s Do Some Visualization",
-    "text": "Let’s Do Some Visualization\nBase R Graphics: Boxplot\n\n\nTo group them, you can change the x to a “formula”\noutcome_var ~ group_var\nJust like we saw with aggregate()"
-  },
-  {
-    "objectID": "lab3-slides.html#where-does-r-look-for-files-the-working-directory",
-    "href": "lab3-slides.html#where-does-r-look-for-files-the-working-directory",
-    "title": "Measures of Variability",
-    "section": "Where Does R Look for Files? The Working Directory",
-    "text": "Where Does R Look for Files? The Working Directory\n\nWhen you write read.csv(\"student_data.csv\"), R reads it as: “look for student_data.csv inside the current working directory”\n\n\nRule for beginners\n\nYour R Markdown file and all required data files should be placed in the same assignment folder before you begin working.\n\nLab_03/\n├── Lab_03.Rmd\n└── student_data.csv\nThen loading the data only needs the file name:\n\nstudent_data &lt;- read.csv(\"student_data.csv\")\n\n\nCheck before you load data\n\ngetwd()        # which folder is R looking in?\nlist.files()   # which files can R see there?\n\nIf the setup is correct you should see something like:\n[1] \"/Users/yourname/Documents/Lab_03\"\n[1] \"Lab_03.Rmd\"  \"student_data.csv\"\n\n○ Tip: when you knit an .Rmd, the working directory is the folder the .Rmd is saved in"
-  },
-  {
-    "objectID": "lab3-slides.html#the-common-mistake",
-    "href": "lab3-slides.html#the-common-mistake",
-    "title": "Measures of Variability",
-    "section": "The Common Mistake",
-    "text": "The Common Mistake\n\n\n\nFiles downloaded to different places\nDownloads/\n└── Lab_03.Rmd\n\nDesktop/\n└── student_data.csv\nThe working directory is Downloads, so this fails:\n\nread.csv(\"student_data.csv\")\n\nError in file(file, \"rt\") : cannot open the connection\nIn addition: Warning message:\n  cannot open file 'student_data.csv': No such file or directory\n\nWhat the error means\nR looked in the working directory but did not find a file with that exact name.\nThe fix\n\n○ Move both files into the same folder (e.g., Lab_03/)\n\n\n○ Open the .Rmd from that folder\n\n\n○ Re-run getwd() and list.files() to confirm\n\n\nFix the folder, not the code: don’t keep rewriting the path in read.csv().\nAlso check the exact file name: Student_Data.csv ≠ student_data.csv"
-  },
-  {
-    "objectID": "lab3-slides.html#lab-assignment-3",
-    "href": "lab3-slides.html#lab-assignment-3",
-    "title": "Measures of Variability",
-    "section": "Lab Assignment 3!",
-    "text": "Lab Assignment 3!\n\nCreate a folder for the assignment for your convenience\nHave the rmd. and the dataset for the assignment on the same folder\nSubmit both the rmd. and the knitted file"
+    "objectID": "lab7-slides.html#lab-7-assignment",
+    "href": "lab7-slides.html#lab-7-assignment",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "Lab 7 Assignment!",
+    "text": "Lab 7 Assignment!\n\n\nLook back at the slides and the live code to help you work through this week’s assignment\nPlease submit both the knitted file and the .Rmd on Canvas!"
   },
   {
     "objectID": "lab5-slides.html#outline",
@@ -985,5 +425,698 @@
     "title": "Intermediate R: tidyverse",
     "section": "Lab 5 Assignment…",
     "text": "Lab 5 Assignment…\n\n\nNo Lab Assignment this week"
+  },
+  {
+    "objectID": "lab3-slides.html#outline",
+    "href": "lab3-slides.html#outline",
+    "title": "Measures of Variability",
+    "section": "Outline",
+    "text": "Outline\n\nMeasures of variability review\nIndexing\nDescriptives by group\nVisualizations: boxplots"
+  },
+  {
+    "objectID": "lab3-slides.html#reminder-installing-vs.-loading-packages",
+    "href": "lab3-slides.html#reminder-installing-vs.-loading-packages",
+    "title": "Measures of Variability",
+    "section": "Reminder: Installing vs. Loading Packages",
+    "text": "Reminder: Installing vs. Loading Packages\n\nPackages are add-ons that give R extra functions (e.g., psych, ggplot2). Using one is a two-step process:\n\n\nStep 1: install.packages(\"name\")\nDownloads the package onto your computer\n\n○ Only need to do this once per computer\n\n\n○ Package name goes in quotes\n\n\n○ Needs an internet connection\n\n\ninstall.packages(\"psych\")\n\n\nStep 2: library(name)\nLoads the package into your current R session so its functions are available\n\n○ Need to do this every time you open R / RStudio\n\n\n○ Quotes are optional\n\n\n○ Put it at the top of your script\n\n\nlibrary(psych)\n\n\n\nInstalling is like buying a book; library() is taking it off the shelf to read it. Installing alone is not enough: without library(), you’ll see could not find function \"describeBy\"."
+  },
+  {
+    "objectID": "lab3-slides.html#measures-of-variability-review",
+    "href": "lab3-slides.html#measures-of-variability-review",
+    "title": "Measures of Variability",
+    "section": "Measures of Variability Review",
+    "text": "Measures of Variability Review\nDescribe the “spread” or “dispersion” of the data"
+  },
+  {
+    "objectID": "lab3-slides.html#measures-of-variability-functions",
+    "href": "lab3-slides.html#measures-of-variability-functions",
+    "title": "Measures of Variability",
+    "section": "Measures of Variability Functions",
+    "text": "Measures of Variability Functions\n\ntestscores &lt;- c(88, 93, 92, 99, 96)\n\nVariance: var(x) function\n\n○ x = vector\n\nStandard Deviation: sd(x) function\n\n○ x = vector\n\nInterquartile Range: IQR(x) function\n\n○ x = vector\n\n\n○ Difference between the 3rd and 1st quantile (so 50% of the data within this range)\n\n\n○ 25% of the data lower than the 1st quantile\n\n\n○ 75% of the data lower than the 3rd quantile\n\n\n○ IQR = 3rd - 1st\n\n\n\n\n\n\n\n\n\n\nQuantiles: quantile() function"
+  },
+  {
+    "objectID": "lab3-slides.html#indexing",
+    "href": "lab3-slides.html#indexing",
+    "title": "Measures of Variability",
+    "section": "Indexing",
+    "text": "Indexing\nTo access some subset of an object (vector, list, dataframe, etc.)\nWe already know one! The $ operator indexes by selecting a column\n\nmydataframe &lt;- data.frame(\n  pet = c(\"cat\", \"dog\"),\n  count = c(2, 2))"
+  },
+  {
+    "objectID": "lab3-slides.html#indexing-1",
+    "href": "lab3-slides.html#indexing-1",
+    "title": "Measures of Variability",
+    "section": "Indexing",
+    "text": "Indexing\nTo access some subset of an object (vector, list, dataframe, etc.)\nCan also use brackets []\n\nmyvector &lt;- c(2, 4, 6, 8)\n\nmyvector[1]\n\n[1] 2\n\n\nCan select more than one position at a time\n\nmyvector[c(1, 2, 3)]\n\n[1] 2 4 6\n\nmyvector[1:3]\n\n[1] 2 4 6"
+  },
+  {
+    "objectID": "lab3-slides.html#indexing-2",
+    "href": "lab3-slides.html#indexing-2",
+    "title": "Measures of Variability",
+    "section": "Indexing",
+    "text": "Indexing\nNeed to account for multiple dimensions\nMatrix: [row, column]\n\nmymatrix &lt;- matrix(c(0, 1, 2,\n                     1, 2, 3,\n                     2, 3, 4),\n                   nrow = 3, byrow = T,\n                   dimnames = list(NULL, c(\"Var1\", \"Var2\", \"Var3\")))\nmymatrix\n\n     Var1 Var2 Var3\n[1,]    0    1    2\n[2,]    1    2    3\n[3,]    2    3    4\n\n\n\nmymatrix[2, ]\n\nVar1 Var2 Var3 \n   1    2    3 \n\nmymatrix[3, 2]\n\nVar2 \n   3"
+  },
+  {
+    "objectID": "lab3-slides.html#indexing-3",
+    "href": "lab3-slides.html#indexing-3",
+    "title": "Measures of Variability",
+    "section": "Indexing",
+    "text": "Indexing\nDataframe: [column] or [row, column]\n\nmydataframe\n\n  pet count\n1 cat     2\n2 dog     2\n\n\n\n\n\nmydataframe[1]\n\n  pet\n1 cat\n2 dog\n\nmydataframe[\"pet\"]\n\n  pet\n1 cat\n2 dog\n\nmydataframe$pet\n\n[1] \"cat\" \"dog\"\n\n\n\n\nmydataframe[2, \"pet\"]\n\n[1] \"dog\"\n\n\nCan also do more than one element at a time:\n\nmydataframe[1:2, \"count\"]\n\n[1] 2 2"
+  },
+  {
+    "objectID": "lab3-slides.html#descriptives-by-group-visualization",
+    "href": "lab3-slides.html#descriptives-by-group-visualization",
+    "title": "Measures of Variability",
+    "section": "Descriptives by Group Visualization",
+    "text": "Descriptives by Group Visualization\nWhy visualize aggregated data?\n\n○ Makes group-level insights easier to interpret.\n\n\n○ Highlights patterns, trends, and outliers in grouped data\n\n\n○ Helps communicate findings effectively"
+  },
+  {
+    "objectID": "lab3-slides.html#descriptives-by-group",
+    "href": "lab3-slides.html#descriptives-by-group",
+    "title": "Measures of Variability",
+    "section": "Descriptives by Group",
+    "text": "Descriptives by Group\nAggregation involves summarizing or grouping data based on certain variables.\nCommonly used to calculate summary statistics like mean, variance, or sum for each group.\n\n\nBenefits:\n\n○ Data summary\n\n\n○ Data simplification\n\n\n○ Statistical analysis\n\n\n○ Trend identification\n\n\n○ Data privacy\n\n\n○ Data-driven decisions\n\n\naggregate(y ~ group, FUN)\n\n○ y = vector we want statistics for\n\n\n○ group = vector with grouping data\n\n\n○ FUN = function to apply"
+  },
+  {
+    "objectID": "lab3-slides.html#descriptives-by-group-example",
+    "href": "lab3-slides.html#descriptives-by-group-example",
+    "title": "Measures of Variability",
+    "section": "Descriptives by Group Example",
+    "text": "Descriptives by Group Example"
+  },
+  {
+    "objectID": "lab3-slides.html#descriptives-by-group-table-and-describeby",
+    "href": "lab3-slides.html#descriptives-by-group-table-and-describeby",
+    "title": "Measures of Variability",
+    "section": "Descriptives by Group: table() and describeBy()",
+    "text": "Descriptives by Group: table() and describeBy()\n\n\nCrosstab (counts): table(var1, var2)\n\n○ var1 = rows, var2 = columns (both categorical)\n\n\niris$Size &lt;- cut(iris$Sepal.Length,\n                 breaks = c(0, 5.8, 10),\n                 labels = c(\"Short\", \"Long\"))\n\ntable(iris$Species, iris$Size)\n\n            \n             Short Long\n  setosa        50    0\n  versicolor    24   26\n  virginica      6   44\n\n\n\nAll descriptives at once: describeBy(x, group)\n\n○ From the psych package: install.packages(\"psych\")\n\n\n○ x = numeric vector, group = grouping vector\n\n\n○ Add mat = TRUE for one compact table\n\n\nlibrary(psych)\n\ndescribeBy(iris$Sepal.Length, iris$Species,\n           mat = TRUE)[, c(\"group1\", \"n\", \"mean\",\n                           \"sd\", \"median\")]\n\n        group1  n  mean        sd median\nX11     setosa 50 5.006 0.3524897    5.0\nX12 versicolor 50 5.936 0.5161711    5.9\nX13  virginica 50 6.588 0.6358796    6.5"
+  },
+  {
+    "objectID": "lab3-slides.html#visualizations-boxplots",
+    "href": "lab3-slides.html#visualizations-boxplots",
+    "title": "Measures of Variability",
+    "section": "Visualizations: Boxplots",
+    "text": "Visualizations: Boxplots\n\n\nBack to the iris dataset, distribution of Sepal Length by species\nAnatomy of a boxplot:\n\n○ “Minimum”\n\n\n○ 25th Quantile (Q1)\n\n\n○ Median\n\n\n○ 75th Quantile (Q3)\n\n\n○ “Maximum”\n\n\n○ Points representing outliers\n\n\n\n\n\n\n\n\n\n\n\n“Minimum” and “maximum” are not the true min and max\n\n○ Minimum: \\(Q1 - 1.5 * IQR\\)\n\n\n○ Maximum: \\(Q3 + 1.5 * IQR\\)\n\nMeans that the whiskers contain ~99% of the data, rest are outliers\n\n\nFor more explanation of the anatomy of a boxplot, feel free to check this post out from Statistics by Jim"
+  },
+  {
+    "objectID": "lab3-slides.html#visualizations-boxplots-1",
+    "href": "lab3-slides.html#visualizations-boxplots-1",
+    "title": "Measures of Variability",
+    "section": "Visualizations: Boxplots",
+    "text": "Visualizations: Boxplots\nOne more resource for boxplot anatomy\n\n\nhttps://www.simplypsychology.org/boxplots.html"
+  },
+  {
+    "objectID": "lab3-slides.html#visualizations-boxplot",
+    "href": "lab3-slides.html#visualizations-boxplot",
+    "title": "Measures of Variability",
+    "section": "Visualizations: Boxplot",
+    "text": "Visualizations: Boxplot"
+  },
+  {
+    "objectID": "lab3-slides.html#lets-do-some-visualization",
+    "href": "lab3-slides.html#lets-do-some-visualization",
+    "title": "Measures of Variability",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Boxplot\n\n\nboxplot(x) function\nIts arguments are:\n\nRequired arguments:\n\n\n○ x = vector (variable) you want to plot\n\n\nOptional arguments:\n\n\n○ main = title\n\n\n○ xlab = label for x-axis\n\n\n○ ylab = label for y-axis\n\n\n○ border = color for bar borders\n\n\n○ col = color for bars\n\n\n○ horizontal = T/F to switch"
+  },
+  {
+    "objectID": "lab3-slides.html#lets-do-some-visualization-1",
+    "href": "lab3-slides.html#lets-do-some-visualization-1",
+    "title": "Measures of Variability",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Boxplot\n\n\nTo group them, you can change the x to a “formula”\noutcome_var ~ group_var\nJust like we saw with aggregate()"
+  },
+  {
+    "objectID": "lab3-slides.html#where-does-r-look-for-files-the-working-directory",
+    "href": "lab3-slides.html#where-does-r-look-for-files-the-working-directory",
+    "title": "Measures of Variability",
+    "section": "Where Does R Look for Files? The Working Directory",
+    "text": "Where Does R Look for Files? The Working Directory\n\nWhen you write read.csv(\"student_data.csv\"), R reads it as: “look for student_data.csv inside the current working directory”\n\n\nRule for beginners\n\nYour R Markdown file and all required data files should be placed in the same assignment folder before you begin working.\n\nLab_03/\n├── Lab_03.Rmd\n└── student_data.csv\nThen loading the data only needs the file name:\n\nstudent_data &lt;- read.csv(\"student_data.csv\")\n\n\nCheck before you load data\n\ngetwd()        # which folder is R looking in?\nlist.files()   # which files can R see there?\n\nIf the setup is correct you should see something like:\n[1] \"/Users/yourname/Documents/Lab_03\"\n[1] \"Lab_03.Rmd\"  \"student_data.csv\"\n\n○ Tip: when you knit an .Rmd, the working directory is the folder the .Rmd is saved in"
+  },
+  {
+    "objectID": "lab3-slides.html#the-common-mistake",
+    "href": "lab3-slides.html#the-common-mistake",
+    "title": "Measures of Variability",
+    "section": "The Common Mistake",
+    "text": "The Common Mistake\n\n\n\nFiles downloaded to different places\nDownloads/\n└── Lab_03.Rmd\n\nDesktop/\n└── student_data.csv\nThe working directory is Downloads, so this fails:\n\nread.csv(\"student_data.csv\")\n\nError in file(file, \"rt\") : cannot open the connection\nIn addition: Warning message:\n  cannot open file 'student_data.csv': No such file or directory\n\nWhat the error means\nR looked in the working directory but did not find a file with that exact name.\nThe fix\n\n○ Move both files into the same folder (e.g., Lab_03/)\n\n\n○ Open the .Rmd from that folder\n\n\n○ Re-run getwd() and list.files() to confirm\n\n\nFix the folder, not the code: don’t keep rewriting the path in read.csv().\nAlso check the exact file name: Student_Data.csv ≠ student_data.csv"
+  },
+  {
+    "objectID": "lab3-slides.html#lab-assignment-3",
+    "href": "lab3-slides.html#lab-assignment-3",
+    "title": "Measures of Variability",
+    "section": "Lab Assignment 3!",
+    "text": "Lab Assignment 3!\n\nCreate a folder for the assignment for your convenience\nHave the rmd. and the dataset for the assignment on the same folder\nSubmit both the rmd. and the knitted file"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "PSYC 2020/6022 - A01",
+    "section": "",
+    "text": "Lab slides. Click a link to open the interactive slides in your browser.\n\n\n\nLab\nTopic\nSlides\n\n\n\n\n2\nCentral Tendency\nSlides\n\n\n3\nMeasures of Variability\nSlides\n\n\n4\nZ-Scores\nSlides\n\n\n5\nIntermediate R: tidyverse\nSlides\n\n\n6\nSampling Distributions & the CLT\nSlides\n\n\n7\nNHST I\nSlides"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#absence-and-late-submission-policy",
+    "href": "PSYC2020-slides.html#absence-and-late-submission-policy",
+    "title": "Central Tendency",
+    "section": "Absence and Late Submission Policy",
+    "text": "Absence and Late Submission Policy\n\n\nHomework and quizzes will generally not be reopened once they have closed and been graded, except in exceptional circumstances.\nFor an unavoidable absence, students may submit an Institute Approved Absence (IAA) request through Georgia Tech. Approved IAA requests will be honored.\nAlternatively, students may provide appropriate supporting documentation, such as a doctor’s or dentist’s note. Such documentation will generally be accepted for absence or late-submission accommodations.\nFor non-emergency circumstances that you know about in advance, please contact me at least 3 days before the affected lab or assignment deadline. For emergencies or unexpected situations, please contact me as soon as reasonably possible."
+  },
+  {
+    "objectID": "PSYC2020-slides.html#homework-1",
+    "href": "PSYC2020-slides.html#homework-1",
+    "title": "Central Tendency",
+    "section": "Homework 1",
+    "text": "Homework 1\nEveryone has done a great job! remember to set up the second level header in the white text space, not within the gray code chunk"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#review-of-central-tendency",
+    "href": "PSYC2020-slides.html#review-of-central-tendency",
+    "title": "Central Tendency",
+    "section": "Review of Central Tendency!",
+    "text": "Review of Central Tendency!\nMean: Sum of all values divided by the total number of values\nMedian: When sorted lowest to highest, the middle value\nMode: The value that appears most often"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#central-tendency-in-r-mean",
+    "href": "PSYC2020-slides.html#central-tendency-in-r-mean",
+    "title": "Central Tendency",
+    "section": "Central Tendency in R: Mean",
+    "text": "Central Tendency in R: Mean\nWe can calculate central tendencies in two ways:\nGiven this dataset, calculate the mean\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\n\n\nBy hand (computer)\n\n\n\n\n\n\n\n\n\nWith the mean(x) function\n\n○ x = vector of data"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#central-tendency-in-r-median",
+    "href": "PSYC2020-slides.html#central-tendency-in-r-median",
+    "title": "Central Tendency",
+    "section": "Central Tendency in R: Median",
+    "text": "Central Tendency in R: Median\nGiven this dataset, calculate the median\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\n\n\nBy hand (computer)\n\n\n\n\n\n\n\n\n\nWith the median(x) function\n\n○ x = vector of data"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#central-tendency-in-r-mode",
+    "href": "PSYC2020-slides.html#central-tendency-in-r-mode",
+    "title": "Central Tendency",
+    "section": "Central Tendency in R: Mode",
+    "text": "Central Tendency in R: Mode\nGiven this dataset, calculate the mode\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\nWith the mode() function\n\n\n\n\n\n\n\n\n\nDoesn’t work :(\nHave to create our own"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#r-functions",
+    "href": "PSYC2020-slides.html#r-functions",
+    "title": "Central Tendency",
+    "section": "R Functions",
+    "text": "R Functions\nWe’ve seen some built-in R functions (e.g., mean(), median()), but we can also make our own\n\n\nfunction_name &lt;- function(argument) {\n  do some stuff\n  return(this stuff)\n}\n\nⓘ Don’t actually need to call return(); R will automatically return the last expression\n\n\nThen, you can call the function\nfunction_name(specific_argument)\n\n\nTo keep the results, make sure to assign them to some variable\nvery_important_results &lt;- function_name(specific_argument)"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#central-tendency-in-r-mode-1",
+    "href": "PSYC2020-slides.html#central-tendency-in-r-mode-1",
+    "title": "Central Tendency",
+    "section": "Central Tendency in R: Mode",
+    "text": "Central Tendency in R: Mode\nGiven this dataset, calculate the mode\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\n\nmode_func &lt;- function(x) {\n  sort(table(x), decreasing = T)[1]\n}\n\nHow does this work?"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#measures-of-variability-in-r",
+    "href": "PSYC2020-slides.html#measures-of-variability-in-r",
+    "title": "Central Tendency",
+    "section": "Measures of Variability in R",
+    "text": "Measures of Variability in R\nVariance: Average of the squared distances of each value from the mean \\(s^2 = \\dfrac{\\sum (x_i - \\bar{x})^2}{n - 1}\\)\nStandard deviation: Square root of the variance; the typical distance of a value from the mean, in the original units\nQuantile: A cut point that splits sorted data into equal-sized groups (e.g., 25% of values fall below the 1st quartile, 75% below the 3rd)\nIQR: 3rd quartile minus 1st quartile; the range of the middle 50% of the data"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#variability-in-r-variance-sd-iqr",
+    "href": "PSYC2020-slides.html#variability-in-r-variance-sd-iqr",
+    "title": "Central Tendency",
+    "section": "Variability in R: Variance, SD, IQR",
+    "text": "Variability in R: Variance, SD, IQR\nGiven this dataset, calculate the median\n\nc(2, 3, 12, 4, 4)\n\n[1]  2  3 12  4  4\n\n\nWith the var(x) function\n○ x = vector of data\n\n\n\n\n\n\n\n\nWith the sd(x) function\n\n\n\n\n\n\n\n\nWith the IQR(x) function"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#descriptive-statistics-in-r",
+    "href": "PSYC2020-slides.html#descriptive-statistics-in-r",
+    "title": "Central Tendency",
+    "section": "Descriptive Statistics in R",
+    "text": "Descriptive Statistics in R\nTakes time to look at all these for a lot of variables, even with functions\nThe summary(object) function provides us a quick overview of this information\n\n○ object = for our purposes, a dataframe\n\n\n\n\n\n\n\n\n\nWhat all do we get?\n\nMinimum and maximum\n1st quartile, median, 3rd quartile\nMean"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#descriptive-statistics-in-r-1",
+    "href": "PSYC2020-slides.html#descriptive-statistics-in-r-1",
+    "title": "Central Tendency",
+    "section": "Descriptive Statistics in R:",
+    "text": "Descriptive Statistics in R:\nsummary() gives us the basics, but no variance, SD, or skew\nThe describe(object) function from the psych package gives us more\n\n○ object = a dataframe (or a single variable)\n\nDo need to install the psych package first\n\ninstall.packages(\"psych\")\n\n\n\n\n\n\n\n\n\n\nWhat all do we get?\nn, mean, sd, median, trimmed mean, mad, min, max, range, skew, kurtosis, se"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#visualizations",
+    "href": "PSYC2020-slides.html#visualizations",
+    "title": "Central Tendency",
+    "section": "Visualizations",
+    "text": "Visualizations\nDon’t rush: graph your data!\nWhat should graphs do?\n\n○ Show the data\n\n\n○ Draw the reader primarily to the data (not the graphical effects)\n\n\n○ Avoid distorting the data\n\n\n○ Present many numbers with minimum ink\n\n\n○ Make large data sets coherent\n\n\n○ Encourage the reader to compare different pieces of data"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#visualizations-histograms",
+    "href": "PSYC2020-slides.html#visualizations-histograms",
+    "title": "Central Tendency",
+    "section": "Visualizations: Histograms",
+    "text": "Visualizations: Histograms\n\n\nAn example of (simulated) SAT scores\nWhat do we see here?\n\n\n○ Outliers at zero! Not a possible SAT score\n\n\n\n\n○ Negatively skewed: more data on the left than on the right"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#skew",
+    "href": "PSYC2020-slides.html#skew",
+    "title": "Central Tendency",
+    "section": "Skew",
+    "text": "Skew\n\n\n\nPositive skew, right-tailed\nThe mass of the distribution is concentrated on the left of the figure\n\nNegative skew, left-tailed\nThe mass of the distribution is concentrated on the right of the figure"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#skewness-demonstration",
+    "href": "PSYC2020-slides.html#skewness-demonstration",
+    "title": "Central Tendency",
+    "section": "Skewness Demonstration",
+    "text": "Skewness Demonstration\n\n\n\n\n\nFull screen version here\n\nSkewness demonstration!\nCredits to Fabio Setti"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lets-do-some-visualization",
+    "href": "PSYC2020-slides.html#lets-do-some-visualization",
+    "title": "Central Tendency",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics\n\n\n\n\n\n\n\n\n\n\n\nWhat do we think about this?"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-1",
+    "href": "PSYC2020-slides.html#lets-do-some-visualization-1",
+    "title": "Central Tendency",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Histogram\n\n\nhist() function\n\nRequired arguments:\n\n\n○ x = vector (variable) you want to plot (remember the $ function!)\n\n\nOptional arguments:\n\n\n\n\n○ breaks = bin count\n\n\n○ main = title\n\n\n○ xlab = label for x-axis\n\n\n○ ylab = label for y-axis\n\n\n\n○ col = color for bars\n\n\n○ xlim = range for x-axis\n\n\n○ ylim = range for y-axis\n\n\n○ prob = T/F, proportion instead of frequency\n\n\n\nIf you do not set specific values for non-essential subarguments, it will use the default"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-2",
+    "href": "PSYC2020-slides.html#lets-do-some-visualization-2",
+    "title": "Central Tendency",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Bar Chart\n\n\nUseful to show frequency/percentage of categorical data\n\n○ Categorical data: not numerically meaningful, it’s a category of a type\n\nX-axis displays the variable; Y-axis displays frequency\nBars do not touch and have equal widths\nShould not be 3-dimensional!\nbarplot() function\n\n○ height = a table of counts (use table() first!)\n\n\n○ main, xlab, ylab, col work the same as hist()"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#histogram-vs.-bar-chart",
+    "href": "PSYC2020-slides.html#histogram-vs.-bar-chart",
+    "title": "Central Tendency",
+    "section": "Histogram vs. Bar Chart",
+    "text": "Histogram vs. Bar Chart\n\n\nHistogram\n\n○ Interval/ratio (numeric) data\n\n\n○ Bars touch: continuity of the data\n\n\n○ hist(x)\n\n\nBar chart\n\n○ Categorical data\n\n\n○ Bars do not touch: separate categories\n\n\n○ barplot(table(x))\n\n\nTry it: make a bar chart of mtcars$cyl (number of cylinders)"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-3",
+    "href": "PSYC2020-slides.html#lets-do-some-visualization-3",
+    "title": "Central Tendency",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Pie Chart\n\n\nCategorical data only\nNever use with more than 2–3 categories\nUse bar charts for comparisons\nIf unsure, don’t use a pie chart!!\n\nWhy?\n\n○ Eye is good at judging relative linear measures, not relative areas\n\n\n○ Anything a pie chart can show, a bar chart can show better (Cleveland, 1985)\n\n\npie() function\n\n○ x = a table of counts, just like barplot()"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#pie-chart-vs.-bar-chart",
+    "href": "PSYC2020-slides.html#pie-chart-vs.-bar-chart",
+    "title": "Central Tendency",
+    "section": "Pie Chart vs. Bar Chart",
+    "text": "Pie Chart vs. Bar Chart\nSame data, two graphs: which one is easier to read?\n\n\nTake away: don’t use a pie chart, use a bar chart for categorical data\nIf you use a pie chart, only when there are two categories"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-4",
+    "href": "PSYC2020-slides.html#lets-do-some-visualization-4",
+    "title": "Central Tendency",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Line Graph\n\n\nUsually displays a variable over the passage of time (x-axis)\nTime series graph: shows how things change\n\n○ Long term trends\n\n\n○ Seasonal components: same pattern every year\n\n\n○ Irregular cycles and random fluctuations\n\nplot() function, with one new argument\n\n○ type = \"l\" = line (\"b\" = both points and lines)"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#line-graph-practice",
+    "href": "PSYC2020-slides.html#line-graph-practice",
+    "title": "Central Tendency",
+    "section": "Line Graph Practice",
+    "text": "Line Graph Practice\nWhat do we see in this graph?\n\n\n○ Overall decreasing trend (the vaccine!)\n\n\n\n\n○ Small peak in 1987: irregular pattern or random fluctuation\n\n\nTry it: R has a built-in monthly time series called AirPassengers\n\n\n\n\n\n\n\n\n\nTrend? Seasonal component?"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lets-do-some-visualization-5",
+    "href": "PSYC2020-slides.html#lets-do-some-visualization-5",
+    "title": "Central Tendency",
+    "section": "Let’s Do Some Visualization",
+    "text": "Let’s Do Some Visualization\nBase R Graphics: Stem-and-Leaf Plot\n\n\nVisual display that orders numbers while also displaying shape\nAll data points are included\nTo create:\n\n○ Order data\n\n\n○ Create stems (the leading digit)\n\n\n○ Attach leaves (the last digit)\n\nstem() function\n\n○ x = vector of data\n\n\n○ scale = how many stems (2 = split each stem in two)"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#stem-and-leaf-practice",
+    "href": "PSYC2020-slides.html#stem-and-leaf-practice",
+    "title": "Central Tendency",
+    "section": "Stem-and-Leaf Practice",
+    "text": "Stem-and-Leaf Practice\nRead the plot: what is the smallest score? The most common stem?\n\n\n\n\n\n\n\n\n\nNow try stem(scores, scale = 2): what changed?\n\n\nBonus: compare stem(scores) with hist(scores). What does the stemplot show that the histogram hides?"
+  },
+  {
+    "objectID": "PSYC2020-slides.html#lab-assignmnt-2",
+    "href": "PSYC2020-slides.html#lab-assignmnt-2",
+    "title": "Central Tendency",
+    "section": "Lab Assignmnt 2",
+    "text": "Lab Assignmnt 2\nDownload the dataset save them in the same folder as your rmd. file set the folder directory as working directory\n\ndataframe &lt;- read.csv(\"file_name\")"
+  },
+  {
+    "objectID": "lab4-slides.html#outline",
+    "href": "lab4-slides.html#outline",
+    "title": "Z-Scores",
+    "section": "Outline",
+    "text": "Outline\n\nZ-Scores\nZ-Scores in R\nGenerating Data\nProbabilities of Normal Values\n\nLearning objectives: R: Generating data, normal distribution functions\nStatistics: Z-scores"
+  },
+  {
+    "objectID": "lab4-slides.html#z-scores",
+    "href": "lab4-slides.html#z-scores",
+    "title": "Z-Scores",
+    "section": "Z-Scores",
+    "text": "Z-Scores\nTo “Z-score” or “standardize” your data\n\n○ Transform a variable such that the mean is zero and the standard deviation is one\n\n\n○ Matches the mean and SD of a “standard” normal distribution, \\(N(0, 1)\\)"
+  },
+  {
+    "objectID": "lab4-slides.html#z-scores-1",
+    "href": "lab4-slides.html#z-scores-1",
+    "title": "Z-Scores",
+    "section": "Z-Scores",
+    "text": "Z-Scores\nWhy standardize?\n\nPuts variables on the same (interpretable) scale\nHelps manage very large or very small numbers\nCan compare across distributions\nGives information about location relative to the rest of the distribution"
+  },
+  {
+    "objectID": "lab4-slides.html#z-scores-in-r",
+    "href": "lab4-slides.html#z-scores-in-r",
+    "title": "Z-Scores",
+    "section": "Z-Scores in R",
+    "text": "Z-Scores in R\nNeed to:\n\nTake out the mean\nScale by the standard deviation\n\ndata$variable_z &lt;- (data$variable - mean(data$variable)) / sd(data$variable)\n\n\n\n\n\n\n\n\n\nCan check to make sure things look right"
+  },
+  {
+    "objectID": "lab4-slides.html#generating-normal-data",
+    "href": "lab4-slides.html#generating-normal-data",
+    "title": "Z-Scores",
+    "section": "Generating Normal Data",
+    "text": "Generating Normal Data\nSometimes, we want to simulate data\n\n○ Demonstration\n\n\n○ Comparison\n\n\n○ Sanity check\n\nTo generate data drawn from a normal distribution, we can use rnorm(n, mean, sd)\n\n○ n = number of draws\n\n\n○ mean = desired mean of distribution\n\n\n○ sd = desired SD of distribution"
+  },
+  {
+    "objectID": "lab4-slides.html#generating-normal-data-1",
+    "href": "lab4-slides.html#generating-normal-data-1",
+    "title": "Z-Scores",
+    "section": "Generating Normal Data",
+    "text": "Generating Normal Data"
+  },
+  {
+    "objectID": "lab4-slides.html#probabilities-of-normal-values",
+    "href": "lab4-slides.html#probabilities-of-normal-values",
+    "title": "Z-Scores",
+    "section": "Probabilities of Normal Values",
+    "text": "Probabilities of Normal Values\nWithin a normal distribution, we can check the probability of a given value and the value at a given probability\n\n\nProbability of a Value\npnorm(q)\n\n○ q = value (or vector of values)\n\n\npnorm(0)\n\n[1] 0.5\n\npnorm(1)\n\n[1] 0.8413447\n\npnorm(c(-3, 3))\n\n[1] 0.001349898 0.998650102\n\n\n\nValue at a Probability\nqnorm(p)\n\n○ p = probability (or vector of probabilities)\n\n\nqnorm(.5)\n\n[1] 0\n\nqnorm(.9)\n\n[1] 1.281552\n\nqnorm(c(.025, .975))\n\n[1] -1.959964  1.959964"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-ggplot2",
+    "href": "lab4-slides.html#visualize-ggplot2",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nSo many numbers! Can we please visualize our data?\n\n\n“The simple graph has brought more information to the data analyst’s mind than any other device.” — John Tukey\n\n\nYes! With the ggplot2 package\nA bit of a different plotting system than the base R plots we’ve used\nBut much more expansive and flexible (and much nicer looking, if you ask me!)"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-setup",
+    "href": "lab4-slides.html#visualize-setup",
+    "title": "Z-Scores",
+    "section": "Visualize: Setup",
+    "text": "Visualize: Setup\nRun this cell first — everything on the next slides builds on it\n\n○ Loads ggplot2\n\n\n○ Adds a grouping variable to iris with cut(), just like we did in Lab 3"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-ggplot2-1",
+    "href": "lab4-slides.html#visualize-ggplot2-1",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\n\nLet’s begin at the end:\nThis is where we’re headed. We’ll build it up one layer at a time."
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-ggplot2-2",
+    "href": "lab4-slides.html#visualize-ggplot2-2",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nWhen we just call the ggplot() function with our data as the first argument, we get this blank area\nggplot() works by adding layers and layers onto a plot object\n\nThis is not a very exciting plot, but you can think of it like an empty canvas you’ll paint the remaining layers of your plot onto. — R4DS"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-ggplot2-3",
+    "href": "lab4-slides.html#visualize-ggplot2-3",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nNext, we want to tell ggplot() what information we want in our plot and where we want it\nWe do this with the aes() (“aesthetics”) function in the mapping = argument\nHow variables are mapped onto specific parts of the plot\nTo investigate the relationship between sepal length and petal length, we can put Sepal.Length on the x-axis and Petal.Length on the y-axis\nWhat do we get?"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-ggplot2-4",
+    "href": "lab4-slides.html#visualize-ggplot2-4",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nStill no data, though\nNeed to define some geom, a geometric display of our data\nWill usually start with geom_\n\n\n\n\ngeom_line()\nline graph\n\n\ngeom_bar()\nbar graph\n\n\ngeom_boxplot()\nboxplot\n\n\ngeom_point()\nscatterplot\n\n\n\n\nCan start addressing questions here!"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-ggplot2-5",
+    "href": "lab4-slides.html#visualize-ggplot2-5",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nThese variables are conceptually similar (both lengths in cm) and should probably have the same scale\nAutomatically generated axes are a good place to start\nBut good practice to consider them each time\nTry changing the limits and re-running!"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-ggplot2-6",
+    "href": "lab4-slides.html#visualize-ggplot2-6",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nAdding aesthetics and layers\nWhich of these flowers belong to which species?\nStart: do we need to modify the aesthetic or the geom?\nWhat can we tell from this?"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-ggplot2-7",
+    "href": "lab4-slides.html#visualize-ggplot2-7",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nAdding aesthetics and layers\nLet’s say we want to add a line to better represent the overall trend\nStart: do we need to modify the aesthetic or the geom?\nWhat can we tell from this?"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-ggplot2-8",
+    "href": "lab4-slides.html#visualize-ggplot2-8",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nLet’s say we want to look at this separately for narrow-sepal vs wide-sepal flowers\nfacet_wrap() splits the plot into panels by a grouping variable\nWhat can we tell from this?"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-ggplot2-9",
+    "href": "lab4-slides.html#visualize-ggplot2-9",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nLet’s say we want this plot to look nicer!!\nBuilt in themes\n\n○ Try theme_minimal() or theme_bw() instead"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-ggplot2-10",
+    "href": "lab4-slides.html#visualize-ggplot2-10",
+    "title": "Z-Scores",
+    "section": "Visualize: ggplot2",
+    "text": "Visualize: ggplot2\nOur question: what is the relationship between sepal length and petal length?\n\n\n\n\n\n\n\n\n\n\n\nLet’s say we want this plot to look nicer!!\nAdditional theming with theme(), labs(), and various arguments\nAnd we’re back to the plot we started with!"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-boxplots",
+    "href": "lab4-slides.html#visualize-boxplots",
+    "title": "Z-Scores",
+    "section": "Visualize: Boxplots",
+    "text": "Visualize: Boxplots\n\n\n\n\n\n\n\n\n\n\n\ngeom_boxplot() shows a distribution for each group\n\n○ x = the grouping variable (categorical)\n\n\n○ y = the variable you’re describing (numeric)\n\nSame anatomy as before: median, Q1, Q3, whiskers, outliers\nThings to try:\n\n○ Swap x and y to flip it sideways\n\n\n○ Add geom_jitter(width = .1) to show the raw data points on top"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-barplots",
+    "href": "lab4-slides.html#visualize-barplots",
+    "title": "Z-Scores",
+    "section": "Visualize: Barplots",
+    "text": "Visualize: Barplots\n\n\n\n\n\n\n\n\n\n\n\nTwo different bar geoms, and the difference matters:\ngeom_bar()\n\n○ Counts the rows in each category for you\n\n\n○ Only needs an x\n\ngeom_col()\n\n○ Uses a value you already computed\n\n\n○ Needs both x and y\n\nThings to try:\n\n○ Add position = \"dodge\" inside geom_bar() to put bars side by side"
+  },
+  {
+    "objectID": "lab4-slides.html#visualize-barplots-with-geom_col",
+    "href": "lab4-slides.html#visualize-barplots-with-geom_col",
+    "title": "Z-Scores",
+    "section": "Visualize: Barplots with geom_col()",
+    "text": "Visualize: Barplots with geom_col()\n\n\n\n\n\n\n\n\n\n\n\nHere we use aggregate() from Lab 3 to get one number per group, then geom_col() draws those numbers directly\nA note on bar plots of means:\n\n○ They hide the spread of the data\n\n\n○ A boxplot usually tells you more"
+  },
+  {
+    "objectID": "lab4-slides.html#lab-4-assignment",
+    "href": "lab4-slides.html#lab-4-assignment",
+    "title": "Z-Scores",
+    "section": "Lab 4 Assignment!",
+    "text": "Lab 4 Assignment!\n\n\nPlease submit both the knitted file and the rmd. on Canvas!"
+  },
+  {
+    "objectID": "lab6-slides.html#outline",
+    "href": "lab6-slides.html#outline",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Outline",
+    "text": "Outline\n\nPopulation Parameters & Estimation\nSampling Distributions\nCentral Limit Theorem\nSampling Distributions in R\n\nLearning objectives: R: sample(), set.seed(), for loops, rnorm() / runif() / rexp()\nStatistics: Population vs. sample vs. sampling distributions, Central Limit Theorem, standard error"
+  },
+  {
+    "objectID": "lab6-slides.html#what-does-a-researcher-want-to-know",
+    "href": "lab6-slides.html#what-does-a-researcher-want-to-know",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "What does a researcher want to know?",
+    "text": "What does a researcher want to know?\n\n\n\n\n\n\n\nData (what we have)\nResearch question is about… (what we want to know)\n\n\n\n\nRandomly selected 1000 people’s IQ in Georgia\nIQ of people living in GA\n\n\n30 students’ height in the Psych department\nHeight of students in Psych\n\n\nRandomly selected 100 GT students’ sleeping hours\nSleeping time of students at GT\n\n\nProduct ratings from 300 people\nProduct satisfaction for customers\n\n\n\n\nWe are interested in population properties (i.e., population parameters)\nWe infer information about the population from the data we have"
+  },
+  {
+    "objectID": "lab6-slides.html#population-parameters-1",
+    "href": "lab6-slides.html#population-parameters-1",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Population Parameters",
+    "text": "Population Parameters\nPopulation parameters are…\n\n○ Assumed to be constant (fixed)\n\n\n○ Unknown and unknowable\n\n\n○ Estimated using statistics\n\n\nⓘ μ (mu; mean) and σ (sigma; standard deviation) are parameters of the normal distribution; different distributions have different parameters\n\n\nStatistics is the science of testing hypotheses about values of these (and other) parameters\n\n○ Point estimation\n\n\n○ Interval estimation"
+  },
+  {
+    "objectID": "lab6-slides.html#two-types-of-estimation",
+    "href": "lab6-slides.html#two-types-of-estimation",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Two Types of Estimation",
+    "text": "Two Types of Estimation\n\n\nPoint estimation\nA single value (point) estimate of the parameter’s true value\n\n○ e.g., \\(\\hat{\\mu} = 52\\)\n\n\n○ \\(\\hat{\\mu}\\) and \\(M\\) both refer to the sample estimate of the mean\n\n\nInterval estimation\nA range of values that may contain the population parameter\n\n○ e.g., \\(\\hat{\\mu} = (100, 150)\\)\n\n\n○ Usually reported with a confidence level (e.g., 95%) to indicate the method’s reliability\n\n\n\nIf we drew 100 random samples and computed a 95% confidence interval (CI) for each one, we would expect about 95 of those 100 CIs to include the true population mean"
+  },
+  {
+    "objectID": "lab6-slides.html#lets-get-a-sample",
+    "href": "lab6-slides.html#lets-get-a-sample",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Let’s Get a Sample",
+    "text": "Let’s Get a Sample\n\n\nA sample consists of multiple observations drawn from the population\n\\[X_1, X_2, X_3, \\dots, X_{n}\\]\nWe summarize the sample with its sample mean\n\\[\\bar{X} = \\frac{\\sum x}{n}\\]"
+  },
+  {
+    "objectID": "lab6-slides.html#sampling-distribution",
+    "href": "lab6-slides.html#sampling-distribution",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Sampling Distribution",
+    "text": "Sampling Distribution\n\n\nMultiple means from multiple samples\n\\[\\bar{X}_1, \\bar{X}_2, \\bar{X}_3, \\dots\\]\nThe distribution of those means is the sampling distribution\n. . .\n…and it is (approximately) a normal distribution!\n\n○ Unimodal, symmetrical\n\n\n○ Mean = median = mode\n\n\n○ 68% / 95% / 99.7% within 1 / 2 / 3 SDs"
+  },
+  {
+    "objectID": "lab6-slides.html#picturing-the-sampling-distribution",
+    "href": "lab6-slides.html#picturing-the-sampling-distribution",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Picturing the Sampling Distribution",
+    "text": "Picturing the Sampling Distribution\n\n\n\n\n\n\n\n\n\n\n\n\nEach dot is the mean of one sample; each line is that sample’s 95% CI\nRed intervals don’t contain the “true” value of the mean\n\nIf the dots dropped to the ground, they would pile up into a normal distribution\n\n○ More dots around the middle\n\n\n○ Fewer dots toward the tails\n\n\n\nSimulated to mirror textbook Figure 2.8 (p. 46)"
+  },
+  {
+    "objectID": "lab6-slides.html#what-the-sampling-distribution-tells-us",
+    "href": "lab6-slides.html#what-the-sampling-distribution-tells-us",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "What the Sampling Distribution Tells Us",
+    "text": "What the Sampling Distribution Tells Us\nIt allows us to…\n\n○ specify a range of scores the population mean is expected to fall within\n\n\n○ determine how accurate our sample mean is in estimating the true population mean\n\n\n○ determine how likely an observed statistic (e.g., a sample mean) is, assuming some hypothesized parameter holds in the population\n\n\n\n\n\n\n\n\nNote\n\n\nIf people in GA have an average IQ of 100, what is the probability that 100 randomly selected people in GA have a mean IQ of 120?"
+  },
+  {
+    "objectID": "lab6-slides.html#central-limit-theorem-clt",
+    "href": "lab6-slides.html#central-limit-theorem-clt",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Central Limit Theorem (CLT)",
+    "text": "Central Limit Theorem (CLT)\nDefinition: if you take sufficiently large random samples from the population, then the distribution of the sample means will be approximately normally distributed\n\nⓘ It doesn’t have to be a mean for the CLT to hold. It can also be a sum (a sum is part of calculating the mean!)\n\n\nTwo things I want to point out:\n\nRepeatedly sampling from a non-normal population still gives you a normal sampling distribution\nThe variance of the sampling distribution is smaller than the original variance"
+  },
+  {
+    "objectID": "lab6-slides.html#sampling-distribution-normal",
+    "href": "lab6-slides.html#sampling-distribution-normal",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "1) Sampling Distribution → Normal",
+    "text": "1) Sampling Distribution → Normal\nRegardless of the population’s skewness / kurtosis, the distribution of the means becomes normal\n\n\n○ U-shape, uniform, exponential, extremely skewed… whatever the original distribution is"
+  },
+  {
+    "objectID": "lab6-slides.html#example-u-shaped-distribution",
+    "href": "lab6-slides.html#example-u-shaped-distribution",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Example: U-shaped Distribution",
+    "text": "Example: U-shaped Distribution\n\n\n\n\n\n\n\n\n\n\n\nPopulation: \\(N\\) = 1225, \\(\\mu\\) = 3, \\(\\sigma\\) = 1.6\n\n\n\n\n\n\nSample\nMean\nSD\n\n\n\n\nSample 1\n3.06\n1.58\n\n\nSample 2\n3.08\n1.66\n\n\nSample 3\n2.99\n1.61\n\n\nSample 4\n2.95\n1.62\n\n\nSample 5\n2.80\n1.71\n\n\nSample 6\n2.84\n1.66\n\n\nSample 7\n2.87\n1.64\n\n\nSample 8\n3.00\n1.58\n\n\nSample 9\n2.84\n1.54\n\n\nSample 10\n2.96\n1.64\n\n\n\n\n\nSampling with \\(n\\) = 100: the 10 means average 2.938 with an SD of only 0.099"
+  },
+  {
+    "objectID": "lab6-slides.html#sample-size-matters",
+    "href": "lab6-slides.html#sample-size-matters",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Sample Size Matters",
+    "text": "Sample Size Matters\nHow does the sampling distribution change as \\(n\\) (observations per sample) increases?\n\n\nThe bigger \\(n\\) is, the narrower the sampling distribution"
+  },
+  {
+    "objectID": "lab6-slides.html#sample-size-matters-standard-error",
+    "href": "lab6-slides.html#sample-size-matters-standard-error",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Sample Size Matters: Standard Error",
+    "text": "Sample Size Matters: Standard Error\n\n\n\n\n\n\n\n\n\n\n\n\nLarge reductions in the standard error as \\(n\\) increases from 1 to about 30\nBeyond about \\(n\\) = 30, there is not as much benefit to adding more subjects in terms of standard error"
+  },
+  {
+    "objectID": "lab6-slides.html#sampling-variance-original-variance",
+    "href": "lab6-slides.html#sampling-variance-original-variance",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "2) Sampling Variance < Original Variance",
+    "text": "2) Sampling Variance &lt; Original Variance\nThe variance of the sampling distribution of the mean is always smaller than the original population variance\n\n○ Less variability in the sample means than in the population\n\n\n○ As the sample size increases, the sampling distribution becomes narrower\n\n\nBecause the original variance is divided by \\(n\\), the sample size:\n\n\n\n\n\n\n\n\nmean\nvariance\nstandard deviation\n\n\n\n\n\\(\\mu_{\\bar{X}} = \\mu\\)\n\\(\\sigma^2_{\\bar{X}} = \\dfrac{\\sigma^2}{n}\\)\n\\(\\sigma_{\\bar{X}} = \\dfrac{\\sigma}{\\sqrt{n}}\\)\n\n\n\n\nThe SD of the sampling distribution is called the standard error (SE)\nIntuition: when the sample size equals the population size, the sampling variance is essentially 0 — no error in the estimate"
+  },
+  {
+    "objectID": "lab6-slides.html#r-demonstrations",
+    "href": "lab6-slides.html#r-demonstrations",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "R Demonstrations",
+    "text": "R Demonstrations\nTwo factors we’re going to test:\nDifferent original distributions\n\n○ If the data are not normal (e.g., uniform or exponential), is the sampling distribution still normal?\n\nDifferent sample sizes\n\n○ When each sample has 5, 30, or 200 observations"
+  },
+  {
+    "objectID": "lab6-slides.html#warm-up-functions-from-earlier-labs",
+    "href": "lab6-slides.html#warm-up-functions-from-earlier-labs",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Warm-up: Functions from Earlier Labs",
+    "text": "Warm-up: Functions from Earlier Labs"
+  },
+  {
+    "objectID": "lab6-slides.html#example-u-shaped-distribution-1",
+    "href": "lab6-slides.html#example-u-shaped-distribution-1",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Example: U-shaped Distribution",
+    "text": "Example: U-shaped Distribution\n\n\n\n\n\n\n\n\n\n\n\nrep(x, times) repeats a value\n\n○ rep(5, 250) = the number 5, 250 times\n\nType ?rep in the console for more info\n\nWhat does this population look like? Is it normal?"
+  },
+  {
+    "objectID": "lab6-slides.html#r-functions-sample",
+    "href": "lab6-slides.html#r-functions-sample",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "R Functions: sample()",
+    "text": "R Functions: sample()\nExtract a sample from a given dataset\nsample(dataname, size = n, replace = T)\n\n○ size = number of observations n\n\n\n○ replace = TRUE (or T): sampling with replacement\n\n\n○ replace = FALSE (or F): sampling without replacement\n\nset.seed() makes random results reproducible: same seed, same samples"
+  },
+  {
+    "objectID": "lab6-slides.html#building-a-sampling-distribution-by-hand",
+    "href": "lab6-slides.html#building-a-sampling-distribution-by-hand",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Building a Sampling Distribution by Hand",
+    "text": "Building a Sampling Distribution by Hand\n\n\n\n\n\n\n\n\n\n\n\n10 samples of \\(n\\) = 100, one mean each\nCompare with hist(Ushape, xlim = c(1, 5))\n\nTyping this out gets old fast…\nWhat if we want 1,000 samples?"
+  },
+  {
+    "objectID": "lab6-slides.html#r-functions-for-loops",
+    "href": "lab6-slides.html#r-functions-for-loops",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "R Functions: for Loops",
+    "text": "R Functions: for Loops\nRepeat the same code many times\n\nsamples &lt;- rep(NA, N)             # 1. \"blank\" vector of N placeholders\nfor (i in 1:N) {                  # 2. do this N times...\n  samples[i] &lt;- mean(sample(dataname, size = n, replace = T))   # 3. ...fill slot i\n}\n\n\n○ N = number of sample sets; n = number of observations per sample (sample size)\n\n\n○ NA is a placeholder we fill in later\n\n\n\n\n\n\n\n\n\n\nⓘ Every run gives different values: it’s random! Add set.seed() first to make it reproducible"
+  },
+  {
+    "objectID": "lab6-slides.html#different-sample-sizes-n",
+    "href": "lab6-slides.html#different-sample-sizes-n",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Different Sample Sizes (n)",
+    "text": "Different Sample Sizes (n)\n\n\n\n\n\n\n\n\n\n\n\n\\(N\\) = 100 sample sets each time; only \\(n\\) changes\nChange n and re-run: what happens to\n\n○ the shape?\n\n\n○ the spread (sd(), i.e., the SE)?\n\n\nCheck: \\(\\sigma / \\sqrt{n}\\) = sd(Ushape) / sqrt(n)"
+  },
+  {
+    "objectID": "lab6-slides.html#fyi-the-number-of-samplings-n",
+    "href": "lab6-slides.html#fyi-the-number-of-samplings-n",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "FYI: The Number of Samplings (N)",
+    "text": "FYI: The Number of Samplings (N)\nThe number of sample sets does not change the essential properties of the sampling distribution\n\n○ The sampling distribution is (hypothetically) fixed once the sample size n is set\n\n\n○ More samplings just make the visualization easier"
+  },
+  {
+    "objectID": "lab6-slides.html#r-functions-making-distributions",
+    "href": "lab6-slides.html#r-functions-making-distributions",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "R Functions: Making Distributions",
+    "text": "R Functions: Making Distributions\n\n\n\n\n\n\n\nFunction\nGenerates n random numbers from a…\n\n\n\n\nrnorm(n, mean = , sd = )\nnormal distribution with the specified mean and SD\n\n\nrunif(n, min = , max = )\nuniform distribution with the specified min and max\n\n\nrexp(n, rate = )\nexponential distribution with the specified rate (λ)\n\n\n\nWe saw rnorm() in Lab 4; runif() and rexp() work the same way"
+  },
+  {
+    "objectID": "lab6-slides.html#normal-distribution-sampling",
+    "href": "lab6-slides.html#normal-distribution-sampling",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Normal Distribution Sampling",
+    "text": "Normal Distribution Sampling\n\n\n\n\n\n\n\n\n\n\n\nPopulation: normal, σ = 10\nSampling distribution: centered at the same mean, but much narrower\n\nPredicted SE: \\(10 / \\sqrt{30} \\approx\\) 1.83"
+  },
+  {
+    "objectID": "lab6-slides.html#uniform-distribution-sampling",
+    "href": "lab6-slides.html#uniform-distribution-sampling",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Uniform Distribution Sampling",
+    "text": "Uniform Distribution Sampling\n\n\n\n\n\n\n\n\n\n\n\nPopulation: flat, not normal at all\nSampling distribution: normal!"
+  },
+  {
+    "objectID": "lab6-slides.html#exponential-distribution-sampling",
+    "href": "lab6-slides.html#exponential-distribution-sampling",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Exponential Distribution Sampling",
+    "text": "Exponential Distribution Sampling\n\n\n\n\n\n\n\n\n\n\n\nPopulation: extremely right-skewed\nSampling distribution: still normal!\n\nTry n = 5 instead of 40: is it still normal? (Remember “sufficiently large”)"
+  },
+  {
+    "objectID": "lab6-slides.html#must-take-home-message",
+    "href": "lab6-slides.html#must-take-home-message",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Must-Take-Home Message",
+    "text": "Must-Take-Home Message\nPopulation distribution\n\n○ The distribution of the population of research interest\n\n\n○ Unknown, so estimated with statistics, but assumed to be fixed\n\nSample distribution\n\n○ The distribution of the dataset we get from experiments/surveys\n\n\n○ Used to infer the population parameters\n\nSampling distribution\n\n○ Distribution of the MEANS of samples\n\n\n○ CLT: approximately NORMALLY distributed, if certain conditions are met (e.g., n &gt; 30)\n\n\n○ Its SD is the standard error: \\(\\sigma / \\sqrt{n}\\)"
+  },
+  {
+    "objectID": "lab6-slides.html#lab-6-assignment",
+    "href": "lab6-slides.html#lab-6-assignment",
+    "title": "Sampling Distributions & the Central Limit Theorem",
+    "section": "Lab 6 Assignment!",
+    "text": "Lab 6 Assignment!\n\n\nLook back at the slides and the live code to help you work through this week’s assignment\nRead the instructions carefully, and check your work before you turn it in!\nPlease submit both the knitted file and the .Rmd on Canvas!"
   }
 ]

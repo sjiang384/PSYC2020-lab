@@ -228,13 +228,13 @@ Shuheng Jiang
 <h4 id="step-1-install.packagesname">Step 1: <code>install.packages("name")</code></h4>
 <p>Downloads the package onto your computer</p>
 <div class="subpoint">
-○ Only need to do this <strong>once</strong> per computer
+<p>○ Only need to do this <strong>once</strong> per computer</p>
 </div>
 <div class="subpoint">
-○ Package name goes in quotes
+<p>○ Package name goes in quotes</p>
 </div>
 <div class="subpoint">
-○ Needs an internet connection
+<p>○ Needs an internet connection</p>
 </div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"psych"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -243,13 +243,13 @@ Shuheng Jiang
 <h4 id="step-2-libraryname">Step 2: <code>library(name)</code></h4>
 <p>Loads the package into your <strong>current R session</strong> so its functions are available</p>
 <div class="subpoint">
-○ Need to do this <strong>every time</strong> you open R / RStudio
+<p>○ Need to do this <strong>every time</strong> you open R / RStudio</p>
 </div>
 <div class="subpoint">
-○ Quotes are optional
+<p>○ Quotes are optional</p>
 </div>
 <div class="subpoint">
-○ Put it at the top of your script
+<p>○ Put it at the top of your script</p>
 </div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -282,29 +282,29 @@ Shuheng Jiang
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>testscores <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">88</span>, <span class="dv">93</span>, <span class="dv">92</span>, <span class="dv">99</span>, <span class="dv">96</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-Variance: <code>var(x)</code> function
+<p>Variance: <code>var(x)</code> function</p>
 <div class="subpoint">
-○ <code>x</code> = vector
+<p>○ <code>x</code> = vector</p>
 </div>
-Standard Deviation: <code>sd(x)</code> function
+<p>Standard Deviation: <code>sd(x)</code> function</p>
 <div class="subpoint">
-○ <code>x</code> = vector
+<p>○ <code>x</code> = vector</p>
 </div>
-Interquartile Range: <code>IQR(x)</code> function
+<p>Interquartile Range: <code>IQR(x)</code> function</p>
 <div class="subpoint">
-○ <code>x</code> = vector
+<p>○ <code>x</code> = vector</p>
 </div>
 <div class="subsubpoint">
-○ Difference between the 3rd and 1st quantile (so 50% of the data within this range)
+<p>○ Difference between the 3rd and 1st quantile (so 50% of the data within this range)</p>
 </div>
 <div class="subsubpoint">
-○ 25% of the data lower than the 1st quantile
+<p>○ 25% of the data lower than the 1st quantile</p>
 </div>
 <div class="subsubpoint">
-○ 75% of the data lower than the 3rd quantile
+<p>○ 75% of the data lower than the 3rd quantile</p>
 </div>
 <div class="subsubpoint">
-○ IQR = 3rd - 1st
+<p>○ IQR = 3rd - 1st</p>
 </div>
 <div class="cell">
 <div>
@@ -444,15 +444,15 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoibXlkYXRhZnJhbWUkcGV0In0=
 </section>
 <section id="descriptives-by-group-visualization" class="slide level2">
 <h2>Descriptives by Group Visualization</h2>
-Why visualize aggregated data?
+<p>Why visualize aggregated data?</p>
 <div class="subpoint">
-○ Makes group-level insights easier to interpret.
+<p>○ Makes group-level insights easier to interpret.</p>
 </div>
 <div class="subpoint">
-○ Highlights patterns, trends, and outliers in grouped data
+<p>○ Highlights patterns, trends, and outliers in grouped data</p>
 </div>
 <div class="subpoint">
-○ Helps communicate findings effectively
+<p>○ Helps communicate findings effectively</p>
 </div>
 
 <img data-src="lab3-images/us_hospitals.png" class="r-stretch"></section>
@@ -462,35 +462,35 @@ Why visualize aggregated data?
 <p>Commonly used to calculate summary statistics like mean, variance, or sum for each group.</p>
 <div class="columns">
 <div class="column fragment">
-Benefits:
+<p>Benefits:</p>
 <div class="subpoint">
-○ Data summary
+<p>○ Data summary</p>
 </div>
 <div class="subpoint">
-○ Data simplification
+<p>○ Data simplification</p>
 </div>
 <div class="subpoint">
-○ Statistical analysis
+<p>○ Statistical analysis</p>
 </div>
 <div class="subpoint">
-○ Trend identification
+<p>○ Trend identification</p>
 </div>
 <div class="subpoint">
-○ Data privacy
+<p>○ Data privacy</p>
 </div>
 <div class="subpoint">
-○ Data-driven decisions
+<p>○ Data-driven decisions</p>
 </div>
 </div><div class="column fragment">
-<code>aggregate(y ~ group, FUN)</code>
+<p><code>aggregate(y ~ group, FUN)</code></p>
 <div class="subpoint">
-○ <code>y</code> = vector we want statistics for
+<p>○ <code>y</code> = vector we want statistics for</p>
 </div>
 <div class="subpoint">
-○ <code>group</code> = vector with grouping data
+<p>○ <code>group</code> = vector with grouping data</p>
 </div>
 <div class="subpoint">
-○ <code>FUN</code> = function to apply
+<p>○ <code>FUN</code> = function to apply</p>
 </div>
 </div></div>
 </section>
@@ -511,9 +511,9 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyBhdmVyYWdlIFNlcGFsIExl
 <h2>Descriptives by Group: <code>table()</code> and <code>describeBy()</code></h2>
 <div class="columns" style="font-size: 70%">
 <div class="column fragment">
-<strong>Crosstab (counts): <code>table(var1, var2)</code></strong>
+<p><strong>Crosstab (counts): <code>table(var1, var2)</code></strong></p>
 <div class="subpoint">
-○ <code>var1</code> = rows, <code>var2</code> = columns (both categorical)
+<p>○ <code>var1</code> = rows, <code>var2</code> = columns (both categorical)</p>
 </div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a aria-hidden="true" tabindex="-1"></a>iris<span class="sc">$</span>Size <span class="ot">&lt;-</span> <span class="fu">cut</span>(iris<span class="sc">$</span>Sepal.Length,</span>
@@ -530,15 +530,15 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyBhdmVyYWdlIFNlcGFsIExl
 </div>
 </div>
 </div><div class="column fragment">
-<strong>All descriptives at once: <code>describeBy(x, group)</code></strong>
+<p><strong>All descriptives at once: <code>describeBy(x, group)</code></strong></p>
 <div class="subpoint">
-○ From the <code>psych</code> package: <code>install.packages("psych")</code>
+<p>○ From the <code>psych</code> package: <code>install.packages("psych")</code></p>
 </div>
 <div class="subpoint">
-○ <code>x</code> = numeric vector, <code>group</code> = grouping vector
+<p>○ <code>x</code> = numeric vector, <code>group</code> = grouping vector</p>
 </div>
 <div class="subpoint">
-○ Add <code>mat = TRUE</code> for one compact table
+<p>○ Add <code>mat = TRUE</code> for one compact table</p>
 </div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
@@ -572,24 +572,24 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyBZb3VyIHR1cm46IGNyb3Nz
 <div class="columns">
 <div class="column">
 <p>Back to the <code>iris</code> dataset, distribution of Sepal Length by species</p>
-Anatomy of a boxplot:
+<p>Anatomy of a boxplot:</p>
 <div class="subpoint">
-○ “Minimum”
+<p>○ “Minimum”</p>
 </div>
 <div class="subpoint">
-○ 25th Quantile (Q1)
+<p>○ 25th Quantile (Q1)</p>
 </div>
 <div class="subpoint">
-○ Median
+<p>○ Median</p>
 </div>
 <div class="subpoint">
-○ 75th Quantile (Q3)
+<p>○ 75th Quantile (Q3)</p>
 </div>
 <div class="subpoint">
-○ “Maximum”
+<p>○ “Maximum”</p>
 </div>
 <div class="subpoint">
-○ Points representing outliers
+<p>○ Points representing outliers</p>
 </div>
 </div><div class="column" style="font-size:70%">
 <div class="cell">
@@ -601,12 +601,12 @@ Anatomy of a boxplot:
 </div>
 </div>
 </div>
-“Minimum” and “maximum” are not the <em>true</em> min and max
+<p>“Minimum” and “maximum” are not the <em>true</em> min and max</p>
 <div class="subpoint">
-○ Minimum: <span class="math inline">\(Q1 - 1.5 * IQR\)</span>
+<p>○ Minimum: <span class="math inline">\(Q1 - 1.5 * IQR\)</span></p>
 </div>
 <div class="subpoint">
-○ Maximum: <span class="math inline">\(Q3 + 1.5 * IQR\)</span>
+<p>○ Maximum: <span class="math inline">\(Q3 + 1.5 * IQR\)</span></p>
 </div>
 <p>Means that the whiskers contain ~99% of the data, rest are outliers</p>
 </div></div>
@@ -619,7 +619,7 @@ Anatomy of a boxplot:
 <p>One more resource for boxplot anatomy</p>
 
 <img data-src="lab3-images/boxplot_anatomy.jpg" class="quarto-figure quarto-figure-center r-stretch" width="400"><div class="footer">
-<p><a href="https://www.simplypsychology.org/boxplots.html">https://www.simplypsychology.org/boxplots.html</a></p>
+<p><a href="https://www.simplypsychology.org/boxplots.html" class="uri">https://www.simplypsychology.org/boxplots.html</a></p>
 </div>
 </section>
 <section id="visualizations-boxplot" class="slide level2">
@@ -634,31 +634,31 @@ Anatomy of a boxplot:
 <p><code>boxplot(x)</code> function</p>
 <p>Its arguments are:</p>
 <div class="subpoint">
-<strong>Required arguments:</strong>
+<p><strong>Required arguments:</strong></p>
 </div>
 <div class="subsubpoint">
-○ <code>x</code> = vector (variable) you want to plot
+<p>○ <code>x</code> = vector (variable) you want to plot</p>
 </div>
 <div class="subpoint">
-<strong>Optional arguments:</strong>
+<p><strong>Optional arguments:</strong></p>
 </div>
 <div class="subsubpoint">
-○ <code>main</code> = title
+<p>○ <code>main</code> = title</p>
 </div>
 <div class="subsubpoint">
-○ <code>xlab</code> = label for x-axis
+<p>○ <code>xlab</code> = label for x-axis</p>
 </div>
 <div class="subsubpoint">
-○ <code>ylab</code> = label for y-axis
+<p>○ <code>ylab</code> = label for y-axis</p>
 </div>
 <div class="subsubpoint">
-○ <code>border</code> = color for bar borders
+<p>○ <code>border</code> = color for bar borders</p>
 </div>
 <div class="subsubpoint">
-○ <code>col</code> = color for bars
+<p>○ <code>col</code> = color for bars</p>
 </div>
 <div class="subsubpoint">
-○ <code>horizontal</code> = <code>T</code>/<code>F</code> to switch
+<p>○ <code>horizontal</code> = <code>T</code>/<code>F</code> to switch</p>
 </div>
 </div><div class="column">
 <div class="cell">
@@ -721,7 +721,7 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiYm94cGxvdChpcmlzJFNlcGFs
 <pre><code>[1] "/Users/yourname/Documents/Lab_03"
 [1] "Lab_03.Rmd"  "student_data.csv"</code></pre>
 <div class="subpoint">
-○ Tip: when you knit an <code>.Rmd</code>, the working directory is the folder the <code>.Rmd</code> is saved in
+<p>○ Tip: when you knit an <code>.Rmd</code>, the working directory is the folder the <code>.Rmd</code> is saved in</p>
 </div>
 </div></div>
 </div>
@@ -749,13 +749,13 @@ In addition: Warning message:
 <p>R looked in the working directory but did not find a file with that exact name.</p>
 <p><strong>The fix</strong></p>
 <div class="subpoint">
-○ Move both files into the same folder (e.g., <code>Lab_03/</code>)
+<p>○ Move both files into the same folder (e.g., <code>Lab_03/</code>)</p>
 </div>
 <div class="subpoint">
-○ Open the <code>.Rmd</code> from <em>that</em> folder
+<p>○ Open the <code>.Rmd</code> from <em>that</em> folder</p>
 </div>
 <div class="subpoint">
-○ Re-run <code>getwd()</code> and <code>list.files()</code> to confirm
+<p>○ Re-run <code>getwd()</code> and <code>list.files()</code> to confirm</p>
 </div>
 <p><br></p>
 <p>Fix the <strong>folder</strong>, not the code: don’t keep rewriting the path in <code>read.csv()</code>.</p>
