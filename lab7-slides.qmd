@@ -33,27 +33,28 @@ draw_z <- function(z = NULL, tail = "two", alpha = .05, main = "") {
 
 # area_z(): bell curve with the area for pnorm()/qnorm() shaded and labeled
 area_z <- function(z, tail = "lower", main = "") {
-  x <- seq(-4, 4, length.out = 400)
+  lim <- max(4, abs(z) + 1.5)
+  x <- seq(-lim, lim, length.out = 400)
   plot(x, dnorm(x), type = "l", lwd = 2, xlab = "z", ylab = "", yaxt = "n",
        main = main, ylim = c(0, 0.45))
   shade <- function(a, b) polygon(c(a, seq(a, b, length.out = 100), b),
                                   c(0, dnorm(seq(a, b, length.out = 100)), 0),
                                   col = adjustcolor("#377EB8", .45), border = NA)
   if (tail == "two") z <- abs(z)
-  if (tail == "lower") { shade(-4, z); area <- pnorm(z) }
-  if (tail == "upper") { shade(z, 4);  area <- pnorm(z, lower.tail = FALSE) }
-  if (tail == "two")   { shade(-4, -z); shade(z, 4); area <- 2 * pnorm(-z) }
+  if (tail == "lower") { shade(-lim, z); area <- pnorm(z) }
+  if (tail == "upper") { shade(z, lim);  area <- pnorm(z, lower.tail = FALSE) }
+  if (tail == "two")   { shade(-lim, -z); shade(z, lim); area <- 2 * pnorm(-z) }
   zs <- if (tail == "two") c(-z, z) else z
   abline(v = zs, col = "firebrick", lwd = 2, lty = 2)
   text(zs, 0.44, paste("z =", round(zs, 2)), col = "firebrick", font = 2,
-       pos = ifelse(zs < 0, 2, 4), offset = 0.3)
-  lab <- function(x, a) text(x, max(dnorm(x) + 0.05, 0.08), round(a, 4),
+       pos = ifelse(zs < 0, 4, 2), offset = 0.3)
+  lab <- function(x, a) text(x, max(dnorm(x) + 0.05, 0.08), signif(a, 3),
                              col = "#1f4e79", font = 2, cex = 1.1)
-  if (tail == "lower") lab(max(-3.3, z - 0.9), area)
-  if (tail == "upper") lab(min(3.3, z + 0.9), area)
+  if (tail == "lower") lab(max(-lim + 0.7, z - 0.9), area)
+  if (tail == "upper") lab(min(lim - 0.7, z + 0.9), area)
   if (tail == "two") {
-    lab(max(-3.3, -z - 0.9), area / 2); lab(min(3.3, z + 0.9), area / 2)
-    text(0, 0.2, paste("total shaded =", round(area, 4)), col = "#1f4e79", font = 2, cex = 1.1)
+    lab(max(-lim + 0.7, -z - 0.9), area / 2); lab(min(lim - 0.7, z + 0.9), area / 2)
+    text(0, 0.2, paste("total shaded =", signif(area, 3)), col = "#1f4e79", font = 2, cex = 1.1)
   }
 }
 ```
@@ -74,27 +75,28 @@ draw_z <- function(z = NULL, tail = "two", alpha = .05, main = "") {
 
 # area_z(): bell curve with the area for pnorm()/qnorm() shaded and labeled
 area_z <- function(z, tail = "lower", main = "") {
-  x <- seq(-4, 4, length.out = 400)
+  lim <- max(4, abs(z) + 1.5)
+  x <- seq(-lim, lim, length.out = 400)
   plot(x, dnorm(x), type = "l", lwd = 2, xlab = "z", ylab = "", yaxt = "n",
        main = main, ylim = c(0, 0.45))
   shade <- function(a, b) polygon(c(a, seq(a, b, length.out = 100), b),
                                   c(0, dnorm(seq(a, b, length.out = 100)), 0),
                                   col = adjustcolor("#377EB8", .45), border = NA)
   if (tail == "two") z <- abs(z)
-  if (tail == "lower") { shade(-4, z); area <- pnorm(z) }
-  if (tail == "upper") { shade(z, 4);  area <- pnorm(z, lower.tail = FALSE) }
-  if (tail == "two")   { shade(-4, -z); shade(z, 4); area <- 2 * pnorm(-z) }
+  if (tail == "lower") { shade(-lim, z); area <- pnorm(z) }
+  if (tail == "upper") { shade(z, lim);  area <- pnorm(z, lower.tail = FALSE) }
+  if (tail == "two")   { shade(-lim, -z); shade(z, lim); area <- 2 * pnorm(-z) }
   zs <- if (tail == "two") c(-z, z) else z
   abline(v = zs, col = "firebrick", lwd = 2, lty = 2)
   text(zs, 0.44, paste("z =", round(zs, 2)), col = "firebrick", font = 2,
-       pos = ifelse(zs < 0, 2, 4), offset = 0.3)
-  lab <- function(x, a) text(x, max(dnorm(x) + 0.05, 0.08), round(a, 4),
+       pos = ifelse(zs < 0, 4, 2), offset = 0.3)
+  lab <- function(x, a) text(x, max(dnorm(x) + 0.05, 0.08), signif(a, 3),
                              col = "#1f4e79", font = 2, cex = 1.1)
-  if (tail == "lower") lab(max(-3.3, z - 0.9), area)
-  if (tail == "upper") lab(min(3.3, z + 0.9), area)
+  if (tail == "lower") lab(max(-lim + 0.7, z - 0.9), area)
+  if (tail == "upper") lab(min(lim - 0.7, z + 0.9), area)
   if (tail == "two") {
-    lab(max(-3.3, -z - 0.9), area / 2); lab(min(3.3, z + 0.9), area / 2)
-    text(0, 0.2, paste("total shaded =", round(area, 4)), col = "#1f4e79", font = 2, cex = 1.1)
+    lab(max(-lim + 0.7, -z - 0.9), area / 2); lab(min(lim - 0.7, z + 0.9), area / 2)
+    text(0, 0.2, paste("total shaded =", signif(area, 3)), col = "#1f4e79", font = 2, cex = 1.1)
   }
 }
 ```
@@ -383,6 +385,50 @@ What *p*-value do you get at exactly 1.96?
 :::
 ::::
 ::::::
+
+## Putting It Together: How Likely Is Our Sample Mean? {style="font-size:80%"}
+
+Back to our example: $\mu$ = 10, $\sigma$ = 2, $n$ = 20, $\bar{x}$ = 12. If the population mean really is 10, how likely is a sample mean this far from it?
+
+:::: {.columns}
+::: {.column width="55%"}
+```{webr}
+#| autorun: true
+#| fig-width: 5.5
+#| fig-height: 3.3
+pop_mean  <- 10
+pop_sd    <- 2
+n_samp    <- 20
+samp_mean <- 12
+
+se <- pop_sd / sqrt(n_samp)          # 1. standard error
+z  <- (samp_mean - pop_mean) / se    # 2. z of the sample mean
+p_upper <- pnorm(z, lower.tail = F)  # 3. P(z this high or higher)
+p_two   <- 2 * pnorm(-abs(z))        #    P(this extreme, either way)
+
+c(se = se, z = z, p_upper = p_upper, p_two = p_two)
+area_z(z, tail = "upper", main = "Area beyond our sample mean")
+```
+:::
+
+::: {.column width="45%"}
+Three steps: **SE → *z* → `pnorm()`**
+
+::: {.fragment}
+The area is tiny (about 4 in a million): a mean of 12 would be very unlikely if $\mu$ were 10
+:::
+
+::: {.fragment}
+Same answer without making the *z* first, using the sampling distribution directly:
+
+`pnorm(12, mean = 10, sd = 2 / sqrt(20), lower.tail = F)`
+:::
+
+::: {.fragment}
+Now try `pop_sd <- 8`: how does the probability change?
+:::
+:::
+::::
 
 ## Must-Take-Home Message {style="font-size:90%"}
 

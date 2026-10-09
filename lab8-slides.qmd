@@ -33,27 +33,28 @@ draw_z <- function(z = NULL, tail = "two", alpha = .05, main = "") {
 
 # area_z(): bell curve with the area for pnorm()/qnorm() shaded and labeled
 area_z <- function(z, tail = "lower", main = "") {
-  x <- seq(-4, 4, length.out = 400)
+  lim <- max(4, abs(z) + 1.5)
+  x <- seq(-lim, lim, length.out = 400)
   plot(x, dnorm(x), type = "l", lwd = 2, xlab = "z", ylab = "", yaxt = "n",
        main = main, ylim = c(0, 0.45))
   shade <- function(a, b) polygon(c(a, seq(a, b, length.out = 100), b),
                                   c(0, dnorm(seq(a, b, length.out = 100)), 0),
                                   col = adjustcolor("#377EB8", .45), border = NA)
   if (tail == "two") z <- abs(z)
-  if (tail == "lower") { shade(-4, z); area <- pnorm(z) }
-  if (tail == "upper") { shade(z, 4);  area <- pnorm(z, lower.tail = FALSE) }
-  if (tail == "two")   { shade(-4, -z); shade(z, 4); area <- 2 * pnorm(-z) }
+  if (tail == "lower") { shade(-lim, z); area <- pnorm(z) }
+  if (tail == "upper") { shade(z, lim);  area <- pnorm(z, lower.tail = FALSE) }
+  if (tail == "two")   { shade(-lim, -z); shade(z, lim); area <- 2 * pnorm(-z) }
   zs <- if (tail == "two") c(-z, z) else z
   abline(v = zs, col = "firebrick", lwd = 2, lty = 2)
   text(zs, 0.44, paste("z =", round(zs, 2)), col = "firebrick", font = 2,
-       pos = ifelse(zs < 0, 2, 4), offset = 0.3)
-  lab <- function(x, a) text(x, max(dnorm(x) + 0.05, 0.08), round(a, 4),
+       pos = ifelse(zs < 0, 4, 2), offset = 0.3)
+  lab <- function(x, a) text(x, max(dnorm(x) + 0.05, 0.08), signif(a, 3),
                              col = "#1f4e79", font = 2, cex = 1.1)
-  if (tail == "lower") lab(max(-3.3, z - 0.9), area)
-  if (tail == "upper") lab(min(3.3, z + 0.9), area)
+  if (tail == "lower") lab(max(-lim + 0.7, z - 0.9), area)
+  if (tail == "upper") lab(min(lim - 0.7, z + 0.9), area)
   if (tail == "two") {
-    lab(max(-3.3, -z - 0.9), area / 2); lab(min(3.3, z + 0.9), area / 2)
-    text(0, 0.2, paste("total shaded =", round(area, 4)), col = "#1f4e79", font = 2, cex = 1.1)
+    lab(max(-lim + 0.7, -z - 0.9), area / 2); lab(min(lim - 0.7, z + 0.9), area / 2)
+    text(0, 0.2, paste("total shaded =", signif(area, 3)), col = "#1f4e79", font = 2, cex = 1.1)
   }
 }
 ```
@@ -74,27 +75,28 @@ draw_z <- function(z = NULL, tail = "two", alpha = .05, main = "") {
 
 # area_z(): bell curve with the area for pnorm()/qnorm() shaded and labeled
 area_z <- function(z, tail = "lower", main = "") {
-  x <- seq(-4, 4, length.out = 400)
+  lim <- max(4, abs(z) + 1.5)
+  x <- seq(-lim, lim, length.out = 400)
   plot(x, dnorm(x), type = "l", lwd = 2, xlab = "z", ylab = "", yaxt = "n",
        main = main, ylim = c(0, 0.45))
   shade <- function(a, b) polygon(c(a, seq(a, b, length.out = 100), b),
                                   c(0, dnorm(seq(a, b, length.out = 100)), 0),
                                   col = adjustcolor("#377EB8", .45), border = NA)
   if (tail == "two") z <- abs(z)
-  if (tail == "lower") { shade(-4, z); area <- pnorm(z) }
-  if (tail == "upper") { shade(z, 4);  area <- pnorm(z, lower.tail = FALSE) }
-  if (tail == "two")   { shade(-4, -z); shade(z, 4); area <- 2 * pnorm(-z) }
+  if (tail == "lower") { shade(-lim, z); area <- pnorm(z) }
+  if (tail == "upper") { shade(z, lim);  area <- pnorm(z, lower.tail = FALSE) }
+  if (tail == "two")   { shade(-lim, -z); shade(z, lim); area <- 2 * pnorm(-z) }
   zs <- if (tail == "two") c(-z, z) else z
   abline(v = zs, col = "firebrick", lwd = 2, lty = 2)
   text(zs, 0.44, paste("z =", round(zs, 2)), col = "firebrick", font = 2,
-       pos = ifelse(zs < 0, 2, 4), offset = 0.3)
-  lab <- function(x, a) text(x, max(dnorm(x) + 0.05, 0.08), round(a, 4),
+       pos = ifelse(zs < 0, 4, 2), offset = 0.3)
+  lab <- function(x, a) text(x, max(dnorm(x) + 0.05, 0.08), signif(a, 3),
                              col = "#1f4e79", font = 2, cex = 1.1)
-  if (tail == "lower") lab(max(-3.3, z - 0.9), area)
-  if (tail == "upper") lab(min(3.3, z + 0.9), area)
+  if (tail == "lower") lab(max(-lim + 0.7, z - 0.9), area)
+  if (tail == "upper") lab(min(lim - 0.7, z + 0.9), area)
   if (tail == "two") {
-    lab(max(-3.3, -z - 0.9), area / 2); lab(min(3.3, z + 0.9), area / 2)
-    text(0, 0.2, paste("total shaded =", round(area, 4)), col = "#1f4e79", font = 2, cex = 1.1)
+    lab(max(-lim + 0.7, -z - 0.9), area / 2); lab(min(lim - 0.7, z + 0.9), area / 2)
+    text(0, 0.2, paste("total shaded =", signif(area, 3)), col = "#1f4e79", font = 2, cex = 1.1)
   }
 }
 ```
