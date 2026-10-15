@@ -4,7 +4,7 @@
     "href": "lab8-slides.html#outline",
     "title": "Null Hypothesis Significance Testing II",
     "section": "Outline",
-    "text": "Outline\n\nQuick Review: z, pnorm(), qnorm()\nHypothesis Testing Step by Step\nOne-Tailed vs. Two-Tailed Tests\n\nLearning objectives: R: writing a z-test by hand\nStatistics: z-test for a sample mean, reject vs. retain, directional hypotheses"
+    "text": "Outline\n\nQuick Review: Testing a Sample Mean\nOne-Tailed vs. Two-Tailed Tests\nErrors and Statistical Power\n\nLearning objectives: R: simulating Type I error and power with a for loop\nStatistics: directional tests, Type I / Type II errors, power"
   },
   {
     "objectID": "lab8-slides.html#quick-review-from-lab-7",
@@ -18,28 +18,21 @@
     "href": "lab8-slides.html#the-logic-of-hypothesis-testing",
     "title": "Null Hypothesis Significance Testing II",
     "section": "The Logic of Hypothesis Testing",
-    "text": "The Logic of Hypothesis Testing\n1. State the hypotheses\n\n○ \\(H_0\\): no effect / no difference (e.g., \\(\\mu\\) = 100)\n\n\n○ \\(H_1\\): there is an effect / a difference (e.g., \\(\\mu \\neq\\) 100)\n\n2. Set the significance level: \\(\\alpha\\) = .05, and find the critical value\n3. Compute the test statistic (\\(z\\)) and its p-value, assuming \\(H_0\\) is true\n4. Make a decision\n\n\n\n\n\n\n\n\n\nDecision\n\n\n\n\n\\(p \\le \\alpha\\), or \\(|z| \\ge |z_{crit}|\\)\nReject \\(H_0\\): statistically significant\n\n\n\\(p &gt; \\alpha\\), or \\(|z| &lt; |z_{crit}|\\)\nFail to reject (retain) \\(H_0\\): not significant\n\n\n\n\nⓘ We never say we “accept” \\(H_0\\) or that \\(H_0\\) is true"
+    "text": "The Logic of Hypothesis Testing\n\n\n1. State the hypotheses\n\n○ \\(H_0\\): no effect (e.g., \\(\\mu\\) = 100)\n\n\n○ \\(H_1\\): an effect (e.g., \\(\\mu \\neq\\) 100)\n\n2. Set \\(\\alpha\\) = .05 and find the critical value\n3. Compute \\(z\\) and its p-value, assuming \\(H_0\\) is true\n4. Make a decision\n\n\n\n\n\n\n\n\n\nDecision\n\n\n\n\n\\(p \\le \\alpha\\) or \\(|z| \\ge |z_{crit}|\\)\nReject \\(H_0\\) (significant)\n\n\n\\(p &gt; \\alpha\\) or \\(|z| &lt; |z_{crit}|\\)\nFail to reject \\(H_0\\) (not significant)\n\n\n\nⓘ Never say we “accept” \\(H_0\\) or that \\(H_0\\) is true"
   },
   {
     "objectID": "lab8-slides.html#example-weight-of-cats",
     "href": "lab8-slides.html#example-weight-of-cats",
     "title": "Null Hypothesis Significance Testing II",
     "section": "Example: Weight of Cats",
-    "text": "Example: Weight of Cats\nNormal cats: \\(\\mu\\) = 100 g, \\(\\sigma\\) = 40. A sample of \\(n\\) = 16 cats with prenatal alcohol exposure has \\(\\bar{x}\\) = 70. Does alcohol affect birth weight?\n\n\n\n\n\n\n\n\n\n\n\n\n\\(z\\) = −3 is far in the rejection region\n\\(p\\) &lt; .05 → reject \\(H_0\\)\nPrenatal alcohol exposure has a statistically significant effect on cats’ birth weight\n\n\nⓘ The lecture reports the one-tail area, pnorm(-3) = .00135; the two-tailed p doubles it (.0027). Same decision either way"
+    "text": "Example: Weight of Cats\nNormal cats: \\(\\mu\\) = 100 g, \\(\\sigma\\) = 40. A sample of \\(n\\) = 16 cats with prenatal alcohol exposure has \\(\\bar{x}\\) = 70. Does alcohol affect birth weight?\n\n\n\n\n\n\n\n\n\n\n\n\n\\(z\\) = −3 is far in the rejection region\n\\(p\\) &lt; .05 → reject \\(H_0\\)\nPrenatal alcohol exposure has a statistically significant effect on cats’ birth weight\n\n\nⓘ Lecture reports the one-tail area, pnorm(-3) = .00135; two-tailed p = .0027. Same decision"
   },
   {
-    "objectID": "lab8-slides.html#your-turn-the-evil-professor",
-    "href": "lab8-slides.html#your-turn-the-evil-professor",
+    "objectID": "lab8-slides.html#what-does-the-p-value-mean",
+    "href": "lab8-slides.html#what-does-the-p-value-mean",
     "title": "Null Hypothesis Significance Testing II",
-    "section": "Your Turn: The “Evil” Professor",
-    "text": "Your Turn: The “Evil” Professor\nYour professor believes extra homework changes final exam scores. Population: \\(\\mu\\) = 70, \\(\\sigma\\) = 15. A sample of \\(n\\) = 25 students who got 50 extra HW questions a week scored \\(\\bar{x}\\) = 75.\n\n\n\n\n\n\n\n\n\nCheck: \\(z = \\dfrac{75 - 70}{15 / \\sqrt{25}} = \\dfrac{5}{3}\\) = 1.67, which is less than 1.96 → retain \\(H_0\\)"
-  },
-  {
-    "objectID": "lab8-slides.html#example-z-test-with-real-data",
-    "href": "lab8-slides.html#example-z-test-with-real-data",
-    "title": "Null Hypothesis Significance Testing II",
-    "section": "Example z-Test with Real Data",
-    "text": "Example z-Test with Real Data\nA flower researcher tells us the population mean of iris petal length is 4 cm and of petal width is 3 cm, both with \\(\\sigma^2\\) = 4. Do the iris sample means differ?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsum(!is.na(x)) counts only the non-missing values, which is safer than length() or nrow() if there are NAs\n\n\nInterpretation? Which test is significant?"
+    "section": "What Does the p-Value Mean?",
+    "text": "What Does the p-Value Mean?\nThe p-value is the probability of getting a test statistic equal to or more extreme than the one we observed, assuming \\(H_0\\) is true\n\nCats: assuming \\(\\mu\\) = 100 is true, the probability of a sample mean (\\(n\\) = 16) at least as far from 100 as 70 is\n\n\n\n\n\n\n\n\n\n\n\n○ The smaller the p-value, the stronger the evidence against \\(H_0\\)\n\n\n○ It is not the probability that \\(H_0\\) is true"
   },
   {
     "objectID": "lab8-slides.html#directional-vs.-non-directional-hypotheses",
@@ -56,6 +49,13 @@
     "text": "Practice: Directional or Non-Directional?\n\nThere is a difference in body weights, with men weighing more than women.\nWomen are better at concentrating on more than one thing at a time than men.\nThere is a relationship between studying and final exam score.\nAs employees earn more money, they become less likely to leave for a new job.\n\n\nDirectional: 1, 2, 4 | Non-directional: 3"
   },
   {
+    "objectID": "lab8-slides.html#your-turn-the-evil-professor",
+    "href": "lab8-slides.html#your-turn-the-evil-professor",
+    "title": "Null Hypothesis Significance Testing II",
+    "section": "Your Turn: The “Evil” Professor",
+    "text": "Your Turn: The “Evil” Professor\nYour professor believes extra homework changes final exam scores. Population: \\(\\mu\\) = 70, \\(\\sigma\\) = 15. A sample of \\(n\\) = 25 students who got 50 extra HW questions a week scored \\(\\bar{x}\\) = 75.\n\n\n\n\n\n\n\n\n\nCheck: \\(z = \\dfrac{75 - 70}{15 / \\sqrt{25}} = \\dfrac{5}{3}\\) = 1.67, which is less than 1.96 → retain \\(H_0\\)"
+  },
+  {
     "objectID": "lab8-slides.html#the-evil-professor-revisited",
     "href": "lab8-slides.html#the-evil-professor-revisited",
     "title": "Null Hypothesis Significance Testing II",
@@ -63,11 +63,46 @@
     "text": "The “Evil” Professor, Revisited\nNow your professor believes extra homework increases final exam scores (same data: \\(\\mu\\) = 70, \\(\\sigma\\) = 15, \\(n\\) = 25, \\(\\bar{x}\\) = 75)\n\n\n\n\n\n\n\n\n\n\n\nSame data, same \\(z\\) = 1.67…\n\n\n○ Two-tailed: 1.67 &lt; 1.96 → retain \\(H_0\\)\n\n\n○ Upper-tailed: 1.67 &gt; 1.65 → reject \\(H_0\\)\n\n\n\nThis is why the direction must be decided before looking at the data!"
   },
   {
+    "objectID": "lab8-slides.html#type-i-and-type-ii-errors",
+    "href": "lab8-slides.html#type-i-and-type-ii-errors",
+    "title": "Null Hypothesis Significance Testing II",
+    "section": "Type I and Type II Errors",
+    "text": "Type I and Type II Errors\n\n\n\n\n\n\n\n\n\n\\(H_0\\) true (no effect)\n\\(H_0\\) false (effect exists)\n\n\n\n\nReject \\(H_0\\)\nType I error (\\(\\alpha\\)) “false alarm”\nCorrect: power (\\(1 - \\beta\\))\n\n\nFail to reject \\(H_0\\)\nCorrect\nType II error (\\(\\beta\\)) “miss a real effect”\n\n\n\n\n○ \\(\\alpha\\) = probability of a Type I error; we choose it (.05)\n\n\n○ \\(\\beta\\) = probability of a Type II error; not easy to know\n\n\n○ Power = \\(1 - \\beta\\) = probability of detecting a real effect\n\n\nPop quiz: if \\(\\beta\\) = 40%, what is power? If \\(\\beta\\) = 10%?\n\n\n60% and 90%"
+  },
+  {
+    "objectID": "lab8-slides.html#simulating-a-type-i-error-rate",
+    "href": "lab8-slides.html#simulating-a-type-i-error-rate",
+    "title": "Null Hypothesis Significance Testing II",
+    "section": "Simulating a Type I Error Rate",
+    "text": "Simulating a Type I Error Rate\nWhat if \\(H_0\\) is true? Run 1,000 studies where the population really has \\(\\mu\\) = 70, and count how often we wrongly reject\n\n\n\n\n\n\n\n\n\n\n\nThe same for loop as Lab 6, one study per loop\nmean() of TRUE/FALSE = proportion of TRUE\n\nWe reject about 5% of the time, even though there is no effect\nThat 5% is \\(\\alpha\\): the Type I error rate we chose"
+  },
+  {
+    "objectID": "lab8-slides.html#simulating-power",
+    "href": "lab8-slides.html#simulating-power",
+    "title": "Null Hypothesis Significance Testing II",
+    "section": "Simulating Power",
+    "text": "Simulating Power\nNow suppose extra homework really raises the mean to 75. We still test \\(H_0\\): \\(\\mu\\) = 70. How often do we catch the effect?\n\n\n\n\n\n\n\n\n\n\n\nEvery rejection here is correct, so the proportion is the power\n\nPower is under 0.4 (theory says 0.38): the “Evil” Professor’s study would miss a real 5-point effect most of the time\n\n\nChange n to 100 and re-run. What happens?"
+  },
+  {
+    "objectID": "lab8-slides.html#what-affects-power",
+    "href": "lab8-slides.html#what-affects-power",
+    "title": "Null Hypothesis Significance Testing II",
+    "section": "What Affects Power?",
+    "text": "What Affects Power?\n\n\n\n\n\n\n\n\n\n\n\nPower goes up with\n\n○ a larger difference from \\(\\mu_0\\)\n\n\n○ less variability (\\(\\sigma\\))\n\n\n○ a larger \\(n\\)\n\n\n○ a larger \\(\\alpha\\)\n\n\nLearning check: testing \\(H_0\\): \\(\\mu\\) = 80, which is most likely to reject? (A) \\(\\sigma\\) = 5, \\(n\\) = 25 (B) \\(\\sigma\\) = 5, \\(n\\) = 50 (C) \\(\\sigma\\) = 10, \\(n\\) = 25 (D) \\(\\sigma\\) = 10, \\(n\\) = 50\nB: smallest \\(\\sigma\\), largest \\(n\\) → smallest standard error"
+  },
+  {
+    "objectID": "lab8-slides.html#your-turn-the-popcorn-problem",
+    "href": "lab8-slides.html#your-turn-the-popcorn-problem",
+    "title": "Null Hypothesis Significance Testing II",
+    "section": "Your Turn: The Popcorn Problem",
+    "text": "Your Turn: The Popcorn Problem\nA theater owner knows a bag should hold \\(\\mu\\) = 8 cups, \\(\\sigma\\) = 0.50. The newest employee’s \\(n\\) = 25 bags average \\(\\bar{x}\\) = 7.75 cups. Is the employee filling bags incorrectly (\\(\\alpha\\) = .05)?\n\n\n\n\n\n\n\n\n\nCheck: \\(z = \\dfrac{7.75 - 8}{0.5 / \\sqrt{25}}\\) = −2.5, beyond −1.96 → reject \\(H_0\\): the employee is filling bags incorrectly"
+  },
+  {
     "objectID": "lab8-slides.html#must-take-home-message",
     "href": "lab8-slides.html#must-take-home-message",
     "title": "Null Hypothesis Significance Testing II",
     "section": "Must-Take-Home Message",
-    "text": "Must-Take-Home Message\n\\[z_{\\bar{x}} = \\frac{\\bar{x} - \\mu}{\\sigma / \\sqrt{n}}\\]\n\n○ pnorm() turns a z into a probability; use lower.tail = F or -abs(z) for the upper tail\n\n\n○ qnorm() turns \\(\\alpha\\) into a critical value: ±1.96 (two-tailed), ±1.65 (one-tailed)\n\n\n○ Two-tailed p = 2 × one-tailed p\n\n\n○ \\(p \\le \\alpha\\) → reject \\(H_0\\); \\(p &gt; \\alpha\\) → fail to reject (never “accept”) \\(H_0\\)\n\n\n○ Directional hypothesis → one-tailed test; decide before collecting data"
+    "text": "Must-Take-Home Message\n\n○ The p-value: the probability of a result this extreme or more, assuming \\(H_0\\) is true\n\n\n○ Directional hypothesis → one-tailed test (±1.65); non-directional → two-tailed (±1.96); decide before collecting data\n\n\n○ Type I error = rejecting a true \\(H_0\\) (rate = \\(\\alpha\\)); Type II error = missing a real effect (rate = \\(\\beta\\))\n\n\n○ Power = \\(1 - \\beta\\); it goes up with a bigger difference, smaller \\(\\sigma\\), bigger \\(n\\), bigger \\(\\alpha\\)"
   },
   {
     "objectID": "lab8-slides.html#lab-8-assignment",
@@ -1134,6 +1169,13 @@
     "text": "Getting a p-Value for Any z\n\n\n\n\n\n\n\n\n\n\n\n-abs(z) always puts us in the lower tail, so this works for positive and negative z\nTwo-tailed p = 2 × one tail\n\nTry z &lt;- 3, z &lt;- 0, z &lt;- 1.96\nWhat p-value do you get at exactly 1.96?"
   },
   {
+    "objectID": "lab7-slides.html#putting-it-together-how-likely-is-our-sample-mean",
+    "href": "lab7-slides.html#putting-it-together-how-likely-is-our-sample-mean",
+    "title": "Null Hypothesis Significance Testing I",
+    "section": "Putting It Together: How Likely Is Our Sample Mean?",
+    "text": "Putting It Together: How Likely Is Our Sample Mean?\nBack to our example: \\(\\mu\\) = 10, \\(\\sigma\\) = 2, \\(n\\) = 20, \\(\\bar{x}\\) = 12. If the population mean really is 10, how likely is a sample mean this far from it?\n\n\n\n\n\n\n\n\n\n\n\nThree steps: SE → z → pnorm()\n\nThe area is tiny (about 4 in a million): a mean of 12 would be very unlikely if \\(\\mu\\) were 10\n\n\nSame answer without making the z first, using the sampling distribution directly:\npnorm(12, mean = 10, sd = 2 / sqrt(20), lower.tail = F)\n\n\nNow try pop_sd &lt;- 8: how does the probability change?"
+  },
+  {
     "objectID": "lab7-slides.html#must-take-home-message",
     "href": "lab7-slides.html#must-take-home-message",
     "title": "Null Hypothesis Significance Testing I",
@@ -1146,12 +1188,5 @@
     "title": "Null Hypothesis Significance Testing I",
     "section": "Lab 7 Assignment!",
     "text": "Lab 7 Assignment!\n\n\nLook back at the slides and the live code to help you work through this week’s assignment\nPlease submit both the knitted file and the .Rmd on Canvas!"
-  },
-  {
-    "objectID": "lab7-slides.html#putting-it-together-how-likely-is-our-sample-mean",
-    "href": "lab7-slides.html#putting-it-together-how-likely-is-our-sample-mean",
-    "title": "Null Hypothesis Significance Testing I",
-    "section": "Putting It Together: How Likely Is Our Sample Mean?",
-    "text": "Putting It Together: How Likely Is Our Sample Mean?\nBack to our example: \\(\\mu\\) = 10, \\(\\sigma\\) = 2, \\(n\\) = 20, \\(\\bar{x}\\) = 12. If the population mean really is 10, how likely is a sample mean this far from it?\n\n\n\n\n\n\n\n\n\n\n\nThree steps: SE → z → pnorm()\n\nThe area is tiny (about 4 in a million): a mean of 12 would be very unlikely if \\(\\mu\\) were 10\n\n\nSame answer without making the z first, using the sampling distribution directly:\npnorm(12, mean = 10, sd = 2 / sqrt(20), lower.tail = F)\n\n\nNow try pop_sd &lt;- 8: how does the probability change?"
   }
 ]
