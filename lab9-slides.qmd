@@ -1,0 +1,201 @@
+---
+title: "Effect Size"
+subtitle: "PSYC 2020-A01 / PSYC 6022-A01 | Lab 9"
+author: "Shuheng Jiang"
+format:
+  live-revealjs:
+    slide-number: true
+    show-slide-number: all
+    css: styles.css
+    width: 1200
+engine: knitr
+execute:
+  echo: true
+---
+
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{webr}
+#| edit: false
+#| output: false
+# hidden setup: a helper that draws the standard normal curve and shades the rejection region(s)
+draw_z <- function(z = NULL, tail = "two", alpha = .05, main = "") {
+  x <- seq(-4, 4, length.out = 400)
+  plot(x, dnorm(x), type = "l", lwd = 2, xlab = "z", ylab = "", yaxt = "n", main = main)
+  shade <- function(a, b) polygon(c(a, seq(a, b, length.out = 100), b),
+                                  c(0, dnorm(seq(a, b, length.out = 100)), 0),
+                                  col = adjustcolor("firebrick", .4), border = NA)
+  if (tail == "two")   { cv <- qnorm(1 - alpha / 2); shade(-4, -cv); shade(cv, 4) }
+  if (tail == "lower") { cv <- qnorm(alpha); shade(-4, cv) }
+  if (tail == "upper") { cv <- qnorm(1 - alpha); shade(cv, 4) }
+  if (!is.null(z)) abline(v = z, col = "#377EB8", lwd = 3)
+}
+
+# area_z(): bell curve with the area for pnorm()/qnorm() shaded and labeled
+area_z <- function(z, tail = "lower", main = "") {
+  lim <- max(4, abs(z) + 1.5)
+  x <- seq(-lim, lim, length.out = 400)
+  plot(x, dnorm(x), type = "l", lwd = 2, xlab = "z", ylab = "", yaxt = "n",
+       main = main, ylim = c(0, 0.45))
+  shade <- function(a, b) polygon(c(a, seq(a, b, length.out = 100), b),
+                                  c(0, dnorm(seq(a, b, length.out = 100)), 0),
+                                  col = adjustcolor("#377EB8", .45), border = NA)
+  if (tail == "two") z <- abs(z)
+  if (tail == "lower") { shade(-lim, z); area <- pnorm(z) }
+  if (tail == "upper") { shade(z, lim);  area <- pnorm(z, lower.tail = FALSE) }
+  if (tail == "two")   { shade(-lim, -z); shade(z, lim); area <- 2 * pnorm(-z) }
+  zs <- if (tail == "two") c(-z, z) else z
+  abline(v = zs, col = "firebrick", lwd = 2, lty = 2)
+  text(zs, 0.44, paste("z =", round(zs, 2)), col = "firebrick", font = 2,
+       pos = ifelse(zs < 0, 4, 2), offset = 0.3)
+  lab <- function(x, a) text(x, max(dnorm(x) + 0.05, 0.08), signif(a, 3),
+                             col = "#1f4e79", font = 2, cex = 1.1)
+  if (tail == "lower") lab(max(-lim + 0.7, z - 0.9), area)
+  if (tail == "upper") lab(min(lim - 0.7, z + 0.9), area)
+  if (tail == "two") {
+    lab(max(-lim + 0.7, -z - 0.9), area / 2); lab(min(lim - 0.7, z + 0.9), area / 2)
+    text(0, 0.2, paste("total shaded =", signif(area, 3)), col = "#1f4e79", font = 2, cex = 1.1)
+  }
+}
+```
+
+```{r}
+#| include: false
+draw_z <- function(z = NULL, tail = "two", alpha = .05, main = "") {
+  x <- seq(-4, 4, length.out = 400)
+  plot(x, dnorm(x), type = "l", lwd = 2, xlab = "z", ylab = "", yaxt = "n", main = main)
+  shade <- function(a, b) polygon(c(a, seq(a, b, length.out = 100), b),
+                                  c(0, dnorm(seq(a, b, length.out = 100)), 0),
+                                  col = adjustcolor("firebrick", .4), border = NA)
+  if (tail == "two")   { cv <- qnorm(1 - alpha / 2); shade(-4, -cv); shade(cv, 4) }
+  if (tail == "lower") { cv <- qnorm(alpha); shade(-4, cv) }
+  if (tail == "upper") { cv <- qnorm(1 - alpha); shade(cv, 4) }
+  if (!is.null(z)) abline(v = z, col = "#377EB8", lwd = 3)
+}
+
+# area_z(): bell curve with the area for pnorm()/qnorm() shaded and labeled
+area_z <- function(z, tail = "lower", main = "") {
+  lim <- max(4, abs(z) + 1.5)
+  x <- seq(-lim, lim, length.out = 400)
+  plot(x, dnorm(x), type = "l", lwd = 2, xlab = "z", ylab = "", yaxt = "n",
+       main = main, ylim = c(0, 0.45))
+  shade <- function(a, b) polygon(c(a, seq(a, b, length.out = 100), b),
+                                  c(0, dnorm(seq(a, b, length.out = 100)), 0),
+                                  col = adjustcolor("#377EB8", .45), border = NA)
+  if (tail == "two") z <- abs(z)
+  if (tail == "lower") { shade(-lim, z); area <- pnorm(z) }
+  if (tail == "upper") { shade(z, lim);  area <- pnorm(z, lower.tail = FALSE) }
+  if (tail == "two")   { shade(-lim, -z); shade(z, lim); area <- 2 * pnorm(-z) }
+  zs <- if (tail == "two") c(-z, z) else z
+  abline(v = zs, col = "firebrick", lwd = 2, lty = 2)
+  text(zs, 0.44, paste("z =", round(zs, 2)), col = "firebrick", font = 2,
+       pos = ifelse(zs < 0, 4, 2), offset = 0.3)
+  lab <- function(x, a) text(x, max(dnorm(x) + 0.05, 0.08), signif(a, 3),
+                             col = "#1f4e79", font = 2, cex = 1.1)
+  if (tail == "lower") lab(max(-lim + 0.7, z - 0.9), area)
+  if (tail == "upper") lab(min(lim - 0.7, z + 0.9), area)
+  if (tail == "two") {
+    lab(max(-lim + 0.7, -z - 0.9), area / 2); lab(min(lim - 0.7, z + 0.9), area / 2)
+    text(0, 0.2, paste("total shaded =", signif(area, 3)), col = "#1f4e79", font = 2, cex = 1.1)
+  }
+}
+```
+
+## Outline
+
+-   Effect Size: Cohen's *d*
+
+Learning objectives: **R:** computing Cohen's *d*
+
+**Statistics:** statistical vs. practical significance, effect size
+
+<!-- Moved from Lab 8. Add the rest of the Week 9 lecture content here. -->
+
+# Effect Size: Cohen's *d* {.center}
+
+## Statistical vs. Practical Significance {style="font-size:85%"}
+
+::: subpoint
+○ **Statistical** significance: is there *any* difference?
+:::
+
+::: subpoint
+○ **Practical** significance: how *big* is the difference?
+:::
+
+Significant effects are not always substantial, so we report an **effect size**: the magnitude of the effect, independent of sample size
+
+$$d = \frac{\bar{x} - \mu}{\sigma}$$
+
+| $|d|$ | Effect size |
+|:-----:|:-----------:|
+|  0.2  |    Small    |
+|  0.5  |   Medium    |
+|  0.8  |    Large    |
+
+::: {style="font-size:70%"}
+ⓘ Unlike $z$, there is no $\sqrt{n}$: we divide by $\sigma$, not the standard error
+:::
+
+## Cohen's *d* in R {style="font-size:85%"}
+
+::::::::: columns
+::: {.column width="58%"}
+```{webr}
+#| autorun: true
+x_bar <- 75; mu <- 70; sigma <- 15
+n <- 25   # try 100, then 10000
+
+z <- (x_bar - mu) / (sigma / sqrt(n))
+d <- (x_bar - mu) / sigma
+c(z = z, p = 2 * pnorm(-abs(z)), d = d)
+```
+:::
+
+::::::: {.column width="42%"}
+"Evil" Professor: $d$ = 0.33, a small effect
+
+::: fragment
+Change `n` and re-run: $z$ and $p$ change, $d$ does not
+:::
+
+::::: {.fragment style="font-size:85%"}
+True or false?
+
+::: subpoint
+○ Increasing the sample size increases the effect size: **False**
+:::
+
+::: subpoint
+○ A larger difference between the sample and population mean increases the effect size: **True** (it is the numerator)
+:::
+:::::
+:::::::
+:::::::::
+
+## Your Turn: The Popcorn Problem {style="font-size:80%"}
+
+A theater owner knows a bag should hold $\mu$ = 8 cups, $\sigma$ = 0.50. The newest employee's $n$ = 25 bags average $\bar{x}$ = 7.75 cups. Is the employee filling bags incorrectly ($\alpha$ = .05)?
+
+```{webr}
+# a. H0:            H1:
+# b. critical values (two-tailed)
+
+# c. test statistic
+
+# d. decision and conclusion
+
+# e. effect size (Cohen's d)
+
+```
+
+::: fragment
+Check: $z = \dfrac{7.75 - 8}{0.5 / \sqrt{25}}$ = −2.5, beyond −1.96 → **reject** $H_0$; $d = \dfrac{-0.25}{0.5}$ = −0.5, a **medium** effect
+:::
+
+## Lab 9 Assignment!
+
+<!-- Add assignment reminders here. -->
+
+-   Look back at the slides and the live code to help you work through this week's assignment
+-   Please submit both the knitted file and the .Rmd on Canvas!

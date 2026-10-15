@@ -103,17 +103,19 @@ area_z <- function(z, tail = "lower", main = "") {
 
 ## Outline
 
--   Quick Review: *z*, `pnorm()`, `qnorm()`
--   Hypothesis Testing Step by Step
+-   Quick Review: Testing a Sample Mean
 -   One-Tailed vs. Two-Tailed Tests
+-   Errors and Statistical Power
 
-Learning objectives: **R:** writing a *z*-test by hand
+Learning objectives: **R:** simulating Type I error and power with a `for` loop
 
-**Statistics:** *z*-test for a sample mean, reject vs. retain, directional hypotheses
+**Statistics:** directional tests, Type I / Type II errors, power
+
+# Quick Review: Testing a Sample Mean {.center}
 
 ## Quick Review from Lab 7 {style="font-size:85%"}
 
-:::: {.columns}
+::::: columns
 ::: {.column width="50%"}
 $$z_{\bar{x}} = \frac{\bar{x} - \mu}{\sigma / \sqrt{n}}$$
 
@@ -132,128 +134,91 @@ qnorm(.975)           # area -> critical z
 area_z(1.5, tail = "two", main = "two-tailed p for z = 1.5")
 ```
 :::
-::::
+:::::
 
-# Hypothesis Testing Step by Step {.center}
+## The Logic of Hypothesis Testing {style="font-size:90%"}
 
-## The Logic of Hypothesis Testing
-
+:::: {.columns}
+::: {.column width="50%"}
 **1. State the hypotheses**
 
-::: subpoint
-○ $H_0$: no effect / no difference (e.g., $\mu$ = 100)
-:::
+<div class="subpoint">○ $H_0$: no effect (e.g., $\mu$ = 100) </div>
+<div class="subpoint">○ $H_1$: an effect (e.g., $\mu \neq$ 100) </div>
 
-::: subpoint
-○ $H_1$: there is an effect / a difference (e.g., $\mu \neq$ 100)
-:::
+**2. Set $\alpha$** = .05 and find the critical value
 
-**2. Set the significance level**: $\alpha$ = .05, and find the critical value
-
-**3. Compute the test statistic** ($z$) and its *p*-value, *assuming* $H_0$ is true
+**3. Compute** $z$ and its *p*-value, assuming $H_0$ is true
 
 **4. Make a decision**
-
-. . .
-
-|   | Decision |
-|------------------------------------|------------------------------------|
-| $p \le \alpha$, or $|z| \ge |z_{crit}|$ | **Reject** $H_0$: statistically significant |
-| $p > \alpha$, or $|z| < |z_{crit}|$ | **Fail to reject** (retain) $H_0$: not significant |
-
-::: {style="font-size:70%"}
-ⓘ We never say we "accept" $H_0$ or that $H_0$ is true
 :::
 
-## Example: Weight of Cats {style="font-size:85%"}
+::: {.column width="50%" .fragment}
+| | Decision |
+|---|---|
+| $p \le \alpha$ or $|z| \ge |z_{crit}|$ | **Reject** $H_0$ (significant) |
+| $p > \alpha$ or $|z| < |z_{crit}|$ | **Fail to reject** $H_0$ (not significant) |
+
+ⓘ Never say we "accept" $H_0$ or that $H_0$ is true
+:::
+::::
+
+## Example: Weight of Cats {style="font-size:70%"}
 
 Normal cats: $\mu$ = 100 g, $\sigma$ = 40. A sample of $n$ = 16 cats with prenatal alcohol exposure has $\bar{x}$ = 70. Does alcohol affect birth weight?
 
-::::::: columns
+:::: {.columns}
 ::: {.column width="55%"}
 ```{webr}
 #| autorun: true
-#| fig-width: 5.5
-#| fig-height: 3
-# Step 1: H0: mu = 100   H1: mu != 100
-# Step 2
+#| fig-width: 5
+#| fig-height: 2.4
+# 1. H0: mu = 100   H1: mu != 100
 alpha  <- .05
-z_crit <- qnorm(1 - alpha / 2)
-# Step 3
-z <- (70 - 100) / (40 / sqrt(16))
+z_crit <- qnorm(alpha / 2)          # 2.
+z <- (70 - 100) / (40 / sqrt(16))       # 3.
 p <- 2 * pnorm(-abs(z))
 c(z = z, z_crit = z_crit, p = p)
-# Step 4
-p <= alpha
+p <= alpha                              # 4.
 draw_z(z, tail = "two")
 ```
 :::
 
-::::: {.column width="45%"}
-::: fragment
+::: {.column width="45%"}
+::: {.fragment}
 $z$ = −3 is far in the rejection region
 
-$p$ \< .05 → **reject** $H_0$
+$p$ < .05 → **reject** $H_0$
 
 Prenatal alcohol exposure has a statistically significant effect on cats' birth weight
 :::
 
-::: {style="font-size:65%"}
-ⓘ The lecture reports the one-tail area, `pnorm(-3)` = .00135; the two-tailed *p* doubles it (.0027). Same decision either way
+::: {style="font-size:75%"}
+ⓘ Lecture reports the one-tail area, `pnorm(-3)` = .00135; two-tailed *p* = .0027. Same decision
 :::
-:::::
-:::::::
-
-## Your Turn: The "Evil" Professor {style="font-size:85%"}
-
-Your professor believes extra homework **changes** final exam scores. Population: $\mu$ = 70, $\sigma$ = 15. A sample of $n$ = 25 students who got 50 extra HW questions a week scored $\bar{x}$ = 75.
-
-```{webr}
-# a. H0:            H1:
-# b. critical value at alpha = .05 (two-tailed)
-
-# c. test statistic
-
-# d. decision and conclusion
-
-```
-
-::: {.fragment style="font-size:80%"}
-Check: $z = \dfrac{75 - 70}{15 / \sqrt{25}} = \dfrac{5}{3}$ = 1.67, which is less than 1.96 → **retain** $H_0$
 :::
+::::
 
-## Example *z*-Test with Real Data {style="font-size:80%"}
+## What Does the *p*-Value Mean? {style="font-size:85%"}
 
-A flower researcher tells us the population mean of iris petal **length** is 4 cm and of petal **width** is 3 cm, both with $\sigma^2$ = 4. Do the `iris` sample means differ?
-
-::::: columns
-::: column
-```{webr}
-samp_mean <- mean(iris$Petal.Length)
-pop_mean  <- 4
-pop_sd    <- sqrt(4)
-samp_n    <- sum(!is.na(iris$Petal.Length))
-
-z_length <- (samp_mean - pop_mean) /
-  (pop_sd / sqrt(samp_n))
-z_length
-2 * pnorm(-abs(z_length))
-```
-:::
-
-::: column
-```{webr}
-# your turn: petal width (pop mean = 3)
-
-```
-
-`sum(!is.na(x))` counts only the non-missing values, which is safer than `length()` or `nrow()` if there are `NA`s
-:::
-:::::
+The *p*-value is the probability of getting a test statistic **equal to or more extreme** than the one we observed, **assuming** $H_0$ is true
 
 ::: fragment
-Interpretation? Which test is significant?
+Cats: assuming $\mu$ = 100 is true, the probability of a sample mean ($n$ = 16) at least as far from 100 as 70 is
+
+```{webr}
+2 * pnorm(-abs((70 - 100) / (40 / sqrt(16))))
+```
 :::
+
+::::: fragment
+::: subpoint
+○ The smaller the *p*-value, the stronger the evidence against $H_0$
+:::
+
+::: subpoint
+○ It is **not** the probability that $H_0$ is true
+:::
+:::::
 
 # One-Tailed vs. Two-Tailed Tests {.center}
 
@@ -318,6 +283,24 @@ draw_z(tail = "upper", main = "Upper-tailed")
 Directional: 1, 2, 4 \| Non-directional: 3
 :::
 
+## Your Turn: The "Evil" Professor {style="font-size:85%"}
+
+Your professor believes extra homework **changes** final exam scores. Population: $\mu$ = 70, $\sigma$ = 15. A sample of $n$ = 25 students who got 50 extra HW questions a week scored $\bar{x}$ = 75.
+
+```{webr}
+# a. H0:            H1:
+# b. critical value at alpha = .05 (two-tailed)
+
+# c. test statistic
+
+# d. decision and conclusion
+
+```
+
+::: {.fragment style="font-size:80%"}
+Check: $z = \dfrac{75 - 70}{15 / \sqrt{25}} = \dfrac{5}{3}$ = 1.67, which is less than 1.96 → **retain** $H_0$
+:::
+
 ## The "Evil" Professor, Revisited {style="font-size:85%"}
 
 Now your professor believes extra homework **increases** final exam scores (same data: $\mu$ = 70, $\sigma$ = 15, $n$ = 25, $\bar{x}$ = 75)
@@ -359,28 +342,190 @@ This is why the direction must be decided **before** looking at the data!
 :::::::
 :::::::::
 
+# Errors and Statistical Power {.center}
+
+## Type I and Type II Errors {style="font-size:85%"}
+
+|   | $H_0$ true (no effect) | $H_0$ false (effect exists) |
+|----|:--:|:--:|
+| **Reject** $H_0$ | **Type I error** ($\alpha$) "false alarm" | Correct: **power** ($1 - \beta$) |
+| **Fail to reject** $H_0$ | Correct | **Type II error** ($\beta$) "miss a real effect" |
+
+::: subpoint
+○ $\alpha$ = probability of a Type I error; we choose it (.05)
+:::
+
+::: subpoint
+○ $\beta$ = probability of a Type II error; not easy to know
+:::
+
+::: subpoint
+○ Power = $1 - \beta$ = probability of detecting a real effect
+:::
+
+::: fragment
+Pop quiz: if $\beta$ = 40%, what is power? If $\beta$ = 10%?
+:::
+
+::: fragment
+60% and 90%
+:::
+
+## Simulating a Type I Error Rate {style="font-size:85%"}
+
+What if $H_0$ is **true**? Run 1,000 studies where the population really has $\mu$ = 70, and count how often we wrongly reject
+
+:::::: columns
+::: {.column width="58%"}
+```{webr}
+#| autorun: true
+set.seed(2020)
+mu    <- 70     # H0, and also the truth
+sigma <- 15
+n     <- 25
+
+reject <- rep(NA, 1000)
+for (i in 1:1000) {
+  x <- rnorm(n, mean = mu, sd = sigma)        # one study
+  z <- (mean(x) - mu) / (sigma / sqrt(n))
+  reject[i] <- abs(z) >= qnorm(.975)          # TRUE = rejected
+}
+mean(reject)   # proportion of false alarms
+```
+:::
+
+:::: {.column width="42%"}
+The same `for` loop as Lab 6, one study per loop
+
+`mean()` of `TRUE`/`FALSE` = proportion of `TRUE`
+
+::: fragment
+We reject about **5%** of the time, even though there is no effect
+
+That 5% **is** $\alpha$: the Type I error rate we chose
+:::
+::::
+::::::
+
+## Simulating Power {style="font-size:85%"}
+
+Now suppose extra homework **really** raises the mean to 75. We still test $H_0$: $\mu$ = 70. How often do we catch the effect?
+
+::::::: columns
+::: {.column width="58%"}
+```{webr}
+#| autorun: true
+set.seed(2020)
+mu0       <- 70   # H0
+true_mean <- 75   # the truth: H0 is false!
+sigma     <- 15
+n         <- 25   # try 100
+
+reject <- rep(NA, 1000)
+for (i in 1:1000) {
+  x <- rnorm(n, mean = true_mean, sd = sigma)
+  z <- (mean(x) - mu0) / (sigma / sqrt(n))
+  reject[i] <- abs(z) >= qnorm(.975)
+}
+c(power = mean(reject), beta = 1 - mean(reject))
+```
+:::
+
+::::: {.column width="42%"}
+Every rejection here is **correct**, so the proportion is the power
+
+::: fragment
+Power is under 0.4 (theory says 0.38): the "Evil" Professor's study would **miss** a real 5-point effect most of the time
+:::
+
+::: fragment
+Change `n` to 100 and re-run. What happens?
+:::
+:::::
+:::::::
+
+## What Affects Power? {style="font-size:85%"}
+
+:::::::::: columns
+::: {.column width="58%"}
+```{webr}
+#| autorun: true
+power_z <- function(true_mean, mu0 = 70, sigma = 15,
+                    n = 25, alpha = .05) {
+  shift <- (true_mean - mu0) / (sigma / sqrt(n))
+  z_crit <- qnorm(1 - alpha / 2)
+  pnorm(shift - z_crit) + pnorm(-shift - z_crit)
+}
+power_z(75)               # our study
+power_z(80)               # bigger difference
+power_z(75, sigma = 7.5)  # less variability
+power_z(75, n = 100)      # bigger sample
+power_z(75, alpha = .10)  # bigger alpha
+```
+:::
+
+:::::::: {.column width="42%"}
+Power goes **up** with
+
+::: subpoint
+○ a larger difference from $\mu_0$
+:::
+
+::: subpoint
+○ less variability ($\sigma$)
+:::
+
+::: subpoint
+○ a larger $n$
+:::
+
+::: subpoint
+○ a larger $\alpha$
+:::
+
+::: {.fragment style="font-size:85%"}
+Learning check: testing $H_0$: $\mu$ = 80, which is most likely to reject? (A) $\sigma$ = 5, $n$ = 25 (B) $\sigma$ = 5, $n$ = 50 (C) $\sigma$ = 10, $n$ = 25 (D) $\sigma$ = 10, $n$ = 50
+
+**B**: smallest $\sigma$, largest $n$ → smallest standard error
+:::
+::::::::
+::::::::::
+
+## Your Turn: The Popcorn Problem {style="font-size:80%"}
+
+A theater owner knows a bag should hold $\mu$ = 8 cups, $\sigma$ = 0.50. The newest employee's $n$ = 25 bags average $\bar{x}$ = 7.75 cups. Is the employee filling bags incorrectly ($\alpha$ = .05)?
+
+```{webr}
+# a. H0:            H1:
+# b. critical values (two-tailed)
+
+# c. test statistic
+
+# d. decision and conclusion
+
+
+```
+
+::: fragment
+Check: $z = \dfrac{7.75 - 8}{0.5 / \sqrt{25}}$ = −2.5, beyond −1.96 → **reject** $H_0$: the employee is filling bags incorrectly
+:::
+
 ## Must-Take-Home Message {style="font-size:90%"}
 
-$$z_{\bar{x}} = \frac{\bar{x} - \mu}{\sigma / \sqrt{n}}$$
-
 ::: subpoint
-○ `pnorm()` turns a *z* into a probability; use `lower.tail = F` or `-abs(z)` for the upper tail
+○ The *p*-value: the probability of a result this extreme or more, **assuming** $H_0$ is true
 :::
 
 ::: subpoint
-○ `qnorm()` turns $\alpha$ into a critical value: ±1.96 (two-tailed), ±1.65 (one-tailed)
+○ Directional hypothesis → one-tailed test (±1.65); non-directional → two-tailed (±1.96); decide before collecting data
 :::
 
 ::: subpoint
-○ Two-tailed *p* = 2 × one-tailed *p*
+○ Type I error = rejecting a true $H_0$ (rate = $\alpha$); Type II error = missing a real effect (rate = $\beta$)
 :::
 
 ::: subpoint
-○ $p \le \alpha$ → reject $H_0$; $p > \alpha$ → fail to reject (never "accept") $H_0$
-:::
-
-::: subpoint
-○ Directional hypothesis → one-tailed test; decide before collecting data
+○ Power = $1 - \beta$; it goes up with a bigger difference, smaller $\sigma$, bigger $n$, bigger $\alpha$
 :::
 
 ## Lab 8 Assignment!
