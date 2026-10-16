@@ -103,13 +103,159 @@ area_z <- function(z, tail = "lower", main = "") {
 
 ## Outline
 
+-   Warm-Up: Variance, SD, and z-Scores
 -   Quick Review: Testing a Sample Mean
 -   One-Tailed vs. Two-Tailed Tests
 -   Errors and Statistical Power
 
 Learning objectives: **R:** simulating Type I error and power with a `for` loop
 
-**Statistics:** directional tests, Type I / Type II errors, power
+**Statistics:** sample vs. population variance, z-scores, directional tests, Type I / Type II errors, power
+
+# Warm-Up: Variance, SD, and z-Scores {.center}
+
+## Variance and SD, Step by Step {style="font-size:85%"}
+
+Data: **2, 4, 6** ($n$ = 3)
+
+:::::: columns
+:::: {.column width="45%"}
+**Step 1.** Find the mean
+
+$$\bar{x} = \frac{2 + 4 + 6}{3} = \frac{12}{3} = 4$$
+
+::: fragment
+**Step 2.** Subtract the mean from each score (the deviation)
+
+**Step 3.** Square each deviation and add them up: the sum of squares (*SS*)
+:::
+::::
+
+::: {.column width="55%" .fragment}
+| $x$ | $x - \bar{x}$ | $(x - \bar{x})^2$ |
+|:--:|:--:|:--:|
+| 2 | 2 − 4 = −2 | 4 |
+| 4 | 4 − 4 = 0 | 0 |
+| 6 | 6 − 4 = 2 | 4 |
+| | sum = 0 | ***SS* = 8** |
+
+ⓘ The deviations always add up to 0; that is why we square them
+:::
+::::::
+
+## Steps 4–5: Sample ($n - 1$) or Population ($N$)? {style="font-size:85%"}
+
+::::: columns
+::: {.column width="50%"}
+**Sample** (most of our data!)
+
+**Step 4.** Variance: divide *SS* by $n - 1$
+
+$$s^2 = \frac{\sum (x - \bar{x})^2}{n - 1} = \frac{8}{3 - 1} = 4$$
+
+**Step 5.** SD: take the square root
+
+$$s = \sqrt{4} = 2$$
+:::
+
+::: {.column width="50%"}
+**Population** (every member measured)
+
+**Step 4.** Variance: divide *SS* by $N$
+
+$$\sigma^2 = \frac{\sum (x - \mu)^2}{N} = \frac{8}{3} \approx 2.667$$
+
+**Step 5.** SD: take the square root
+
+$$\sigma = \sqrt{2.667} \approx 1.633$$
+:::
+:::::
+
+::: fragment
+ⓘ Common midterm mistake: dividing a **sample's** *SS* by $n$. For a sample, divide by $n - 1$. R's `var()` and `sd()` already do this
+:::
+
+## What Does the SD Tell Us? {style="font-size:85%"}
+
+$s$ = 2: on average, the scores are about **2 units away from the mean** of 4
+
+```{r}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 2.2
+par(mar = c(3, 1, 0.5, 1))
+plot(NA, xlim = c(0, 8), ylim = c(0, 1), yaxt = "n", xlab = "", ylab = "", bty = "n")
+abline(v = 4, lty = 2, col = "firebrick", lwd = 2)
+arrows(4, .5, c(2, 6), .5, length = .1, lwd = 3, col = "#377EB8")
+text(c(3, 5), .65, "2 units", col = "#377EB8", font = 2, cex = 1.3)
+points(c(2, 4, 6), rep(.2, 3), pch = 19, cex = 2.5)
+text(4.1, .92, "mean = 4", col = "firebrick", font = 2, cex = 1.3, pos = 4)
+```
+
+::: subpoint
+○ The SD is in the **same units** as the data (points, cups, hours); the variance is in **squared** units
+:::
+
+::: subpoint
+○ A bigger SD → scores are more spread out around the mean
+:::
+
+::: fragment
+::: subpoint
+○ The SD describes the **whole dataset**. It does not tell us where any **one** score falls: that is the job of a z-score
+:::
+:::
+
+## Every Observation Gets Its Own z-Score {style="font-size:80%"}
+
+$$z = \frac{x - \bar{x}}{s} \qquad \bar{x} = 4, \; s = 2$$
+
+:::::::: columns
+:::::: {.column width="50%"}
+| $x$ | $z$ |
+|:--:|:--:|
+| 2 | (2 − 4) / 2 = **−1** |
+| 4 | (4 − 4) / 2 = **0** |
+| 6 | (6 − 4) / 2 = **+1** |
+
+::: fragment
+| One dataset has… | |
+|---|:--:|
+| one mean | 4 |
+| one variance | 4 |
+| one SD | 2 |
+| **three** z-scores | one per observation |
+:::
+::::::
+
+:::::: {.column width="50%"}
+```{webr}
+x <- c(2, 4, 6)
+mean(x)                  # one number
+var(x)                   # one number
+sd(x)                    # one number
+(x - mean(x)) / sd(x)    # one z per score
+```
+
+::: fragment
+$z$ = +1: the score 6 is **1 SD above** the mean
+
+The SD (2) is **not** a z-score: it is the typical spread of the whole dataset
+:::
+::::::
+::::::::
+
+## Quiz 6: Try These Again {style="font-size:90%"}
+
+Two questions many of you missed on Quiz 6:
+
+1.  For a two-tailed test with $\alpha$ = .05, the critical values of $z$ are ± \_\_\_\_\_\_. For a one-tailed test with $\alpha$ = .05, the critical value of $z$ is \_\_\_\_\_\_, ignoring the sign.
+
+2.  A hypothesis that predicts a difference without specifying its direction is called a \_\_\_\_\_\_ hypothesis, and it is tested with a \_\_\_\_\_\_-tailed test.
+
+::: fragment
+ⓘ Keep these in mind. By the end of today's lab you should be able to answer both, and they are on the Lab 8 assignment!
+:::
 
 # Quick Review: Testing a Sample Mean {.center}
 
