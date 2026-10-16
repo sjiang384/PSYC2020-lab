@@ -4,7 +4,42 @@
     "href": "lab8-slides.html#outline",
     "title": "Null Hypothesis Significance Testing II",
     "section": "Outline",
-    "text": "Outline\n\nQuick Review: Testing a Sample Mean\nOne-Tailed vs. Two-Tailed Tests\nErrors and Statistical Power\n\nLearning objectives: R: simulating Type I error and power with a for loop\nStatistics: directional tests, Type I / Type II errors, power"
+    "text": "Outline\n\nWarm-Up: Variance, SD, and z-Scores\nQuick Review: Testing a Sample Mean\nOne-Tailed vs. Two-Tailed Tests\nErrors and Statistical Power\n\nLearning objectives: R: simulating Type I error and power with a for loop\nStatistics: sample vs. population variance, z-scores, directional tests, Type I / Type II errors, power"
+  },
+  {
+    "objectID": "lab8-slides.html#variance-and-sd-step-by-step",
+    "href": "lab8-slides.html#variance-and-sd-step-by-step",
+    "title": "Null Hypothesis Significance Testing II",
+    "section": "Variance and SD, Step by Step",
+    "text": "Variance and SD, Step by Step\nData: 2, 4, 6 (\\(n\\) = 3)\n\n\nStep 1. Find the mean\n\\[\\bar{x} = \\frac{2 + 4 + 6}{3} = \\frac{12}{3} = 4\\]\n\nStep 2. Subtract the mean from each score (the deviation)\nStep 3. Square each deviation and add them up: the sum of squares (SS)\n\n\n\n\n\n\\(x\\)\n\\(x - \\bar{x}\\)\n\\((x - \\bar{x})^2\\)\n\n\n\n\n2\n2 − 4 = −2\n4\n\n\n4\n4 − 4 = 0\n0\n\n\n6\n6 − 4 = 2\n4\n\n\n\nsum = 0\nSS = 8\n\n\n\nⓘ The deviations always add up to 0; that is why we square them"
+  },
+  {
+    "objectID": "lab8-slides.html#steps-45-sample-n---1-or-population-n",
+    "href": "lab8-slides.html#steps-45-sample-n---1-or-population-n",
+    "title": "Null Hypothesis Significance Testing II",
+    "section": "Steps 4–5: Sample (\\(n - 1\\)) or Population (\\(N\\))?",
+    "text": "Steps 4–5: Sample (\\(n - 1\\)) or Population (\\(N\\))?\n\n\nSample (most of our data!)\nStep 4. Variance: divide SS by \\(n - 1\\)\n\\[s^2 = \\frac{\\sum (x - \\bar{x})^2}{n - 1} = \\frac{8}{3 - 1} = 4\\]\nStep 5. SD: take the square root\n\\[s = \\sqrt{4} = 2\\]\n\nPopulation (every member measured)\nStep 4. Variance: divide SS by \\(N\\)\n\\[\\sigma^2 = \\frac{\\sum (x - \\mu)^2}{N} = \\frac{8}{3} \\approx 2.667\\]\nStep 5. SD: take the square root\n\\[\\sigma = \\sqrt{2.667} \\approx 1.633\\]\n\n\nⓘ Common midterm mistake: dividing a sample’s SS by \\(n\\). For a sample, divide by \\(n - 1\\). R’s var() and sd() already do this"
+  },
+  {
+    "objectID": "lab8-slides.html#what-does-the-sd-tell-us",
+    "href": "lab8-slides.html#what-does-the-sd-tell-us",
+    "title": "Null Hypothesis Significance Testing II",
+    "section": "What Does the SD Tell Us?",
+    "text": "What Does the SD Tell Us?\n\\(s\\) = 2: on average, the scores are about 2 units away from the mean of 4\n\n\n○ The SD is in the same units as the data (points, cups, hours); the variance is in squared units\n\n\n○ A bigger SD → scores are more spread out around the mean\n\n\n\n○ The SD describes the whole dataset. It does not tell us where any one score falls: that is the job of a z-score"
+  },
+  {
+    "objectID": "lab8-slides.html#every-observation-gets-its-own-z-score",
+    "href": "lab8-slides.html#every-observation-gets-its-own-z-score",
+    "title": "Null Hypothesis Significance Testing II",
+    "section": "Every Observation Gets Its Own z-Score",
+    "text": "Every Observation Gets Its Own z-Score\n\\[z = \\frac{x - \\bar{x}}{s} \\qquad \\bar{x} = 4, \\; s = 2\\]\n\n\n\n\n\n\\(x\\)\n\\(z\\)\n\n\n\n\n2\n(2 − 4) / 2 = −1\n\n\n4\n(4 − 4) / 2 = 0\n\n\n6\n(6 − 4) / 2 = +1\n\n\n\n\n\n\n\nOne dataset has…\n\n\n\n\n\none mean\n4\n\n\none variance\n4\n\n\none SD\n2\n\n\nthree z-scores\none per observation\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\\(z\\) = +1: the score 6 is 1 SD above the mean\nThe SD (2) is not a z-score: it is the typical spread of the whole dataset"
+  },
+  {
+    "objectID": "lab8-slides.html#quiz-6-try-these-again",
+    "href": "lab8-slides.html#quiz-6-try-these-again",
+    "title": "Null Hypothesis Significance Testing II",
+    "section": "Quiz 6: Try These Again",
+    "text": "Quiz 6: Try These Again\nTwo questions many of you missed on Quiz 6:\n\nFor a two-tailed test with \\(\\alpha\\) = .05, the critical values of \\(z\\) are ± ______. For a one-tailed test with \\(\\alpha\\) = .05, the critical value of \\(z\\) is ______, ignoring the sign.\nA hypothesis that predicts a difference without specifying its direction is called a ______ hypothesis, and it is tested with a ______-tailed test.\n\n\nⓘ Keep these in mind. By the end of today’s lab you should be able to answer both, and they are on the Lab 8 assignment!"
   },
   {
     "objectID": "lab8-slides.html#quick-review-from-lab-7",
