@@ -13,3 +13,5 @@
 /_site/
 Claude outputs/
 Lab*_assignment/
+
+*.qmd.bak*

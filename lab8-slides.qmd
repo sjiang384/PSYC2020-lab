@@ -308,7 +308,7 @@ area_z(1.5, tail = "two", main = "two-tailed p for z = 1.5")
 :::
 ::::
 
-## Example: Weight of Cats {style="font-size:70%"}
+## Example: Weight of  {style="font-size:70%"}
 
 Normal cats: $\mu$ = 100 g, $\sigma$ = 40. A sample of $n$ = 16 cats with prenatal alcohol exposure has $\bar{x}$ = 70. Does alcohol affect birth weight?
 
