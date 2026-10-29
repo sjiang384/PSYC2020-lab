@@ -152,6 +152,11 @@ ul.task-list li input[type="checkbox"] {
 <td>Confidence Intervals &amp; Effect Size</td>
 <td><a href="lab9-slides.html">Slides</a></td>
 </tr>
+<tr class="odd">
+<td>10</td>
+<td>Advanced R: Communicating with Plots</td>
+<td><a href="lab10-slides.html">Slides</a></td>
+</tr>
 </tbody>
 </table>
 
@@ -231,7 +236,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/sjiang384\.github\.io\/PSYC2020-lab\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

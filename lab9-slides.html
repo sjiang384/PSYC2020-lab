@@ -223,9 +223,138 @@ eyJhdHRyIjp7ImVkaXQiOmZhbHNlLCJldmFsIjp0cnVlLCJvdXRwdXQiOmZhbHNlfSwiY29kZSI6IiMg
 </div>
 </div>
 </section>
+<section id="lab-7-review-lower-tailed-test" class="slide level2" style="font-size:78%">
+<h2>Lab 7 Review: Lower-Tailed Test</h2>
+<p>A sleep researcher predicts that GT students sleep <strong>less</strong> than the national average of <span class="math inline">\(\mu\)</span> = 7 hours (<span class="math inline">\(\sigma\)</span> = 1.2). A sample of <span class="math inline">\(n\)</span> = 36 GT students sleeps <span class="math inline">\(\bar{x}\)</span> = 6.6 hours. <span class="math inline">\(\alpha\)</span> = .05</p>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p><span class="math inline">\(H_0\)</span>: <span class="math inline">\(\mu \ge 7\)</span> <span class="math inline">\(H_1\)</span>: <span class="math inline">\(\mu &lt; 7\)</span> → <strong>lower tail</strong></p>
+<p>All of <span class="math inline">\(\alpha\)</span> goes in the <strong>left</strong> tail:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">qnorm</span>(.<span class="dv">05</span>)    <span class="co"># qnorm(alpha)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -1.644854</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>(<span class="fl">6.6</span> <span class="sc">-</span> <span class="dv">7</span>) <span class="sc">/</span> (<span class="fl">1.2</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">36</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -2</code></pre>
+</div>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(z\)</span> = −2.0 ≤ −1.645 → <strong>reject</strong> <span class="math inline">\(H_0\)</span>: GT students sleep less than 7 hours</p>
+</div>
+</div><div class="column" style="width:55%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-5-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="lab-7-review-upper-tailed-test" class="slide level2" style="font-size:78%">
+<h2>Lab 7 Review: Upper-Tailed Test</h2>
+<p>A tutoring program claims it <strong>raises</strong> exam scores above the average of <span class="math inline">\(\mu\)</span> = 70 (<span class="math inline">\(\sigma\)</span> = 15). A sample of <span class="math inline">\(n\)</span> = 25 tutored students scores <span class="math inline">\(\bar{x}\)</span> = 76. <span class="math inline">\(\alpha\)</span> = .05</p>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p><span class="math inline">\(H_0\)</span>: <span class="math inline">\(\mu \le 70\)</span> <span class="math inline">\(H_1\)</span>: <span class="math inline">\(\mu &gt; 70\)</span> → <strong>upper tail</strong></p>
+<p>All of <span class="math inline">\(\alpha\)</span> goes in the <strong>right</strong> tail:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">qnorm</span>(<span class="dv">1</span> <span class="sc">-</span> .<span class="dv">05</span>)    <span class="co"># qnorm(1 - alpha)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.644854</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>(<span class="dv">76</span> <span class="sc">-</span> <span class="dv">70</span>) <span class="sc">/</span> (<span class="dv">15</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">25</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(z\)</span> = 2.0 ≥ 1.645 → <strong>reject</strong> <span class="math inline">\(H_0\)</span>: tutoring raises exam scores</p>
+</div>
+</div><div class="column" style="width:55%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-7-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="lab-7-review-two-tailed-test-barx-mu" class="slide level2" style="font-size:78%">
+<h2>Lab 7 Review: Two-Tailed Test, <span class="math inline">\(\bar{x}\)</span> &gt; <span class="math inline">\(\mu\)</span></h2>
+<p>Does caffeine <strong>change</strong> reaction time? Population: <span class="math inline">\(\mu\)</span> = 250 ms, <span class="math inline">\(\sigma\)</span> = 40. A sample of <span class="math inline">\(n\)</span> = 64 people who drank coffee averages <span class="math inline">\(\bar{x}\)</span> = 262 ms. <span class="math inline">\(\alpha\)</span> = .05</p>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p><span class="math inline">\(H_0\)</span>: <span class="math inline">\(\mu = 250\)</span> <span class="math inline">\(H_1\)</span>: <span class="math inline">\(\mu \ne 250\)</span> → <strong>two tails</strong>, <span class="math inline">\(\alpha\)</span>/2 = .025 in each</p>
+<p><span class="math inline">\(\bar{x}\)</span> is <strong>above</strong> <span class="math inline">\(\mu\)</span>, so compare with the <strong>upper</strong> cutoff:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">qnorm</span>(<span class="dv">1</span> <span class="sc">-</span> .<span class="dv">05</span> <span class="sc">/</span> <span class="dv">2</span>)    <span class="co"># qnorm(1 - alpha/2)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.959964</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>(<span class="dv">262</span> <span class="sc">-</span> <span class="dv">250</span>) <span class="sc">/</span> (<span class="dv">40</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">64</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.4</code></pre>
+</div>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(z\)</span> = 2.4 ≥ 1.96 → <strong>reject</strong> <span class="math inline">\(H_0\)</span>: caffeine changes reaction time</p>
+</div>
+</div><div class="column" style="width:55%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-9-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="lab-7-review-two-tailed-test-barx-mu-1" class="slide level2" style="font-size:78%">
+<h2>Lab 7 Review: Two-Tailed Test, <span class="math inline">\(\bar{x}\)</span> &lt; <span class="math inline">\(\mu\)</span></h2>
+<p>Does a new font <strong>change</strong> reading speed? Population: <span class="math inline">\(\mu\)</span> = 200 words per minute, <span class="math inline">\(\sigma\)</span> = 30. A sample of <span class="math inline">\(n\)</span> = 36 readers using the new font averages <span class="math inline">\(\bar{x}\)</span> = 191. <span class="math inline">\(\alpha\)</span> = .05</p>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p><span class="math inline">\(H_0\)</span>: <span class="math inline">\(\mu = 200\)</span> <span class="math inline">\(H_1\)</span>: <span class="math inline">\(\mu \ne 200\)</span> → <strong>two tails</strong>, <span class="math inline">\(\alpha\)</span>/2 = .025 in each</p>
+<p><span class="math inline">\(\bar{x}\)</span> is <strong>below</strong> <span class="math inline">\(\mu\)</span>, so compare with the <strong>lower</strong> cutoff:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">qnorm</span>(.<span class="dv">05</span> <span class="sc">/</span> <span class="dv">2</span>)    <span class="co"># qnorm(alpha/2)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -1.959964</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>(<span class="dv">191</span> <span class="sc">-</span> <span class="dv">200</span>) <span class="sc">/</span> (<span class="dv">30</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">36</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -1.8</code></pre>
+</div>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(z\)</span> = −1.8 is <strong>not</strong> beyond −1.96 → <strong>fail to reject</strong> <span class="math inline">\(H_0\)</span>: no evidence the font changes reading speed</p>
+</div>
+</div><div class="column" style="width:55%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-11-1.png" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
 <section id="outline" class="slide level2">
 <h2>Outline</h2>
 <ul>
+<li>Lab 7 Assignment Review: Critical Values</li>
 <li>Confidence Intervals</li>
 <li>From <em>z</em> to <em>t</em>: the One-Sample <em>t</em>-Test</li>
 <li>Effect Size: Cohen’s <em>d</em></li>
@@ -304,7 +433,7 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoicW5vcm0oMSAtIC4wNSAvIDIp
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-4-1.png" width="576"></p>
+<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-13-1.png" width="576"></p>
 </figure>
 </div>
 </div>
@@ -434,7 +563,7 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyBIaW50OiA4MCUgY29uZmlk
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-9-1.png" width="1056"></p>
+<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-18-1.png" width="1056"></p>
 </figure>
 </div>
 </div>
@@ -444,18 +573,7 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyBIaW50OiA4MCUgY29uZmlk
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-10-1.png" width="1056"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div class="fragment">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-11-1.png" width="1056"></p>
+<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-19-1.png" width="1056"></p>
 </figure>
 </div>
 </div>
@@ -466,7 +584,7 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyBIaW50OiA4MCUgY29uZmlk
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-12-1.png" width="1056"></p>
+<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-20-1.png" width="1056"></p>
 </figure>
 </div>
 </div>
@@ -477,7 +595,18 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyBIaW50OiA4MCUgY29uZmlk
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-13-1.png" width="1056"></p>
+<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-21-1.png" width="1056"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="lab9-slides_files/figure-revealjs/unnamed-chunk-22-1.png" width="1056"></p>
 </figure>
 </div>
 </div>
@@ -511,7 +640,7 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoicW5vcm0oLjk3NSkgICAgICAg
 <p>Same idea as the <span class="math inline">\(z\)</span>-test, but with <span class="math inline">\(s\)</span> in place of <span class="math inline">\(\sigma\)</span>:</p>
 <p><span class="math display">\[t = \frac{\bar{x} - \mu}{s / \sqrt{n}}, \qquad df = n - 1\]</span></p>
 <p>R does every step for us with <code>t.test()</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">t.test</span>(x, <span class="at">mu =</span> <span class="dv">0</span>, <span class="at">alternative =</span> <span class="st">"two.sided"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="fu">t.test</span>(x, <span class="at">mu =</span> <span class="dv">0</span>, <span class="at">alternative =</span> <span class="st">"two.sided"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="subpoint">
 <p>○ <code>x</code>: the sample data</p>
 </div>
@@ -544,9 +673,9 @@ eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoicmVz
 </div>
 <div class="fragment">
 <p>Pull out pieces with <code>$</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>result<span class="sc">$</span>statistic</span>
-<span id="cb2-2"><a></a>result<span class="sc">$</span>p.value</span>
-<span id="cb2-3"><a></a>result<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>result<span class="sc">$</span>statistic</span>
+<span id="cb18-2"><a></a>result<span class="sc">$</span>p.value</span>
+<span id="cb18-3"><a></a>result<span class="sc">$</span>conf.int</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The 95% CI [22.67, 24.21] excludes 30, so the CI tells the same story</p>
 </div>
 </div></div>
@@ -1044,7 +1173,7 @@ W10=
         }
           var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
           var mailtoRegex = new RegExp(/^mailto:/);
-            var filterRegex = new RegExp('/' + window.location.host + '/');
+            var filterRegex = new RegExp("https:\/\/sjiang384\.github\.io\/PSYC2020-lab\/");
           var isInternal = (href) => {
               return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
           }
