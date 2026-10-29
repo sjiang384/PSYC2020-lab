@@ -25,8 +25,163 @@ execute:
 library(ggplot2)
 ```
 
+```{r}
+#| include: false
+# crit_plot(): z curve with the rejection region shaded, the critical value(s) as
+# dashed red line(s), and the observed z as a solid blue line
+crit_plot <- function(tail, z_obs, alpha = .05) {
+  x <- seq(-4, 4, length.out = 400)
+  par(mar = c(4, 1, 1, 1))
+  plot(x, dnorm(x), type = "l", lwd = 2, xlab = "z", ylab = "", yaxt = "n",
+       bty = "n", ylim = c(0, 0.47))
+  shade <- function(a, b) {
+    xs <- seq(a, b, length.out = 100)
+    polygon(c(a, xs, b), c(0, dnorm(xs), 0), col = adjustcolor("firebrick", .4), border = NA)
+  }
+  cv <- switch(tail,
+               lower = qnorm(alpha),
+               upper = qnorm(1 - alpha),
+               two   = c(qnorm(alpha / 2), qnorm(1 - alpha / 2)))
+  if (tail == "lower") shade(-4, cv)
+  if (tail == "upper") shade(cv, 4)
+  if (tail == "two")   { shade(-4, cv[1]); shade(cv[2], 4) }
+  abline(v = cv, col = "firebrick", lwd = 3, lty = 2)
+  abline(v = z_obs, col = "#377EB8", lwd = 3)
+  near <- cv[which.min(abs(cv - z_obs))]          # the cutoff on the same side
+  outward <- abs(z_obs) > abs(near)               # is our z beyond that cutoff?
+  # put each cutoff's label on the side away from our z line
+  cpos <- ifelse(cv < 0, 2, 4)
+  if (outward) cpos[cv == near] <- ifelse(near < 0, 4, 2)
+  text(cv, 0.45, paste("critical z =", sprintf("%.3f", cv)), col = "firebrick", font = 2,
+       cex = 1.1, pos = cpos)
+  text(z_obs, 0.30, paste("our z =", z_obs), col = "#377EB8", font = 2, cex = 1.1,
+       pos = ifelse(xor(z_obs < 0, !outward), 2, 4))
+}
+```
+
+## Lab 7 Review: Lower-Tailed Test {style="font-size:78%"}
+
+A sleep researcher predicts that GT students sleep **less** than the national average of $\mu$ = 7 hours ($\sigma$ = 1.2). A sample of $n$ = 36 GT students sleeps $\bar{x}$ = 6.6 hours. $\alpha$ = .05
+
+::::: columns
+::: {.column width="45%"}
+$H_0$: $\mu \ge 7$ $H_1$: $\mu < 7$ → **lower tail**
+
+All of $\alpha$ goes in the **left** tail:
+
+```{r}
+qnorm(.05)    # qnorm(alpha)
+(6.6 - 7) / (1.2 / sqrt(36))
+```
+
+::: fragment
+$z$ = −2.0 ≤ −1.645 → **reject** $H_0$: GT students sleep less than 7 hours
+:::
+:::
+
+::: {.column width="55%"}
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 4
+crit_plot("lower", z_obs = -2.0)
+```
+:::
+:::::
+
+## Lab 7 Review: Upper-Tailed Test {style="font-size:78%"}
+
+A tutoring program claims it **raises** exam scores above the average of $\mu$ = 70 ($\sigma$ = 15). A sample of $n$ = 25 tutored students scores $\bar{x}$ = 76. $\alpha$ = .05
+
+::::: columns
+::: {.column width="45%"}
+$H_0$: $\mu \le 70$ $H_1$: $\mu > 70$ → **upper tail**
+
+All of $\alpha$ goes in the **right** tail:
+
+```{r}
+qnorm(1 - .05)    # qnorm(1 - alpha)
+(76 - 70) / (15 / sqrt(25))
+```
+
+::: fragment
+$z$ = 2.0 ≥ 1.645 → **reject** $H_0$: tutoring raises exam scores
+:::
+:::
+
+::: {.column width="55%"}
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 4
+crit_plot("upper", z_obs = 2.0)
+```
+:::
+:::::
+
+## Lab 7 Review: Two-Tailed Test, $\bar{x}$ > $\mu$ {style="font-size:78%"}
+
+Does caffeine **change** reaction time? Population: $\mu$ = 250 ms, $\sigma$ = 40. A sample of $n$ = 64 people who drank coffee averages $\bar{x}$ = 262 ms. $\alpha$ = .05
+
+::::: columns
+::: {.column width="45%"}
+$H_0$: $\mu = 250$ $H_1$: $\mu \ne 250$ → **two tails**, $\alpha$/2 = .025 in each
+
+$\bar{x}$ is **above** $\mu$, so compare with the **upper** cutoff:
+
+```{r}
+qnorm(1 - .05 / 2)    # qnorm(1 - alpha/2)
+(262 - 250) / (40 / sqrt(64))
+```
+
+::: fragment
+$z$ = 2.4 ≥ 1.96 → **reject** $H_0$: caffeine changes reaction time
+:::
+:::
+
+::: {.column width="55%"}
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 4
+crit_plot("two", z_obs = 2.4)
+```
+:::
+:::::
+
+## Lab 7 Review: Two-Tailed Test, $\bar{x}$ < $\mu$ {style="font-size:78%"}
+
+Does a new font **change** reading speed? Population: $\mu$ = 200 words per minute, $\sigma$ = 30. A sample of $n$ = 36 readers using the new font averages $\bar{x}$ = 191. $\alpha$ = .05
+
+::::: columns
+::: {.column width="45%"}
+$H_0$: $\mu = 200$ $H_1$: $\mu \ne 200$ → **two tails**, $\alpha$/2 = .025 in each
+
+$\bar{x}$ is **below** $\mu$, so compare with the **lower** cutoff:
+
+```{r}
+qnorm(.05 / 2)    # qnorm(alpha/2)
+(191 - 200) / (30 / sqrt(36))
+```
+
+::: fragment
+$z$ = −1.8 is **not** beyond −1.96 → **fail to reject** $H_0$: no evidence the font changes reading speed
+:::
+:::
+
+::: {.column width="55%"}
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 4
+crit_plot("two", z_obs = -1.8)
+```
+:::
+:::::
+
 ## Outline
 
+-   Lab 7 Assignment Review: Critical Values
 -   Confidence Intervals
 -   From *z* to *t*: the One-Sample *t*-Test
 -   Effect Size: Cohen's *d*

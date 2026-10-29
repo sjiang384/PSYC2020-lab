@@ -1,0 +1,318 @@
+---
+title: "Advanced R"
+subtitle: "PSYC 2020-A01 / PSYC 6022-A01 | 2026-10-30 | Lab 10"
+author: "Shuheng Jiang"
+format:
+  revealjs:
+    slide-number: true
+    scrollable: true
+    code-overflow: wrap
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+## Outline
+
+-   **No assignment this week** – today is a bonus R lab, just for fun and future you
+-   Data Communication
+    -   Labels
+    -   Annotations
+-   Quarto (a quick tour)
+
+**Learning objective**
+
+-   **R:** Turn a quick exploratory plot into one that explains itself to an audience
+
+# Data Communication
+
+## Exploration vs. Communication
+
+-   **Exploratory plots** are for *you*
+    -   Fast, messy, default labels are fine
+-   **Communication plots** are for *other people*
+    -   They don't know your data, so the plot has to explain itself
+-   Today: two tools that make the jump easy
+    1.  **Labels** – say what the plot shows
+    2.  **Annotations** – point to what matters
+-   Reference: [R for Data Science, Ch. 11 – Communication](https://r4ds.hadley.nz/communication)
+
+## Today's Data
+
+`mpg`: fuel economy for 38 popular car models (comes with the tidyverse)
+
+```{r}
+library(tidyverse)
+
+head(mpg)
+```
+
+-   `displ` = engine size (liters), `hwy` = highway miles per gallon, `drv` = drive type, `class` = type of car
+
+## Labels
+
+:::: panel-tabset
+### Code
+
+```{r}
+#| eval: false
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point(aes(color = class)) +
+  geom_smooth(se = FALSE) +
+  labs(
+    title    = "Fuel efficiency generally decreases with engine size",
+    subtitle = "Two seaters (sports cars) are an exception because of their light weight",
+    caption  = "Data from fueleconomy.gov",
+    x        = "Engine displacement (L)",
+    y        = "Highway fuel economy (mpg)",
+    color    = "Car type"
+  )
+```
+
+### Plot
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point(aes(color = class)) +
+  geom_smooth(se = FALSE) +
+  labs(
+    title    = "Fuel efficiency generally decreases with engine size",
+    subtitle = "Two seaters (sports cars) are an exception because of their light weight",
+    caption  = "Data from fueleconomy.gov",
+    x        = "Engine displacement (L)",
+    y        = "Highway fuel economy (mpg)",
+    color    = "Car type"
+  )
+```
+::::
+
+-   **Title** = the main finding, not just "hwy vs. displ"
+-   **Axis labels** = plain words + units
+
+## Annotations: Labeling Groups
+
+Instead of a legend, put the label right next to the data
+
+First, make a small data frame with **where** each label goes and **what** it says:
+
+```{r}
+mpg_labels <- mpg |>
+  group_by(drv) |>
+  summarize(displ = mean(displ),
+            hwy   = mean(hwy)) |>
+  mutate(drive_type = case_when(
+    drv == "f" ~ "front-wheel drive",
+    drv == "r" ~ "rear-wheel drive",
+    drv == "4" ~ "4-wheel drive"
+  ))
+
+mpg_labels
+```
+
+-   `case_when()`: "if this, then that" – recodes `f` / `r` / `4` into readable names
+
+## Annotations: `geom_text()`
+
+:::: panel-tabset
+### Code
+
+```{r}
+#| eval: false
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(se = FALSE) +
+  geom_text(data = mpg_labels,             # use the label data frame
+            aes(label = drive_type),
+            fontface = "bold", size = 5) +
+  theme(legend.position = "none")          # legend no longer needed
+```
+
+### Plot
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(se = FALSE) +
+  geom_text(data = mpg_labels,
+            aes(label = drive_type),
+            fontface = "bold", size = 5) +
+  theme(legend.position = "none")
+```
+::::
+
+-   Problem: labels sit on top of the lines and can overlap 😕
+
+## Annotations: `ggrepel`
+
+`geom_label_repel()` pushes labels away from each other and from the data
+
+:::: panel-tabset
+### Code
+
+```{r}
+#| eval: false
+# install.packages("ggrepel")   # run once
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(se = FALSE) +
+  ggrepel::geom_label_repel(data = mpg_labels,
+                            aes(label = drive_type),
+                            fontface = "bold", size = 5, nudge_y = 2) +
+  theme(legend.position = "none")
+```
+
+### Plot
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+ggplot(mpg, aes(x = displ, y = hwy, color = drv)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(se = FALSE) +
+  ggrepel::geom_label_repel(data = mpg_labels,
+                            aes(label = drive_type),
+                            fontface = "bold", size = 5, nudge_y = 2) +
+  theme(legend.position = "none")
+```
+::::
+
+-   `package::function()` uses a function without loading the whole package
+
+## Annotations: Highlighting Outliers
+
+Same idea: **filter** the interesting points, then **layer** them on top
+
+```{r}
+potential_outliers <- mpg |>
+  filter(hwy > 40 | (hwy > 20 & displ > 5))
+```
+
+:::: panel-tabset
+### Code
+
+```{r}
+#| eval: false
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_point(data = potential_outliers, color = "red") +    # recolor them
+  ggrepel::geom_text_repel(data = potential_outliers,       # name them
+                           aes(label = model))
+```
+
+### Plot
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_point(data = potential_outliers, color = "red") +
+  ggrepel::geom_text_repel(data = potential_outliers,
+                           aes(label = model))
+```
+::::
+
+-   Each geom can use its **own** `data =` — this is the key trick for annotations
+
+## Annotations: `annotate()`
+
+For a one-off note, skip the data frame and use `annotate()`
+
+:::: panel-tabset
+### Code
+
+```{r}
+#| eval: false
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point() +
+  annotate(geom = "label", x = 3.5, y = 38, hjust = "left", color = "red",
+           label = "Larger engines tend to\nhave lower fuel economy") +
+  annotate(geom = "segment", x = 3, y = 35, xend = 5, yend = 25,
+           color = "red", arrow = arrow(type = "closed"))
+```
+
+### Plot
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point() +
+  annotate(geom = "label", x = 3.5, y = 38, hjust = "left", color = "red",
+           label = "Larger engines tend to\nhave lower fuel economy") +
+  annotate(geom = "segment", x = 3, y = 35, xend = 5, yend = 25,
+           color = "red", arrow = arrow(type = "closed"))
+```
+::::
+
+-   `\n` starts a new line in the text
+
+## Your Turn (optional, not graded)
+
+Start from this exploratory plot:
+
+```{r}
+#| eval: false
+ggplot(mpg, aes(x = cty, y = hwy)) +
+  geom_point()
+```
+
+1.  Add a **title** that states the finding and **axis labels** with units
+2.  Color the points by `class` and give the legend a readable name
+3.  Use `filter()` + a second `geom_point()` to highlight the car(s) with the best `hwy` in red
+4.  **Bonus:** add a note with `annotate()`
+
+# Quarto
+
+## What is Quarto?
+
+-   One file that combines **code + results + writing**
+    -   Change the data → re-render → every number and plot updates
+-   The successor to R Markdown; works with R, Python, and more
+-   Already built into RStudio
+-   These slides (and the course website) are made with Quarto!
+
+## Anatomy of a `.qmd` File
+
+````markdown
+---
+title: "My First Report"
+format: html
+---
+
+## Results
+
+The `mpg` data has `r knitr::inline_expr("nrow(mpg)")` cars.
+
+```{{r}}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point()
+```
+````
+
+1.  **YAML header** (between `---`): title and output format
+2.  **Text** written in Markdown (`##` heading, `**bold**`, `*italic*`)
+3.  **Code chunks** (```` ```{r} ````) that run and show their output
+
+## Try It
+
+1.  RStudio → **File** → **New File** → **Quarto Document...**
+2.  Paste in your plot from "Your Turn"
+3.  Click **Render**
+4.  Change `format: html` to `format: revealjs` (slides!) or `format: docx` (Word) and render again
+
+**Resources**
+
+-   [Quarto: Get Started](https://quarto.org/docs/get-started/)
+-   [Quarto Gallery](https://quarto.org/docs/gallery/)
+-   [R for Data Science, Ch. 28 – Quarto](https://r4ds.hadley.nz/quarto)
