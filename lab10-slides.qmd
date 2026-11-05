@@ -5,6 +5,9 @@ author: "Shuheng Jiang"
 format:
   revealjs:
     slide-number: true
+    show-slide-number: all
+    css: styles.css
+    width: 1200
     scrollable: true
     code-overflow: wrap
 execute:

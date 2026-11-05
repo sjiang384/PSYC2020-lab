@@ -11,6 +11,8 @@ project:
     - "lab7-slides.qmd"
     - "lab8-slides.qmd"
     - "lab9-slides.qmd"
+    - "lab10-slides.qmd"
+    - "lab11-slides.qmd"
 
 website:
   title: "PSYC 2020/6022 - A01"

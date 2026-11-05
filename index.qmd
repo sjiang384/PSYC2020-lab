@@ -15,3 +15,5 @@ Lab slides. Click a link to open the interactive slides in your browser.
 | 7 | NHST I | [Slides](lab7-slides.html) |
 | 8 | NHST II | [Slides](lab8-slides.html) |
 | 9 | Confidence Intervals & Effect Size | [Slides](lab9-slides.html) |
+| 10 | Advanced R: Communicating with Plots | [Slides](lab10-slides.html) |
+| 11 | Independent & Paired Samples *t*-Tests | [Slides](lab11-slides.html) |
