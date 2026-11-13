@@ -17,3 +17,4 @@ Lab slides. Click a link to open the interactive slides in your browser.
 | 9 | Confidence Intervals & Effect Size | [Slides](lab9-slides.html) |
 | 10 | Advanced R: Communicating with Plots | [Slides](lab10-slides.html) |
 | 11 | Independent & Paired Samples *t*-Tests | [Slides](lab11-slides.html) |
+| 12 | One-Way ANOVA | [Slides](lab12-slides.html) |

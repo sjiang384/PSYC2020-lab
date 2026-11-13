@@ -1,0 +1,478 @@
+---
+title: "Independent & Paired Samples *t*-Tests"
+subtitle: "PSYC 2020-A01 / PSYC 6022-A01 | Lab 11"
+author: "Shuheng Jiang"
+format:
+  live-revealjs:
+    slide-number: true
+    show-slide-number: all
+    css: styles.css
+    width: 1200
+engine: knitr
+execute:
+  echo: true
+---
+
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
+
+```{webr}
+#| edit: false
+#| echo: false
+#| output: false
+# hidden setup: today's two data sets, available in every live cell
+candy <- data.frame(
+  candy = rep(c("candy corn", "chocolate"), each = 20),
+  sales = c(4.8, 5.8, 6.4, 3.8, 6.6, 5.8, 6.7, 5.8, 7.3, 3.9,
+            8.2, 7.3, 4.4, 6.5, 6.1, 2.6, 6.4, 4.5, 5.0, 4.4,
+            14.2, 15.1, 15.2, 12.2, 14.5, 12.6, 12.7, 14.4, 16.5, 16.1,
+            13.9, 13.7, 13.5, 15.3, 16.7, 15.0, 16.2, 15.6, 17.7, 11.4)
+)
+pumpkin <- data.frame(
+  oct1  = c(6.7, 11.5, 13.6, 11.0, 13.1, 9.1, 8.9, 10.2, 14.1, 13.7,
+            10.2, 12.5, 10.4, 12.1, 9.2, 11.9, 10.2, 11.9, 10.4, 9.9),
+  oct31 = c(9.9, 14.2, 16.7, 13.6, 16.9, 11.2, 12.9, 14.9, 16.9, 18.9,
+            15.7, 16.1, 11.9, 13.3, 12.1, 17.1, 14.0, 15.9, 13.2, 12.1)
+)
+```
+
+```{r}
+#| include: false
+# same data for the static plots
+candy <- data.frame(
+  candy = rep(c("candy corn", "chocolate"), each = 20),
+  sales = c(4.8, 5.8, 6.4, 3.8, 6.6, 5.8, 6.7, 5.8, 7.3, 3.9,
+            8.2, 7.3, 4.4, 6.5, 6.1, 2.6, 6.4, 4.5, 5.0, 4.4,
+            14.2, 15.1, 15.2, 12.2, 14.5, 12.6, 12.7, 14.4, 16.5, 16.1,
+            13.9, 13.7, 13.5, 15.3, 16.7, 15.0, 16.2, 15.6, 17.7, 11.4)
+)
+pumpkin <- data.frame(
+  oct1  = c(6.7, 11.5, 13.6, 11.0, 13.1, 9.1, 8.9, 10.2, 14.1, 13.7,
+            10.2, 12.5, 10.4, 12.1, 9.2, 11.9, 10.2, 11.9, 10.4, 9.9),
+  oct31 = c(9.9, 14.2, 16.7, 13.6, 16.9, 11.2, 12.9, 14.9, 16.9, 18.9,
+            15.7, 16.1, 11.9, 13.3, 12.1, 17.1, 14.0, 15.9, 13.2, 12.1)
+)
+```
+
+## Lab 9 Review: Q1 {style="font-size:85%"}
+
+A population has a mean of $\mu$ = 50. A sample of $n$ = 16 has a mean of $\bar{x}$ = 56 and a standard deviation of $s$ = 8. What is the value of the $t$ statistic?
+
+::: fragment
+$$t = \frac{\bar{x} - \mu}{s / \sqrt{n}} = \frac{56 - 50}{8 / \sqrt{16}} = \frac{6}{2} = \mathbf{3.0}$$
+
+```{r}
+(56 - 50) / (8 / sqrt(16))
+```
+:::
+
+## Lab 9 Review: Q2 {style="font-size:85%"}
+
+For a one-sample $t$ test with $n$ = 25, the degrees of freedom equal [\_\_\_\_\_]. As the degrees of freedom increase, the shape of the $t$ distribution becomes more similar to the [\_\_\_\_\_] distribution.
+
+::: fragment
+$df = n - 1 =$ **24**
+:::
+
+::: fragment
+**Normal** ($z$): with more $df$, the tails get thinner and $t \approx z$
+:::
+
+## Lab 9 Review: Q3 {style="font-size:85%"}
+
+Two researchers each compute a 95% CI for the same population mean. Researcher A uses $n$ = 25, and Researcher B uses $n$ = 100. Researcher [\_\_\_\_\_] will obtain the narrower interval, because increasing the sample size makes the standard error [\_\_\_\_\_].
+
+::: fragment
+Researcher **B**: increasing $n$ makes the standard error **smaller**
+:::
+
+::: {.fragment style="font-size:85%"}
+$SE = s / \sqrt{n}$: $\sqrt{25} = 5$ vs. $\sqrt{100} = 10$, so B's SE (and CI width) is **half** of A's
+:::
+
+## Lab 9 Review: Q4 {style="font-size:85%"}
+
+Increasing the sample size makes the value of the $t$ statistic [\_\_\_\_\_], but it leaves the value of Cohen's $d$ [\_\_\_\_\_].
+
+::: fragment
+$t$ gets **larger** (farther from 0); $d$ stays **unchanged**
+:::
+
+::: {.fragment style="font-size:85%"}
+$$t = \frac{\bar{x} - \mu}{s / \sqrt{n}} \quad \text{has } \sqrt{n} \qquad d = \frac{\bar{x} - \mu}{s} \quad \text{has no } n$$
+:::
+
+## Outline
+
+-   Lab 9 Review
+-   Warm-up: *t* cutoffs with `qt()`
+-   Independent samples *t*-test
+-   Paired samples *t*-test
+-   Effect size (Cohen's *d*) and writing up the result
+
+Learning objectives: **R:** computing *t* by hand, `t.test()` with `var.equal = TRUE` and `paired = TRUE`
+
+**Statistics:** pooled SD, difference scores, degrees of freedom, choosing the right *t*-test
+
+## Warm-Up: *t* Cutoffs {style="font-size:85%"}
+
+Last lab: `qt()` gives the critical *t*, just like `qnorm()` gives the critical *z*. $\alpha$ = .05
+
+::::: columns
+::: {.column width="55%"}
+```{webr}
+# one-tailed: all of alpha in one tail
+qt(1 - .05, df = 3)
+qt(1 - .05, df = 37)
+
+# two-tailed: alpha/2 in each tail
+qt(1 - .05 / 2, df = 3)
+qt(1 - .05 / 2, df = 37)
+```
+:::
+
+::: {.column .fragment width="45%"}
+| $df$ | one-tailed | two-tailed |
+|:----:|:----------:|:----------:|
+|  3   |    2.35    |   ±3.18    |
+|  37  |    1.69    |   ±2.03    |
+
+Smaller $df$ → thicker tails → **bigger** cutoff
+
+Two tails → $\alpha$ is split → **bigger** cutoff
+:::
+:::::
+
+## Which *t*-Test? {style="font-size:85%"}
+
+| Test | Question | Example |
+|:-----------------|:-----------------|:-----------------|
+| **One-sample** (Lab 9) | Does one group differ from a known value $\mu$? | Do cars average 30 mpg? |
+| **Independent samples** | Do **two separate groups** differ? | Treatment vs. control; GT vs. UGA salaries |
+| **Paired samples** | Do the **same people** differ across two conditions/times? | Stress before vs. after an exam |
+
+::: fragment
+Ask: *is each score in group 1 matched to a specific score in group 2?*
+
+::: subpoint
+○ No → **independent** ○ Yes (same person, twin, matched pair) → **paired**
+:::
+:::
+
+# Independent Samples *t*-Test {.center}
+
+## Today's Data: Candy Sales {style="font-size:85%"}
+
+A store records daily sales (in \$100s) of **candy corn** on 20 days and **chocolate** on 20 other days. Do they sell differently?
+
+::::: columns
+::: {.column width="45%"}
+```{webr}
+#| autorun: true
+head(candy)
+table(candy$candy)
+```
+
+$H_0$: $\mu_1 = \mu_2$ $H_1$: $\mu_1 \ne \mu_2$
+:::
+
+::: {.column width="55%"}
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 4.2
+par(mar = c(4, 4, 1, 1))
+stripchart(sales ~ candy, data = candy, vertical = TRUE, method = "jitter",
+           pch = 19, col = adjustcolor(c("darkorange", "chocolate4"), .6),
+           ylab = "Daily sales ($100s)", xlab = "", cex = 1.3)
+m <- tapply(candy$sales, candy$candy, mean)
+segments(1:2 - .25, m, 1:2 + .25, m, lwd = 4)
+```
+:::
+:::::
+
+## Step 1: Pooled SD {style="font-size:85%"}
+
+We combine the two groups' variability into one estimate, weighting each by its $df$:
+
+$$s_p^2 = \frac{(n_1 - 1)s_1^2 + (n_2 - 1)s_2^2}{n_1 + n_2 - 2} \qquad s_p = \sqrt{s_p^2}$$
+
+::: fragment
+With **equal** group sizes, this is just the average of the two variances:
+
+$$s_p^2 = \frac{s_1^2 + s_2^2}{2}$$
+:::
+
+::: {.fragment style="font-size:80%"}
+ⓘ Pooling assumes the two groups have roughly **equal variances**, which is why we'll write `var.equal = TRUE` in R
+:::
+
+## Step 2: Test Statistic {style="font-size:85%"}
+
+$$t = \frac{\bar{x}_1 - \bar{x}_2}{s_p\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} \qquad df = (n_1 - 1) + (n_2 - 1) = n_1 + n_2 - 2$$
+
+::: subpoint
+○ Numerator: how far apart the two group means are
+:::
+
+::: subpoint
+○ Denominator: the standard error of that difference
+:::
+
+::: subpoint
+○ We lose **one** $df$ per group, because we estimate **two** means
+:::
+
+## Independent *t* by Hand {style="font-size:80%"}
+
+::::: columns
+::: {.column width="58%"}
+```{webr}
+#| autorun: true
+corn  <- candy$sales[candy$candy == "candy corn"]
+choco <- candy$sales[candy$candy == "chocolate"]
+n1 <- length(corn);  n2 <- length(choco)
+
+# Step 1: pooled SD
+sp <- sqrt(((n1 - 1) * sd(corn)^2 + (n2 - 1) * sd(choco)^2) /
+           (n1 + n2 - 2))
+sp
+
+# Step 2: t and df
+t_obs <- (mean(corn) - mean(choco)) / (sp * sqrt(1/n1 + 1/n2))
+df    <- n1 + n2 - 2
+c(t = t_obs, df = df, cutoff = qt(.975, df))
+```
+:::
+
+::: {.column .fragment width="42%"}
+$s_p$ = 1.53
+
+$t$ = −18.68, $df$ = 38
+
+Cutoff = ±2.02
+
+\|−18.68\| \> 2.02 → **reject** $H_0$: candy corn and chocolate sell differently (chocolate sells more!)
+:::
+:::::
+
+## Independent *t* with `t.test()` {style="font-size:80%"}
+
+::::: columns
+::: {.column width="60%"}
+```{webr}
+#| autorun: true
+t.test(sales ~ candy, data = candy, var.equal = TRUE)
+```
+:::
+
+::: {.column width="40%"}
+::: subpoint
+○ `sales ~ candy`: outcome **\~** grouping variable
+:::
+
+::: subpoint
+○ `var.equal = TRUE`: use the pooled SD (the test we did by hand)
+:::
+
+::: fragment
+Same answer: $t$(38) = −18.68, $p$ \< .001
+
+95% CI for $\mu_1 - \mu_2$: \[−9.99, −8.03\], which excludes 0
+:::
+
+::: {.fragment style="font-size:80%"}
+ⓘ Leave out `var.equal` and R runs **Welch's** *t*-test, which doesn't assume equal variances (note the decimal $df$)
+:::
+:::
+:::::
+
+# Paired Samples *t*-Test {.center}
+
+## Today's Data: Pumpkins {style="font-size:85%"}
+
+A farmer weighs the **same 20 pumpkins** (lbs) on Oct 1 and again on Oct 31. Did they gain weight?
+
+::::: columns
+::: {.column width="45%"}
+```{webr}
+#| autorun: true
+head(pumpkin)
+```
+
+Each Oct 31 weight is **matched** to an Oct 1 weight → paired
+
+$H_0$: $\mu_D = 0$ $H_1$: $\mu_D \ne 0$
+:::
+
+::: {.column width="55%"}
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 4.2
+par(mar = c(4, 4, 1, 1))
+plot(NA, xlim = c(.8, 2.2), ylim = range(pumpkin), xaxt = "n",
+     xlab = "", ylab = "Weight (lbs)")
+axis(1, at = 1:2, labels = c("Oct 1", "Oct 31"))
+segments(1, pumpkin$oct1, 2, pumpkin$oct31, col = adjustcolor("darkorange", .6), lwd = 2)
+points(rep(1, 20), pumpkin$oct1, pch = 19, col = "darkorange")
+points(rep(2, 20), pumpkin$oct31, pch = 19, col = "darkorange")
+```
+:::
+:::::
+
+## Paired *t*: Difference Scores {style="font-size:85%"}
+
+Trick: turn two columns into **one** column of differences, then run a one-sample *t*-test on it against 0
+
+$$d_i = x_{2i} - x_{1i} \qquad \bar{d} = \frac{\sum d_i}{n} \qquad s_d = \sqrt{\frac{\sum (d_i - \bar{d})^2}{n - 1}}$$
+
+$$t = \frac{\bar{d}}{s_d / \sqrt{n}} \qquad df = n - 1$$
+
+::: {.fragment style="font-size:85%"}
+ⓘ $n$ = number of **pairs** (20 pumpkins), not number of scores (40)
+:::
+
+## Paired *t* by Hand {style="font-size:80%"}
+
+::::: columns
+::: {.column width="58%"}
+```{webr}
+#| autorun: true
+pumpkin$diff <- pumpkin$oct31 - pumpkin$oct1
+d_bar <- mean(pumpkin$diff)
+s_d   <- sd(pumpkin$diff)
+n     <- nrow(pumpkin)
+
+t_obs <- d_bar / (s_d / sqrt(n))
+c(d_bar = d_bar, t = t_obs, df = n - 1,
+  cutoff = qt(.975, n - 1))
+```
+:::
+
+::: {.column .fragment width="42%"}
+$\bar{d}$ = 3.35 lbs
+
+$t$ = 12.45, $df$ = 19
+
+Cutoff = ±2.09
+
+12.45 \> 2.09 → **reject** $H_0$: pumpkins gained weight during October
+:::
+:::::
+
+## Paired *t* with `t.test()` {style="font-size:80%"}
+
+::::: columns
+::: {.column width="60%"}
+```{webr}
+#| autorun: true
+t.test(pumpkin$oct31, pumpkin$oct1, paired = TRUE)
+```
+:::
+
+::: {.column width="40%"}
+::: subpoint
+○ Order matters: R computes **first − second**
+:::
+
+::: subpoint
+○ `paired = TRUE` is the only change
+:::
+
+::: fragment
+$t$(19) = 12.45, $p$ \< .001
+
+95% CI for $\mu_D$: \[2.78, 3.91\]
+:::
+
+::: {.fragment style="font-size:85%"}
+Same as Lab 9's one-sample test on the differences:
+
+``` r
+t.test(pumpkin$diff, mu = 0)
+```
+:::
+:::
+:::::
+
+# Effect Size & Write-Up {.center}
+
+## Cohen's *d* for Two Means {style="font-size:85%"}
+
+Same idea as Lab 9: a mean difference divided by an SD
+
+::::: columns
+::: {.column width="50%"}
+**Independent:** $d = \dfrac{\bar{x}_1 - \bar{x}_2}{s_p}$
+
+**Paired:** $d = \dfrac{\bar{d}}{s_d}$
+
+```{webr}
+(mean(corn) - mean(choco)) / sp   # independent
+d_bar / s_d                       # paired
+```
+:::
+
+::: {.column .fragment width="50%"}
+Candy: $d$ = −5.91
+
+Pumpkins: $d$ = 2.79
+
+Both are **huge** (\|d\| \> 0.8 is large)
+
+::: {style="font-size:75%"}
+ⓘ The `effectsize` package's `cohens_d()` gives the same numbers, but by hand is fine for this class
+:::
+:::
+:::::
+
+## Writing It Up {style="font-size:85%"}
+
+Template: An \[independent / paired\] samples *t*-test showed that \[DV\] was \[significantly / not significantly\] different between \[groups/conditions\], $t$(df) = \_\_, $p$ = \_\_, $d$ = \_\_.
+
+::: fragment
+**Candy:** An independent samples *t*-test showed that daily sales were significantly higher for chocolate (*M* = 14.63) than candy corn (*M* = 5.62), $t$(38) = −18.68, $p$ \< .001, $d$ = −5.91.
+:::
+
+::: fragment
+**Pumpkins:** A paired samples *t*-test showed that pumpkins weighed significantly more on Oct 31 than on Oct 1 (mean gain = 3.35 lbs), $t$(19) = 12.45, $p$ \< .001, $d$ = 2.79.
+:::
+
+## Your Turn {style="font-size:80%"}
+
+Pick the right test, run it, and write one sentence
+
+1.  `mtcars`: do automatic (`am == 0`) and manual (`am == 1`) cars differ in `mpg`?
+2.  `sleep`: 10 people took two sleep drugs. Does `extra` sleep differ between drug 1 (`group == 1`, rows 1–10) and drug 2 (rows 11–20)?
+
+```{webr}
+
+
+
+
+```
+
+::: fragment
+Check:
+
+1.  **Independent**: $t$(30) = −4.11, $p$ \< .001, $d$ = −1.48
+2.  **Paired** (same 10 people): $t$(9) = 4.06, $p$ = .003, $d$ = 1.28 (drug 2 − drug 1)
+:::
+
+## Must-Take-Home Message {style="font-size:90%"}
+
+::: subpoint
+○ **Independent**: two separate groups → pool the SDs, $df = n_1 + n_2 - 2$, `t.test(y ~ group, var.equal = TRUE)`
+:::
+
+::: subpoint
+○ **Paired**: same subjects twice → difference scores, $df = n - 1$ (pairs), `t.test(x2, x1, paired = TRUE)`
+:::
+
+::: subpoint
+○ A paired *t*-test is just a one-sample *t*-test on the differences
+:::
+
+::: subpoint
+○ Always report $t$(df), $p$, and Cohen's $d$
+:::
