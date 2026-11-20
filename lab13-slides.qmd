@@ -1,0 +1,1327 @@
+---
+title: "Correlation & Regression + R Exam Walkthrough"
+subtitle: "PSYC 2020-A01 / PSYC 6022-A01 | 2026-11-20 | Lab 13"
+author: "Shuheng Jiang"
+format:
+  revealjs:
+    slide-number: true
+    show-slide-number: all
+    css: PSYC2020L_styles.css
+    width: 1200
+resources:
+  - data/survey_data.csv
+engine: knitr
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r}
+#| echo: false
+library(tidyverse)
+theme_set(theme_classic(base_size = 18))
+set.seed(2020)
+```
+
+## Outline
+
+-   The R Take-Home Exam
+-   **Part 1:** Correlation & Regression [(new today)]{.red}
+-   **Part 2:** Paired-Samples *t*-Test [(review of Lab 11)]{.blue}
+-   **Part 3:** One-Way ANOVA [(review of Lab 12)]{.blue}
+
+Learning objectives:
+
+**R:** `cor()`, `lm()`, `predict()`, `scale()`, plus a full run-through of `t.test(paired = TRUE)`, `aov()`, and `TukeyHSD()`
+
+**Statistics:** direction & strength of *r*, interpreting a slope, and going from hypotheses → decision → conclusion → APA write-up
+
+## The R Take-Home Exam {style="font-size:85%"}
+
+-   **Optional** for PSYC 2020 (bonus of up to 5% toward your final) · **Required** for PSYC 6022
+-   Completed in **RMarkdown**: submit the `.Rmd` **and** a knitted Word / PDF / HTML file
+-   Three parts, **one dataset**, $\alpha$ = .05 for every test
+-   Your own work only: questions about content go to the instructors **privately** on Ed
+-   Generative AI can help with a coding error, but it often gets the statistics wrong. You have to understand and interpret every result yourself
+
+::: {.my-callout .fragment}
+Today we walk through every exam question **in the same order**, using a **different dataset**. Follow along in your own `.Rmd` and you'll leave with a working example of each step.
+:::
+
+## Exam Roadmap {style="font-size:80%"}
+
+|   | Research question | Analysis | Covered in |
+|:---|:---|:---|:---|
+| **Part 1** | How strongly are two continuous variables related, and can one predict the other? | Correlation & simple linear regression | **Today** |
+| **Part 2** | Do the **same people** score differently on two measures? | Paired-samples *t*-test | Lab 11 |
+| **Part 3** | Do **three or more groups** differ on a continuous outcome? | One-way ANOVA + Tukey's HSD | Lab 12 |
+
+:::: fragment
+Each part follows the same rhythm:
+
+::: subpoint
+○ look at the data → state hypotheses → run the test → make a decision → explain it in words
+:::
+::::
+
+## Today's Data: Student Survey {style="font-size:65%"}
+
+168 intro statistics students at the University of Adelaide filled out a survey and had a few things measured. This is a cleaned version of `MASS::survey` that keeps only students with complete records. [Download survey_data.csv](data/survey_data.csv)
+
+| Variable | Description |
+|----|----|
+| `id` | Student identifier |
+| `sex` | Student sex (female, male) |
+| `hand` | Writing hand (left, right) |
+| `smoke` | How much the student smokes (never, occasional, regular, heavy) |
+| `exercise` | How often the student exercises (none, some, freq = frequently) |
+| `age` | Age (years) |
+| `height` | Height (cm) |
+| `pulse` | Pulse rate (beats per minute) |
+| `wr_hand` | Span of the **writing** hand, tip of thumb to tip of little finger (cm) |
+| `nw_hand` | Span of the **non-writing** hand (cm) |
+
+::: notes
+survey_data.csv was made from MASS::survey: keep Sex, W.Hnd, Exer, Smoke, Age, Height, Pulse, Wr.Hnd, NW.Hnd; drop rows with any NA (237 -\> 168); rename to lowercase; age rounded to 1 decimal.
+:::
+
+# Part 1: Correlation & Regression {.center}
+
+## Research Question 1 {style="font-size:85%"}
+
+Bigger people tend to have bigger hands.
+
+**How strongly is a student's writing-hand span related to their height, and can hand span be used to predict height?**
+
+::: fragment
+| Role                             | Variable  |
+|:---------------------------------|:----------|
+| Outcome (*y*, vertical axis)     | `height`  |
+| Predictor (*x*, horizontal axis) | `wr_hand` |
+:::
+
+::: fragment
+Two continuous variables → **correlation** (how strongly related?) and **simple linear regression** (can *x* predict *y*?)
+:::
+
+## 1.1 Import & Get a Sense of the Data {style="font-size:80%"}
+
+```{r}
+library(tidyverse)   # ggplot2 for plots, dplyr for group summaries
+library(car)         # leveneTest() for Part 3
+
+survey <- read.csv("data/survey_data.csv")
+```
+
+::: panel-tabset
+### `head()`
+
+```{r}
+head(survey)
+```
+
+### `str()`
+
+```{r}
+str(survey)
+```
+
+### `summary()`
+
+```{r}
+summary(survey[, c("age", "height", "pulse", "wr_hand", "nw_hand")])
+```
+:::
+
+::: {style="font-size:80%"}
+ⓘ The file path is relative to your `.Rmd`, so keep the CSV in the same folder (or a `data/` subfolder). Other options: `dim()`, `names()`, `glimpse()`, `psych::describe()`
+:::
+
+## 1.1 Put the Groups in a Sensible Order {style="font-size:85%"}
+
+R reads text columns as characters and sorts groups **alphabetically**:
+
+```{r}
+table(survey$exercise)
+```
+
+::: fragment
+`factor()` with `levels =` sets the order *you* want (none → some → freq):
+
+```{r}
+survey$exercise <- factor(survey$exercise, levels = c("none", "some", "freq"))
+table(survey$exercise)
+```
+:::
+
+::::: fragment
+::: subpoint
+○ Run it **once, right after importing**, so every table, plot, ANOVA, and Tukey output in Part 3 reads in a natural order
+:::
+
+::: subpoint
+○ Spelling must match the data exactly: a misspelled level turns those rows into `NA`
+:::
+:::::
+
+## Correlation: The Big Idea {style="font-size:85%"}
+
+**Pearson's** $r$: the direction and strength of the **linear** relationship between two continuous variables, from −1 to +1
+
+```{r}
+#| echo: false
+#| fig-width: 13
+#| fig-height: 3.3
+#| fig-align: center
+set.seed(13)
+make_r <- function(r, n = 120) {
+  x <- rnorm(n)
+  data.frame(x = x, y = r * x + sqrt(1 - r^2) * rnorm(n))
+}
+x_curve <- runif(120, -2, 2)
+sims <- bind_rows(
+  make_r(-0.8) |> mutate(panel = 1),
+  make_r(0)    |> mutate(panel = 2),
+  make_r(0.4)  |> mutate(panel = 3),
+  make_r(0.9)  |> mutate(panel = 4),
+  data.frame(x = x_curve, y = x_curve^2 + rnorm(120, 0, .3), panel = 5)
+)
+panel_labels <- sims |>
+  group_by(panel) |>
+  summarise(r = cor(x, y)) |>
+  mutate(label = sprintf("r = %.2f", r),
+         label = ifelse(panel == 5, paste0(label, " (curved!)"), label))
+sims |>
+  left_join(panel_labels, by = "panel") |>
+  mutate(label = fct_reorder(label, panel)) |>
+  ggplot(aes(x, y)) +
+  geom_point(color = "#5a55fa", alpha = .6, size = 2) +
+  facet_wrap(~ label, nrow = 1, scales = "free_y") +
+  labs(x = NULL, y = NULL) +
+  theme(axis.text = element_blank(), axis.ticks = element_blank(),
+        strip.background = element_blank(),
+        strip.text = element_text(size = 20, face = "bold"))
+```
+
+::: subpoint
+○ **Sign** = direction: + both rise together; − one rises as the other falls
+:::
+
+::: subpoint
+○ **Size** (how close to ±1) = strength: how tightly points hug a straight line
+:::
+
+::: subpoint
+○ $r$ only sees straight lines: the last panel has a strong pattern but $r \approx 0$, so **always plot first**
+:::
+
+## 1.2 Scatterplot {style="font-size:80%"}
+
+::: panel-tabset
+### Plot
+
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 4.1
+#| fig-align: center
+ggplot(survey, aes(x = wr_hand, y = height)) +
+  geom_point(alpha = 0.5, size = 3) +
+  labs(x = "Writing-hand span (cm)", y = "Height (cm)")
+```
+
+### Code
+
+```{r}
+#| eval: false
+ggplot(survey, aes(x = wr_hand, y = height)) +
+  geom_point(alpha = 0.5, size = 3) +
+  labs(x = "Writing-hand span (cm)", y = "Height (cm)")
+```
+
+Quick base R version:
+
+```{r}
+#| eval: false
+plot(height ~ wr_hand, data = survey)   # formula is y ~ x
+```
+
+ⓘ With `plot(x, y)` the **first** argument goes on the horizontal axis
+:::
+
+::: fragment
+What do you see? Points rise from left to right, in a fairly tight cloud with no curve
+:::
+
+## 1.3 Correlation Coefficient {style="font-size:80%"}
+
+```{r}
+cor(survey$wr_hand, survey$height)
+```
+
+::: subpoint
+○ Order doesn't matter: `cor(x, y)` = `cor(y, x)`
+:::
+
+::: fragment
+Under the hood, $r$ is the **average product of z-scores**:
+
+$$r = \frac{\sum z_x z_y}{n - 1}$$
+
+```{r}
+z_hand   <- (survey$wr_hand - mean(survey$wr_hand)) / sd(survey$wr_hand)
+z_height <- (survey$height  - mean(survey$height))  / sd(survey$height)
+sum(z_hand * z_height) / (nrow(survey) - 1)
+```
+:::
+
+## Why Does *r* Come Out Positive? {style="font-size:85%"}
+
+::::::::: columns
+::: {.column width="62%"}
+```{r}
+#| echo: false
+#| fig-width: 7.2
+#| fig-height: 5.4
+quad <- survey |>
+  mutate(zx = (wr_hand - mean(wr_hand)) / sd(wr_hand),
+         zy = (height - mean(height)) / sd(height),
+         product = ifelse(zx * zy > 0, "positive", "negative"))
+ggplot(quad, aes(x = wr_hand, y = height, color = product)) +
+  geom_vline(xintercept = mean(survey$wr_hand), linetype = "dashed", color = "gray60") +
+  geom_hline(yintercept = mean(survey$height), linetype = "dashed", color = "gray60") +
+  geom_point(size = 2.8, alpha = .7) +
+  annotate("text", x = 23.4, y = 203, label = "(+)(+) = +", color = "#5a55fa", size = 6, fontface = "bold", hjust = 1) +
+  annotate("text", x = 12.8, y = 149, label = "(-)(-) = +", color = "#5a55fa", size = 6, fontface = "bold", hjust = 0) +
+  annotate("text", x = 12.8, y = 203, label = "(-)(+) = -", color = "#b04c19", size = 6, fontface = "bold", hjust = 0) +
+  annotate("text", x = 23.4, y = 149, label = "(+)(-) = -", color = "#b04c19", size = 6, fontface = "bold", hjust = 1) +
+  scale_color_manual(values = c(positive = "#5a55fa", negative = "#b04c19")) +
+  coord_cartesian(xlim = c(12.8, 23.4), ylim = c(148, 204)) +
+  labs(x = "Writing-hand span (cm)", y = "Height (cm)") +
+  theme(legend.position = "none")
+```
+:::
+
+::::::: {.column width="38%"}
+Dashed lines = the two means
+
+::: subpoint
+○ Above-average hand **and** above-average height: $(+)(+) = +$
+:::
+
+::: subpoint
+○ Below on both: $(-)(-) = +$
+:::
+
+::: subpoint
+○ Above on one, below on the other: product is $-$
+:::
+
+::: fragment
+`r sum(quad$zx * quad$zy > 0)` of the 168 students land in a **+** quadrant, so the products add up to a positive $r$
+:::
+:::::::
+:::::::::
+
+## 1.4 Describing Direction & Strength {style="font-size:85%"}
+
+::::::::: columns
+::::: {.column width="50%"}
+**Direction** = sign of $r$
+
+::: subpoint
+○ $+$: as one goes up, so does the other
+:::
+
+::: subpoint
+○ $-$: as one goes up, the other goes down
+:::
+
+**Strength** = size of $|r|$ (Cohen's rough guidelines)
+
+| $|r|$ | Strength |
+|:-----:|:--------:|
+| ≈ .10 |   weak   |
+| ≈ .30 | moderate |
+| ≥ .50 |  strong  |
+:::::
+
+::::: {.column .fragment width="50%"}
+**Our result:** $r$ = .65 → **positive** and **strong**
+
+::: my-callout
+The scatterplot and $r$ = .65 show a strong, positive linear relationship between writing-hand span and height: students with wider hand spans tend to be taller.
+:::
+
+<br>
+
+::: {style="font-size:80%"}
+ⓘ Use **both** pieces of evidence: the plot shows the shape and any outliers, $r$ puts a number on it
+
+ⓘ Correlation ≠ causation: stretching your hand won't make you taller!
+:::
+:::::
+:::::::::
+
+## 1.5 Correlation Matrix {style="font-size:80%"}
+
+Give `cor()` several columns at once and it returns every pairwise correlation:
+
+```{r}
+round(cor(survey[, c("wr_hand", "nw_hand", "height", "pulse")]), 2)
+
+# same thing with dplyr:
+# survey |> select(wr_hand, nw_hand, height, pulse) |> cor() |> round(2)
+```
+
+::::::: columns
+::::: {.column .fragment width="50%"}
+**How to read it**
+
+::: subpoint
+○ Diagonal = 1 (each variable with itself): skip it
+:::
+
+::: subpoint
+○ The two triangles are mirror images: read just one
+:::
+:::::
+
+::: {.column .fragment width="50%"}
+**Strongest** = largest $|r|$: `wr_hand` & `nw_hand` (.97), since your two hands are nearly the same size
+
+**Weakest** = closest to 0: `wr_hand` & `pulse` (−.01), basically no relationship
+:::
+:::::::
+
+::: {.fragment style="font-size:80%"}
+ⓘ Strength ignores the sign: $r$ = −.08 is *stronger* than $r$ = −.01. If your data had missing values, add `use = "complete.obs"`
+:::
+
+## Regression: Drawing the Best Line {style="font-size:85%"}
+
+::::::::: columns
+::::::: {.column width="45%"}
+$$\hat{y} = b_0 + b_1 x$$
+
+::: subpoint
+○ $\hat{y}$ = predicted height
+:::
+
+::: subpoint
+○ $b_0$ = **intercept**: predicted $y$ when $x = 0$
+:::
+
+::: subpoint
+○ $b_1$ = **slope**: change in predicted $y$ for every 1-unit increase in $x$
+:::
+
+::: fragment
+"Best" line = **least squares**: the line that makes the sum of squared residuals as small as possible
+
+$$\sum (y_i - \hat{y}_i)^2$$
+:::
+:::::::
+
+::: {.column width="55%"}
+```{r}
+#| echo: false
+#| fig-width: 6.5
+#| fig-height: 5
+fit_demo <- lm(height ~ wr_hand, data = survey)
+survey |>
+  mutate(pred = fitted(fit_demo)) |>
+  ggplot(aes(x = wr_hand, y = height)) +
+  geom_segment(aes(xend = wr_hand, yend = pred), color = "#b04c19", alpha = .45) +
+  geom_point(alpha = .6, size = 2.5) +
+  geom_abline(intercept = coef(fit_demo)[1], slope = coef(fit_demo)[2],
+              color = "#5a55fa", linewidth = 2) +
+  annotate("text", x = 22.4, y = 156, label = "red lines =\nresiduals", color = "#b04c19", size = 6) +
+  labs(x = "Writing-hand span (cm)", y = "Height (cm)")
+```
+:::
+:::::::::
+
+## 1.6 Hypotheses for the Slope {style="font-size:85%"}
+
+$H_0$: $\beta_1 = 0$
+
+::: subpoint
+○ Hand span does **not** predict height (the population line is flat)
+:::
+
+$H_1$: $\beta_1 \neq 0$
+
+::: subpoint
+○ Hand span **does** predict height (the population line has a nonzero slope)
+:::
+
+::: {.fragment style="font-size:85%"}
+ⓘ $\beta_1$ (Greek) is the **population** slope we're testing; $b_1$ is the slope we **estimate** from our sample
+
+ⓘ `lm()` tests this two-tailed by default
+:::
+
+## 1.7 Simple Linear Regression {style="font-size:80%"}
+
+`lm(outcome ~ predictor, data = ...)`: same `y ~ x` formula as the plot
+
+```{r}
+height_model <- lm(height ~ wr_hand, data = survey)
+summary(height_model)
+```
+
+## Reading the `summary()` Output {style="font-size:75%"}
+
+::::::::::::: columns
+::: {.column width="48%"}
+```{r}
+round(summary(height_model)$coefficients, 4)
+summary(height_model)$r.squared
+```
+:::
+
+::::::::::: {.column width="52%"}
+::: subpoint
+○ **Estimate**: $b_0$ = 108.95 (intercept), $b_1$ = 3.38 (slope)
+:::
+
+::: subpoint
+○ **Std. Error**: how much each estimate would bounce around from sample to sample
+:::
+
+::: subpoint
+○ **t value** = Estimate ÷ Std. Error (3.3785 ÷ 0.3057 = 11.05)
+:::
+
+::: subpoint
+○ **Pr(\>\|t\|)**: *p*-value for $H_0: \beta = 0$
+:::
+
+::: subpoint
+○ **df** = $n - 2$ = 166 (we estimated two things: $b_0$ and $b_1$)
+:::
+
+::::: fragment
+::: subpoint
+○ $R^2$ = .42: hand span explains 42% of the variability in height. With one predictor, $R^2 = r^2$ (.651² = .42)
+:::
+
+::: subpoint
+○ The *F*-test at the bottom tests the whole model. With one predictor, $F = t^2$ (11.05² = 122.1)
+:::
+:::::
+:::::::::::
+:::::::::::::
+
+## 1.8 Interpreting the Slope {style="font-size:85%"}
+
+:::::::: columns
+::::: {.column width="52%"}
+Template: *For every 1-\[unit\] increase in \[x\], \[y\] is predicted to \[increase / decrease\] by \[*$b_1$\] \[units\].
+
+::: {.my-callout .fragment}
+For every **1-cm** increase in writing-hand span, predicted height increases by **3.38 cm**. The slope is significant, $b$ = 3.38, $t$(166) = 11.05, $p$ \< .001, so we reject $H_0$: hand span significantly predicts height.
+:::
+
+::: {.fragment style="font-size:80%"}
+ⓘ The intercept (108.95 cm) is the predicted height for a hand span of **0 cm**. Nobody has a 0-cm hand, so the intercept just anchors the line. Don't over-interpret it
+:::
+:::::
+
+:::: {.column width="48%"}
+```{r}
+#| echo: false
+#| fig-width: 5.6
+#| fig-height: 4.8
+ggplot(survey, aes(x = wr_hand, y = height)) +
+  geom_point(alpha = 0.5, size = 2.5) +
+  geom_smooth(method = "lm", color = "#5a55fa", fill = "#5a55fa", alpha = .2, linewidth = 1.8) +
+  labs(x = "Writing-hand span (cm)", y = "Height (cm)")
+```
+
+::: {style="font-size:70%"}
+add `geom_smooth(method = "lm")` to draw the line
+:::
+::::
+::::::::
+
+## 1.9 Predicted Values {style="font-size:80%"}
+
+What height would we predict for hand spans of **16, 18, and 20 cm**?
+
+::::: columns
+::: {.column width="50%"}
+**By hand** with the coefficients: $\hat{y} = b_0 + b_1 x$
+
+```{r}
+b <- coef(height_model)
+b
+b[1] + b[2] * c(16, 18, 20)
+```
+:::
+
+::: {.column width="50%"}
+**With `predict()`**
+
+```{r}
+new_hands <- data.frame(wr_hand = c(16, 18, 20))
+predict(height_model, newdata = new_hands)
+```
+:::
+:::::
+
+:::::: fragment
+::: subpoint
+○ The column in `newdata` must have **exactly** the same name as the predictor (`wr_hand`)
+:::
+
+::: subpoint
+○ Each extra 2 cm of hand span adds 2 × 3.38 = 6.76 cm of predicted height
+:::
+
+::: subpoint
+○ Only predict inside the range you observed (13 to 23.2 cm here)
+:::
+::::::
+
+## 1.10 z-Scores {style="font-size:80%"}
+
+$$z = \frac{x - \bar{x}}{s}$$
+
+```{r}
+survey$height_z  <- (survey$height - mean(survey$height)) / sd(survey$height)
+survey$wr_hand_z <- as.numeric(scale(survey$wr_hand))   # scale() does the same thing
+
+round(c(mean = mean(survey$height_z),  sd = sd(survey$height_z)), 2)
+round(c(mean = mean(survey$wr_hand_z), sd = sd(survey$wr_hand_z)), 2)
+```
+
+::: subpoint
+○ `scale()` returns a matrix, so wrap it in `as.numeric()` to store a plain column
+:::
+
+::: fragment
+**Bonus:** regress one z-score on the other, and the slope **is** $r$
+
+```{r}
+round(coef(lm(height_z ~ wr_hand_z, data = survey)), 3)
+```
+:::
+
+# Part 2: Paired *t*-Test {.center}
+
+## Research Question 2 {style="font-size:85%"}
+
+::::::::: columns
+::::::: {.column width="50%"}
+Most of us use our writing hand far more than the other one.
+
+**Is a student's writing-hand span different from their non-writing-hand span?**
+
+:::::: fragment
+Every student has **two** scores, `wr_hand` and `nw_hand`, so the scores come in **pairs**
+
+::: subpoint
+○ above the dashed line: writing hand wider (`r sum(survey$wr_hand > survey$nw_hand)` students)
+:::
+
+::: subpoint
+○ below: non-writing hand wider (`r sum(survey$wr_hand < survey$nw_hand)`)
+:::
+
+::: subpoint
+○ on it: same span (`r sum(survey$wr_hand == survey$nw_hand)`)
+:::
+::::::
+:::::::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| fig-width: 5.5
+#| fig-height: 5.5
+ggplot(survey, aes(x = nw_hand, y = wr_hand)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "gray50", linewidth = 1) +
+  geom_jitter(width = .08, height = .08, alpha = .5, size = 2.5, color = "#5a55fa") +
+  coord_equal() +
+  labs(x = "Non-writing-hand span (cm)", y = "Writing-hand span (cm)")
+```
+:::
+:::::::::
+
+## 2.1 Hypotheses {style="font-size:85%"}
+
+For each student, $D$ = `wr_hand` − `nw_hand`
+
+$H_0$: $\mu_D = 0$
+
+::: subpoint
+○ On average, the two hands have the same span
+:::
+
+$H_1$: $\mu_D \neq 0$
+
+::: subpoint
+○ On average, the two hands' spans differ
+:::
+
+::: {.fragment style="font-size:85%"}
+ⓘ Hypotheses are about the **population** mean difference ($\mu_D$), not our sample's $\bar{d}$
+:::
+
+## 2.2 Which Test, and Why? {style="font-size:85%"}
+
+**Paired-samples (dependent) *t*-test, two-tailed**
+
+::: subpoint
+○ **Paired**: the same 168 students give both measurements, so each `wr_hand` score is matched to one `nw_hand` score. These are not two independent groups
+:::
+
+::: subpoint
+○ **Two-tailed**: the question asks whether the spans are **different**, not whether one is **larger**
+:::
+
+::: {.fragment style="font-size:85%"}
+| Same people (or matched units) measured twice? | Number of groups / conditions | Test |
+|:--:|:--:|:--:|
+| Yes | 2 | Paired-samples *t* |
+| No | 2 | Independent-samples *t* |
+| No | 3 or more | One-way ANOVA |
+
+Direction stated in the question ("higher," "decrease") → one-tailed. Just "different" → two-tailed
+:::
+
+## 2.3 Means and the Difference Between Them {style="font-size:85%"}
+
+```{r}
+mean_wr <- mean(survey$wr_hand)
+mean_nw <- mean(survey$nw_hand)
+
+mean_wr
+mean_nw
+mean_wr - mean_nw
+```
+
+::: {.fragment style="font-size:85%"}
+ⓘ When a question says **display** the result, save it **and** print it. Shortcut: wrapping an assignment in parentheses does both, e.g., `(mean_wr <- mean(survey$wr_hand))`
+:::
+
+## 2.4 A Difference Score for Each Student {style="font-size:80%"}
+
+::::::: columns
+::::: {.column width="55%"}
+```{r}
+survey$hand_diff <- survey$wr_hand - survey$nw_hand
+head(survey[, c("id", "wr_hand", "nw_hand", "hand_diff")])
+```
+
+::: subpoint
+○ Keep the same order as 2.3 (writing − non-writing), so a **positive** difference = writing hand wider
+:::
+
+::: subpoint
+○ Two columns are now **one**, so a paired *t*-test is a one-sample *t*-test of `hand_diff` against 0
+:::
+:::::
+
+::: {.column width="45%"}
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 4.6
+ggplot(survey, aes(x = hand_diff)) +
+  geom_histogram(binwidth = .2, fill = "#5a55fa", alpha = .7, color = "white") +
+  geom_vline(xintercept = 0, linetype = "dashed", linewidth = 1) +
+  labs(x = "Writing minus non-writing span (cm)", y = "Number of students")
+```
+:::
+:::::::
+
+## 2.5–2.7 Mean, SD, and SE of the Differences {style="font-size:80%"}
+
+::::: columns
+::: {.column width="58%"}
+```{r}
+n         <- nrow(survey)             # number of pairs
+mean_diff <- mean(survey$hand_diff)   # 2.5
+sd_diff   <- sd(survey$hand_diff)     # 2.6
+se_diff   <- sd_diff / sqrt(n)        # 2.7
+
+mean_diff
+sd_diff
+se_diff
+```
+:::
+
+::: {.column width="42%"}
+$$\bar{d} = \frac{\sum d_i}{n}$$
+
+$$s_d = \sqrt{\frac{\sum (d_i - \bar{d})^2}{n - 1}}$$
+
+$$SE_{\bar{d}} = \frac{s_d}{\sqrt{n}}$$
+:::
+:::::
+
+::: {.fragment style="font-size:85%"}
+ⓘ The mean of the differences = the difference of the means (0.0708 both ways, compare with 2.3)
+
+ⓘ $n$ = number of **pairs** (168 students), not number of scores (336)
+:::
+
+## 2.8 Degrees of Freedom & Critical *t* {style="font-size:85%"}
+
+$$df = n - 1 = 168 - 1 = 167$$
+
+```{r}
+df_t <- n - 1
+qt(1 - .05/2, df = df_t)   # two-tailed: .025 in each tail
+```
+
+::: fragment
+Reject $H_0$ if $|t| > 1.97$
+:::
+
+::: {.fragment style="font-size:85%"}
+ⓘ Reminder from Lab 11: a one-tailed test puts all of $\alpha$ in one tail, `qt(.95, df = 167)` = 1.65
+:::
+
+## 2.9 Statistical Decision & Conclusion {style="font-size:80%"}
+
+::::: columns
+::: {.column width="50%"}
+$$t = \frac{\bar{d}}{SE_{\bar{d}}}$$
+
+```{r}
+t_obs <- mean_diff / se_diff
+t_obs
+
+2 * pt(-abs(t_obs), df = df_t)   # two-tailed p
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| fig-width: 5.8
+#| fig-height: 3.8
+crit_t <- qt(.975, df_t)
+t_curve <- tibble(t = seq(-4, 4, length.out = 600), dens = dt(t, df_t))
+ggplot(t_curve, aes(t, dens)) +
+  geom_area(data = filter(t_curve, t >= crit_t), fill = "#b04c19", alpha = .5) +
+  geom_area(data = filter(t_curve, t <= -crit_t), fill = "#b04c19", alpha = .5) +
+  geom_line(linewidth = 1.2) +
+  geom_vline(xintercept = t_obs, color = "#5a55fa", linewidth = 1.6) +
+  annotate("text", x = t_obs, y = .43, label = sprintf("t = %.2f", t_obs),
+           color = "#5a55fa", size = 6, hjust = 1.1) +
+  annotate("text", x = c(-3.1, 3.1), y = .08, label = c("-1.97", "+1.97"),
+           color = "#b04c19", size = 5.5) +
+  scale_y_continuous(limits = c(0, .45), expand = c(0, 0)) +
+  labs(x = "t (df = 167)", y = NULL) +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+        axis.line.y = element_blank())
+```
+:::
+:::::
+
+::: fragment
+**Decision:** $|1.77| < 1.97$ ($p$ = .078 \> .05) → **fail to reject** $H_0$
+:::
+
+::: {.my-callout .fragment}
+**Conclusion:** Students' writing-hand span (*M* = 18.80 cm) was not significantly different from their non-writing-hand span (*M* = 18.73 cm), $t$(167) = 1.77, $p$ = .078.
+:::
+
+## 2.9 Double-Check with `t.test()` {style="font-size:80%"}
+
+::::::: columns
+::: {.column width="60%"}
+```{r}
+t.test(survey$wr_hand, survey$nw_hand, paired = TRUE)
+```
+:::
+
+::::: {.column width="40%"}
+Same $t$(167) = 1.77, $p$ = .078 ✓
+
+::: fragment
+95% CI for $\mu_D$: \[−0.01, 0.15\] **includes 0**, which agrees with failing to reject $H_0$
+:::
+
+::: {.fragment style="font-size:85%"}
+ⓘ Order matters: R computes **first − second**, the same order as `hand_diff`
+
+ⓘ Same result: `t.test(survey$hand_diff, mu = 0)`
+
+ⓘ "Fail to reject" ≠ "the hands are identical." We just don't have enough evidence of a difference
+:::
+:::::
+:::::::
+
+## 2.10 Effect Size: Cohen's *d* {style="font-size:85%"}
+
+::::::: columns
+::: {.column width="50%"}
+$$d = \frac{\bar{d}}{s_d}$$
+
+```{r}
+cohens_d <- mean_diff / sd_diff
+cohens_d
+```
+
+| $|d|$ |  Size  |
+|:-----:|:------:|
+|  0.2  | small  |
+|  0.5  | medium |
+|  0.8  | large  |
+:::
+
+::::: {.column .fragment width="50%"}
+::: my-callout
+$d$ = 0.14 is below even the "small" benchmark of 0.2: the average difference between the two hands is only about one-seventh of a standard deviation. A **negligible** effect.
+:::
+
+<br>
+
+::: {style="font-size:80%"}
+ⓘ $t$ grows with $n$, but $d$ doesn't. $d$ tells you how **big** a difference is, no matter how many people you measured
+:::
+:::::
+:::::::
+
+# Part 3: One-Way ANOVA {.center}
+
+## Research Question 3 {style="font-size:85%"}
+
+People who exercise often tend to have lower heart rates.
+
+**Does pulse rate differ across students who exercise not at all, some of the time, or frequently?**
+
+::::: fragment
+::: subpoint
+○ Outcome: `pulse` (continuous)
+:::
+
+::: subpoint
+○ Grouping variable: `exercise` (3 groups, already put in order back in 1.1)
+:::
+
+3 or more independent groups, one continuous outcome → **one-way ANOVA**
+:::::
+
+## 3.1 Hypotheses {style="font-size:85%"}
+
+$H_0$: $\mu_{none} = \mu_{some} = \mu_{freq}$
+
+::: subpoint
+○ Average pulse is the same in all three exercise groups
+:::
+
+$H_1$: at least one group mean differs from the others
+
+::: {.fragment style="font-size:85%"}
+⚠ Not $H_1: \mu_{none} \neq \mu_{some} \neq \mu_{freq}$. $H_1$ is true even if only **one** group stands out
+:::
+
+## 3.2 Descriptives by Group {style="font-size:80%"}
+
+::::::::: columns
+::::::: {.column width="55%"}
+```{r}
+survey |>
+  group_by(exercise) |>
+  summarise(n    = n(),
+            mean = mean(pulse),
+            sd   = sd(pulse))
+```
+
+::: {style="font-size:85%"}
+Base R alternative:
+
+`tapply(survey$pulse, survey$exercise, mean)`
+:::
+
+::::: fragment
+::: subpoint
+○ Frequent exercisers have the lowest average pulse
+:::
+
+::: subpoint
+○ Group sizes are unequal (14 / 69 / 85). That's fine for ANOVA
+:::
+:::::
+:::::::
+
+::: {.column width="45%"}
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 5
+ggplot(survey, aes(x = exercise, y = pulse, fill = exercise)) +
+  geom_boxplot(alpha = .5, outlier.shape = NA, width = .55) +
+  geom_jitter(width = .12, height = 0, alpha = .4, size = 1.8) +
+  stat_summary(fun = mean, geom = "point", shape = 23, size = 5, fill = "white") +
+  scale_fill_manual(values = c("#b04c19", "#dfc127", "#5a55fa")) +
+  labs(x = "Exercise", y = "Pulse (beats per minute)", caption = "white diamond = group mean") +
+  theme(legend.position = "none")
+```
+:::
+:::::::::
+
+## 3.3 Homogeneity of Variance {style="font-size:80%"}
+
+ANOVA assumes the groups have (roughly) **equal variances**. Pick **one** method, name it, and state your conclusion
+
+::: panel-tabset
+### Rule of thumb
+
+```{r}
+group_sds <- tapply(survey$pulse, survey$exercise, sd)
+group_sds
+max(group_sds) / min(group_sds)
+```
+
+Largest SD ÷ smallest SD = 1.43, which is **less than 2** → assumption satisfied
+
+### Levene's test
+
+```{r}
+leveneTest(pulse ~ exercise, data = survey)   # from the car package
+```
+
+$F$(2, 165) = 1.33, $p$ = .268 → **not significant** → assumption satisfied
+
+ⓘ Install once in the console: `install.packages("car")`
+
+### Bartlett's test
+
+```{r}
+bartlett.test(pulse ~ exercise, data = survey)   # base R
+```
+
+$p$ = .177 → **not significant** → assumption satisfied (Bartlett's is more sensitive to non-normal data than Levene's)
+:::
+
+::: {.my-callout .fragment}
+Here a **non-significant** result is the good news: $H_0$ for these tests is that the variances are equal.
+:::
+
+## 3.4 Run the One-Way ANOVA {style="font-size:85%"}
+
+`aov(outcome ~ group, data = ...)`, then `summary()`
+
+```{r}
+pulse_model <- aov(pulse ~ exercise, data = survey)
+summary(pulse_model)
+```
+
+::: {.fragment style="font-size:85%"}
+ⓘ Check the `Df` next to your grouping variable: it should be (number of groups − 1) = 2. If it says **1**, R treated your groups as a number (e.g., groups coded 1/2/3). Convert with `factor()` first!
+:::
+
+## 3.5 Degrees of Freedom {style="font-size:85%"}
+
+$k$ = 3 groups, $N$ = 168 students
+
+|                | Formula |       Value       |
+|:---------------|:-------:|:-----------------:|
+| $df_{between}$ | $k - 1$ |   3 − 1 = **2**   |
+| $df_{within}$  | $N - k$ | 168 − 3 = **165** |
+| $df_{total}$   | $N - 1$ | 168 − 1 = **167** |
+
+::: fragment
+```{r}
+k <- nlevels(survey$exercise)
+N <- nrow(survey)
+c(df_between = k - 1, df_within = N - k, df_total = N - 1)
+```
+:::
+
+::: {.fragment style="font-size:85%"}
+ⓘ $df_{between} + df_{within} = df_{total}$: 2 + 165 = 167
+:::
+
+## 3.6 Verify the Mean Squares {style="font-size:80%"}
+
+$$MS = \frac{SS}{df} \qquad MS_{between} = \frac{SS_{between}}{k - 1} \qquad MS_{within} = \frac{SS_{within}}{N - k}$$
+
+```{r}
+anova_table <- summary(pulse_model)[[1]]   # the ANOVA table as a data frame
+ss_between  <- anova_table$`Sum Sq`[1]
+ss_within   <- anova_table$`Sum Sq`[2]
+
+ms_between <- ss_between / (k - 1)
+ms_within  <- ss_within  / (N - k)
+c(ms_between = ms_between, ms_within = ms_within)
+```
+
+::: fragment
+1153.27 ÷ 2 = **576.6** and 21076.64 ÷ 165 = **127.7** ✓ match the `Mean Sq` column
+:::
+
+::: {.fragment style="font-size:85%"}
+ⓘ The printed table rounds SS (1153, 21077). Pulling the values out of the table object, as above, avoids rounding error
+:::
+
+## 3.7 Verify *F* {style="font-size:85%"}
+
+$$F = \frac{MS_{between}}{MS_{within}}$$
+
+```{r}
+F_obs <- ms_between / ms_within
+F_obs
+```
+
+::: fragment
+576.6 ÷ 127.7 = **4.51** ✓ matches the `F value` column
+:::
+
+:::: fragment
+::: subpoint
+○ The variability **between** exercise groups is about 4.5 times the variability **within** them
+:::
+::::
+
+## 3.8 Critical *F*, Decision & Conclusion {style="font-size:80%"}
+
+:::::: columns
+:::: {.column width="52%"}
+```{r}
+# critical F
+qf(.95, df1 = k - 1, df2 = N - k)
+
+# p-value
+pf(F_obs, k - 1, N - k, lower.tail = FALSE)
+```
+
+::: {style="font-size:85%"}
+ⓘ *F* only has an upper tail (it's a ratio of variances), so use `.95`, not `.975`
+:::
+::::
+
+::: {.column width="48%"}
+```{r}
+#| echo: false
+#| fig-width: 5.4
+#| fig-height: 3.6
+crit_F <- qf(.95, k - 1, N - k)
+F_curve <- tibble(f = seq(0, 7, length.out = 600), dens = df(f, k - 1, N - k))
+ggplot(F_curve, aes(f, dens)) +
+  geom_area(data = filter(F_curve, f >= crit_F), fill = "#b04c19", alpha = .5) +
+  geom_line(linewidth = 1.2) +
+  geom_vline(xintercept = F_obs, color = "#5a55fa", linewidth = 1.6) +
+  annotate("text", x = F_obs, y = .8, label = sprintf("F = %.2f", F_obs),
+           color = "#5a55fa", size = 6, hjust = -0.1) +
+  annotate("text", x = crit_F, y = .25, label = sprintf("critical\nF = %.2f", crit_F),
+           color = "#b04c19", size = 5, hjust = 1.1) +
+  scale_y_continuous(limits = c(0, 1.02), expand = c(0, 0)) +
+  labs(x = "F (2, 165)", y = NULL) +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(),
+        axis.line.y = element_blank())
+```
+:::
+::::::
+
+::: fragment
+**Decision:** 4.51 \> 3.05 ($p$ = .012 \< .05) → **reject** $H_0$
+:::
+
+::: {.my-callout .fragment}
+**Conclusion:** Pulse rate differs significantly across exercise groups, $F$(2, 165) = 4.51, $p$ = .012. ANOVA tells us **some** difference exists, but not **which** groups differ → Tukey's HSD
+:::
+
+## 3.9 Tukey's HSD: All Pairwise Comparisons {style="font-size:75%"}
+
+```{r}
+TukeyHSD(pulse_model)
+```
+
+:::::::: columns
+:::::: {.column .fragment width="40%"}
+::: subpoint
+○ `diff` = first group's mean − second group's mean
+:::
+
+::: subpoint
+○ `lwr`, `upr` = 95% CI, adjusted for making 3 comparisons
+:::
+
+::: subpoint
+○ `p adj` \< .05 (CI excludes 0) → significant
+:::
+::::::
+
+::: {.column .fragment width="60%"}
+| Comparison  | Diff. (bpm) | $p$ adj | Significant? |
+|:------------|:-----------:|:-------:|:------------:|
+| some − none |    0.97     |  .954   |      no      |
+| freq − none |    −4.41    |  .368   |      no      |
+| freq − some |    −5.38    |  .011   |   **yes**    |
+:::
+::::::::
+
+## 3.9 What's the Pattern? {style="font-size:80%"}
+
+::::::::: columns
+::: {.column width="50%"}
+```{r}
+#| fig-width: 6
+#| fig-height: 4.6
+par(mar = c(4.5, 7, 2.5, 1))
+plot(TukeyHSD(pulse_model), las = 1)
+```
+:::
+
+::::::: {.column width="50%"}
+::: subpoint
+○ Frequent exercisers have the lowest pulse (*M* = 71.45), significantly lower than the "some" group (*M* = 76.83)
+:::
+
+::: subpoint
+○ The "none" group (*M* = 75.86) did not differ significantly from either group. With only 14 students, its confidence intervals are very wide
+:::
+
+::: fragment
+**Overall:** exercising *frequently*, not just *sometimes*, goes with a lower pulse
+:::
+
+::: {.fragment style="font-size:85%"}
+ⓘ Not significant ≠ no difference: small groups have low power
+
+ⓘ This is survey data, not an experiment, so we can't say exercise **causes** a lower pulse
+:::
+:::::::
+:::::::::
+
+## 3.10 Writing It Up in APA Style {style="font-size:75%"}
+
+Include: the test, $F$($df_{between}$, $df_{within}$), $p$, each group's *M* and *SD*, and what Tukey's HSD showed, in full sentences
+
+::: {.my-callout .fragment}
+A one-way ANOVA was conducted to examine whether pulse rate differed by how often students exercised. Pulse rate differed significantly across exercise groups, *F*(2, 165) = 4.51, *p* = .012. Students who exercised frequently (*M* = 71.45, *SD* = 11.00) had a lower average pulse than students who exercised some of the time (*M* = 76.83, *SD* = 10.74) or not at all (*M* = 75.86, *SD* = 15.38). Tukey's HSD post hoc comparisons showed that the frequent group's pulse was significantly lower than the some group's (*p* = .011). The no-exercise group did not differ significantly from either the some group (*p* = .954) or the frequent group (*p* = .368).
+:::
+
+::::::: fragment
+**APA 7 reminders**
+
+::: subpoint
+○ Italicize statistical symbols: *F*, *t*, *r*, *p*, *M*, *SD*
+:::
+
+::: subpoint
+○ No leading zero for values that can't exceed 1: *p* = .012, *r* = .65 (but *M* = 0.07)
+:::
+
+::: subpoint
+○ Report exact *p* to 2–3 decimals; write *p* \< .001 when it's tiny
+:::
+
+::: subpoint
+○ Optional extra: effect size $\eta^2 = SS_{between} / SS_{total}$ = 1153.27 / 22229.90 = .05
+:::
+:::::::
+
+# Wrapping Up {.center}
+
+## Exam Survival Checklist {style="font-size:78%"}
+
+::::::::::::::::: columns
+:::::::: {.column width="50%"}
+**R & RMarkdown**
+
+::: subpoint
+○ Knit early and often: one error anywhere stops the knit
+:::
+
+::: subpoint
+○ Every object must be created **inside** the `.Rmd` (code you ran only in the console doesn't count)
+:::
+
+::: subpoint
+○ Keep the CSV next to your `.Rmd` and import it with `read.csv("file.csv")`
+:::
+
+::: subpoint
+○ Run `install.packages()` in the console, never in the `.Rmd`
+:::
+
+::: subpoint
+○ Print every value you're asked to calculate or display
+:::
+::::::::
+
+:::::::::: {.column width="50%"}
+**Statistics**
+
+::: subpoint
+○ Run `factor()` right after importing
+:::
+
+::: subpoint
+○ Scatterplot: outcome on the *y*-axis (`y ~ x`)
+:::
+
+::: subpoint
+○ Strength of *r* = size of $|r|$; skip the diagonal of the matrix
+:::
+
+::: subpoint
+○ Paired *t*: $n$ = number of pairs; keep the difference order consistent
+:::
+
+::: subpoint
+○ Say "fail to reject $H_0$," never "accept $H_0$"
+:::
+
+::: subpoint
+○ ANOVA $H_1$: "at least one mean differs"
+:::
+
+::: subpoint
+○ Always follow a decision with a plain-English conclusion
+:::
+::::::::::
+:::::::::::::::::
+
+## Extra Practice: Penguins {style="font-size:78%"}
+
+Same steps, new data: `palmerpenguins` (you met them in Lab 12)
+
+```{r}
+#| eval: false
+library(palmerpenguins)
+penguins <- na.omit(penguins)   # drop rows with missing values (333 penguins left)
+```
+
+1.  **Part 1 steps:** How strongly is `flipper_length_mm` related to `bill_length_mm`? Use flipper length to predict bill length, then predict bill length for flippers of 190, 200, and 210 mm
+2.  **Part 3 steps:** Does `bill_depth_mm` differ across `species`? Check the equal-variance assumption, run the ANOVA, then Tukey's HSD
+
+::: {.fragment style="font-size:90%"}
+Check:
+
+1.  $r$ = .65 (strong, positive); $b$ = 0.25 mm of bill per mm of flipper, $t$(331) = 15.69, $p$ \< .001; predicted bill lengths: 41.20, 43.75, 46.29 mm
+2.  $F$(2, 330) = 344.8, $p$ \< .001; Gentoo bills are shallower than both Adelie and Chinstrap bills (both $p$ \< .001); Adelie vs. Chinstrap is not significant ($p$ = .897)
+:::
+
+## Must-Take-Home Message {style="font-size:90%"}
+
+::: subpoint
+○ **Correlation:** `cor(x, y)` → sign = direction, $|r|$ = strength; always check the scatterplot
+:::
+
+::: subpoint
+○ **Regression:** `lm(y ~ x)` → slope = change in predicted *y* per 1-unit increase in *x*; `predict()` for new values
+:::
+
+::: subpoint
+○ **Paired *t*:** one difference score per person, $df = n - 1$, $d = \bar{d} / s_d$
+:::
+
+::: subpoint
+○ **ANOVA:** `aov(y ~ group)`, $MS = SS / df$, $F = MS_{between} / MS_{within}$, then `TukeyHSD()` to see which groups differ
+:::
+
+::: subpoint
+○ Every test: hypotheses → decision → conclusion in words
+:::
